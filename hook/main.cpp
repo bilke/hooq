@@ -23,12 +23,27 @@ QString objectName(QObject* object)
 		return QString("%1:1").arg(object->metaObject()->className());
 	}
 
+	const QList<QObject*> siblings = object->parent()->children();
+
+	int index = 1;
+	Q_FOREACH(QObject* sibling, siblings)
+	{
+		if(sibling == object)
+		{
+			break;
+		}
+		if(sibling->metaObject() == object->metaObject())
+		{
+			++index;
+		}
+	}
+
 	return QString(
 		"%1:%2"
 	).arg(
 		object->metaObject()->className()
 	).arg(
-		object->parent()->children().indexOf(object)
+		index
 	);
 }
 
