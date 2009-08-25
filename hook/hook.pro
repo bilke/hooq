@@ -5,8 +5,9 @@
 TEMPLATE = lib
 TARGET = 
 DEPENDPATH += .
-INCLUDEPATH += /tmp/hooktest/hook/. .
+INCLUDEPATH += .
 CONFIG += debug
 
 # Input
-SOURCES += main.cpp
+HEADERS += GlobalEventHook.h
+SOURCES += GlobalEventHook.cpp main.cpp
