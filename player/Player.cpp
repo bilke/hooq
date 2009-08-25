@@ -18,15 +18,6 @@ QFile Player::m_logFile;
 
 void Player::sleep(int msec)
 {
-	/*
-	QTime time;
-	time.start();
-	do
-	{
-		QCoreApplication::processEvents(QEventLoop::AllEvents, msec);
-	}
-	while(time.elapsed() < msec);
-	*/
 	QTimer::singleShot(msec, this, SLOT(readNext()));
 }
 
