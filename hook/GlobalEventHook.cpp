@@ -13,6 +13,7 @@
 
 void GlobalEventHook::activate()
 {
+	// Internal API... seems unavoidable
 	QInternal::registerCallback(QInternal::EventNotifyCallback, &hook);
 }
 
@@ -20,6 +21,7 @@ bool GlobalEventHook::hook(void** data)
 {
 	QObject* receiver = reinterpret_cast<QObject*>(data[0]);
 	QEvent* event = reinterpret_cast<QEvent*>(data[1]);
+	// returnType* returnValue = reinterpret_cast<returnType*>(data[2])
 	switch(event->type())
 	{
 		case QEvent::KeyPress:
@@ -50,8 +52,8 @@ bool GlobalEventHook::hook(void** data)
 QList<QPair<QString, QString> > GlobalEventHook::formattedKeyEvent(QKeyEvent* event)
 {
 	QList<QPair<QString, QString> > data;
-	data.append(qMakePair(QString("key"), QString::number(event->key())));
-	data.append(qMakePair(QString("modifiers"), QString::number(event->modifiers())));
+	data.append(qMakePair(QString("key"), QString::number(event->key()))); // Qt::Key
+	data.append(qMakePair(QString("modifiers"), QString::number(event->modifiers()))); // Qt::Modifiers
 	return data;
 }
 
@@ -67,16 +69,19 @@ QList<QPair<QString, QString> > GlobalEventHook::formattedMouseEvent(QMouseEvent
 
 QString GlobalEventHook::objectName(QObject* object)
 {
+	// Grab the object name
 	if(!object->objectName().isEmpty())
 	{
 		return object->objectName();
 	}
 
+	// If it's got no parent, classname:0
 	if(!object->parent())
 	{
-		return QString("%1:1").arg(object->metaObject()->className());
+		return QString("%1:0").arg(object->metaObject()->className());
 	}
 
+	// It does - classname:Index
 	const QList<QObject*> siblings = object->parent()->children();
 
 	int index = 1;
