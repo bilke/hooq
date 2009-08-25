@@ -1,4 +1,5 @@
 #include "GlobalEventHook.h"
+#include "../lib/ObjectHookName.h"
 
 #include <Qt>
 
@@ -6,7 +7,6 @@
 #include <QMouseEvent>
 #include <QKeyEvent>
 #include <QObject>
-#include <QStringList>
 #include <QTextStream>
 #include <QTime>
 #include <QUrl>
@@ -34,22 +34,22 @@ bool GlobalEventHook::hook(void** data)
 	switch(event->type())
 	{
 		case QEvent::KeyPress:
-			outputEvent(objectPath(receiver), "keyPress", formattedKeyEvent(static_cast<QKeyEvent*>(event)));
+			outputEvent(ObjectHookName::objectPath(receiver), "keyPress", formattedKeyEvent(static_cast<QKeyEvent*>(event)));
 			break;
 		case QEvent::KeyRelease:
-			outputEvent(objectPath(receiver), "keyRelease", formattedKeyEvent(static_cast<QKeyEvent*>(event)));
+			outputEvent(ObjectHookName::objectPath(receiver), "keyRelease", formattedKeyEvent(static_cast<QKeyEvent*>(event)));
 			break;
 		case QEvent::MouseMove:
-			outputEvent(objectPath(receiver), "mouseMove", formattedMouseEvent(static_cast<QMouseEvent*>(event)));
+			outputEvent(ObjectHookName::objectPath(receiver), "mouseMove", formattedMouseEvent(static_cast<QMouseEvent*>(event)));
 			break;
 		case QEvent::MouseButtonPress:
-			outputEvent(objectPath(receiver), "mouseButtonPress", formattedMouseEvent(static_cast<QMouseEvent*>(event)));
+			outputEvent(ObjectHookName::objectPath(receiver), "mouseButtonPress", formattedMouseEvent(static_cast<QMouseEvent*>(event)));
 			break;
 		case QEvent::MouseButtonRelease:
-			outputEvent(objectPath(receiver), "mouseButtonRelease", formattedMouseEvent(static_cast<QMouseEvent*>(event)));
+			outputEvent(ObjectHookName::objectPath(receiver), "mouseButtonRelease", formattedMouseEvent(static_cast<QMouseEvent*>(event)));
 			break;
 		case QEvent::MouseButtonDblClick:
-			outputEvent(objectPath(receiver), "mouseButtonDoubleClick", formattedMouseEvent(static_cast<QMouseEvent*>(event)));
+			outputEvent(ObjectHookName::objectPath(receiver), "mouseButtonDoubleClick", formattedMouseEvent(static_cast<QMouseEvent*>(event)));
 			break;
 		default:
 			break;
@@ -74,57 +74,6 @@ QList<QPair<QString, QString> > GlobalEventHook::formattedMouseEvent(QMouseEvent
 	data.append(qMakePair(QString("button"), QString::number(event->button())));
 	data.append(qMakePair(QString("buttons"), QString::number(event->buttons())));
 	return data;
-}
-
-QString GlobalEventHook::objectName(QObject* object)
-{
-	// Grab the object name
-	if(!object->objectName().isEmpty())
-	{
-		return object->objectName();
-	}
-
-	// If it's got no parent, classname:0
-	if(!object->parent())
-	{
-		return QString("%1:0").arg(object->metaObject()->className());
-	}
-
-	// It does - classname:Index
-	const QList<QObject*> siblings = object->parent()->children();
-
-	int index = 1;
-	Q_FOREACH(QObject* sibling, siblings)
-	{
-		if(sibling == object)
-		{
-			break;
-		}
-		if(sibling->metaObject() == object->metaObject())
-		{
-			++index;
-		}
-	}
-
-	return QString(
-		"%1:%2"
-	).arg(
-		object->metaObject()->className()
-	).arg(
-		index
-	);
-}
-
-QString GlobalEventHook::objectPath(QObject* object)
-{
-	QStringList components;
-	QObject* current = object;
-	while(current)
-	{
-		components.append(objectName(current));
-		current = current->parent();
-	}
-	return components.join(".");
 }
 
 void GlobalEventHook::outputEvent(const QString& object, const char* action, const QList<QPair<QString, QString> >& data)

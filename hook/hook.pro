@@ -6,8 +6,14 @@ INCLUDEPATH += .
 CONFIG += debug
 
 # Input
-HEADERS += GlobalEventHook.h
-SOURCES += GlobalEventHook.cpp main.cpp
+HEADERS += \
+	../lib/ObjectHookName.h \
+	GlobalEventHook.h \
+
+SOURCES += \
+	../lib/ObjectHookName.cpp \
+	GlobalEventHook.cpp \
+	main.cpp \
 
 win32 {
 	SOURCES += WinDll.cpp
