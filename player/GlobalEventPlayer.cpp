@@ -42,6 +42,7 @@ void GlobalEventPlayer::run()
 		}
 		if(url.scheme() == "qevent")
 		{
+			qDebug() << "Looking for" << url.host();
 			QObject* receiver = findObject(url.host());
 			if(!receiver)
 			{
@@ -91,15 +92,17 @@ void GlobalEventPlayer::setLogFile(const QString& targetFilePath)
 
 QObject* GlobalEventPlayer::findObject(const QString& path)
 {
+	qDebug() << Q_FUNC_INFO << path;
 	QStringList parts = path.split(".");
 	if(parts.isEmpty())
 	{
 		return 0;
 	}
-	const QString name = parts.takeLast();
+	const QString name = parts.takeFirst();
 	QObject* parent = 0;
 	if(parts.isEmpty())
 	{
+		qDebug() << "Looking for top-level for" << path;
 		// Top level widget
 		Q_FOREACH(QWidget* widget, QApplication::topLevelWidgets())
 		{
@@ -112,14 +115,17 @@ QObject* GlobalEventPlayer::findObject(const QString& path)
 	}
 	else
 	{
+		qDebug() << "Looking for parent for" << path;
 		parent = findObject(parts.join("."));
 		if(!parent)
 		{
 			return 0;
 		}
 	}
+	qDebug() << "Looking at children for" << path;
 	Q_FOREACH(QObject* child, parent->children())
 	{
+		qDebug() << ObjectHookName::objectName(child) << name;
 		if(ObjectHookName::objectName(child) == name)
 		{
 			return child;
