@@ -3,75 +3,122 @@
 
 #include <QApplication>
 #include <QDebug>
+#include <QKeyEvent>
 #include <QMouseEvent>
 #include <QStringList>
 #include <QTextStream>
-#include <QTime>
+#include <QTimer>
 #include <QUrl>
 #include <QWidget>
 
+#include <unistd.h>
+
 QFile GlobalEventPlayer::m_logFile;
-QHash<QString, QPointer<QObject> > GlobalEventPlayer::m_objectCache;
+
+GlobalEventPlayer::GlobalEventPlayer(QObject* parent)
+: QObject(parent)
+{
+}
+
+GlobalEventPlayer::~GlobalEventPlayer()
+{
+}
 
 void GlobalEventPlayer::sleep(int msec)
 {
+	/*
 	QTime time;
 	time.start();
 	do
 	{
-		QCoreApplication::processEvents();
+		QCoreApplication::processEvents(QEventLoop::AllEvents, msec);
 	}
 	while(time.elapsed() < msec);
+	*/
+	QTimer::singleShot(msec, this, SLOT(readNext()));
 }
 
 void GlobalEventPlayer::run()
 {
-	QTextStream in(&m_logFile);
-	Q_FOREVER
+	GlobalEventPlayer* player = new GlobalEventPlayer();
+	player->m_logStream.setDevice(&m_logFile);
+	player->readNext();
+}
+
+void GlobalEventPlayer::readNext()
+{
+	const QString line = m_logStream.readLine();
+	if(line.isNull())
 	{
-		const QString line = in.readLine();
-		if(line.isNull())
+		return;
+	}
+	const QUrl url(line);
+	if(url.scheme() == "msec")
+	{
+		sleep(url.host().toInt());
+		return;
+	}
+	if(url.scheme() == "qevent")
+	{
+		QObject* receiver = findObject(url.host());
+		if(!receiver)
 		{
-			break;
+			qDebug() << "Couldn't find receiver for" << url;
+			readNext();
+			return;
 		}
-		const QUrl url(line);
-		if(url.scheme() == "msec")
+		if(url.path() == "/keyPress")
 		{
-			sleep(url.host().toInt());
-			continue;
+			postKeyEvent(receiver, QEvent::KeyPress, url);
+			readNext();
+			return;
 		}
-		if(url.scheme() == "qevent")
+		if(url.path() == "/keyRelease")
 		{
-			qDebug() << "Looking for" << url.host();
-			QObject* receiver = findObject(url.host());
-			if(!receiver)
-			{
-				qDebug() << "Couldn't find receiver for" << url;
-				continue;
-			}
-			if(url.path() == "/mouseMove")
-			{
-				postMouseEvent(receiver, QEvent::MouseMove, url);
-				continue;
-			}
-			if(url.path() == "/mouseButtonPress")
-			{
-				postMouseEvent(receiver, QEvent::MouseButtonPress, url);
-				continue;
-			}
-			if(url.path() == "/mouseButtonDoubleClick")
-			{
-				postMouseEvent(receiver, QEvent::MouseButtonDblClick, url);
-				continue;
-			}
-			if(url.path() == "/mouseButtonRelease")
-			{
-				postMouseEvent(receiver, QEvent::MouseButtonRelease, url);
-				continue;
-			}
+			postKeyEvent(receiver, QEvent::KeyRelease, url);
+			readNext();
+			return;
+		}
+		if(url.path() == "/mouseMove")
+		{
+			postMouseEvent(receiver, QEvent::MouseMove, url);
+			readNext();
+			return;
+		}
+		if(url.path() == "/mouseButtonPress")
+		{
+			postMouseEvent(receiver, QEvent::MouseButtonPress, url);
+			readNext();
+			return;
+		}
+		if(url.path() == "/mouseButtonDoubleClick")
+		{
+			postMouseEvent(receiver, QEvent::MouseButtonDblClick, url);
+			readNext();
+			return;
+		}
+		if(url.path() == "/mouseButtonRelease")
+		{
+			postMouseEvent(receiver, QEvent::MouseButtonRelease, url);
+			readNext();
+			return;
 		}
 	}
 }
+
+void GlobalEventPlayer::postKeyEvent(QObject* object, int type, const QUrl& url)
+{
+	QKeyEvent* event = new QKeyEvent(
+		static_cast<QEvent::Type>(type),
+		url.queryItemValue("key").toInt(),
+		static_cast<Qt::KeyboardModifiers>(url.queryItemValue("modifiers").toInt()),
+		url.queryItemValue("text"),
+		url.queryItemValue("isAutoRepeat") == "true",
+		url.queryItemValue("count").toUShort()
+	);
+	QCoreApplication::postEvent(object, event);
+}
+
 
 void GlobalEventPlayer::postMouseEvent(QObject* object, int type, const QUrl& url)
 {
@@ -97,7 +144,6 @@ void GlobalEventPlayer::setLogFile(const QString& targetFilePath)
 
 QObject* GlobalEventPlayer::findObject(const QString& path)
 {
-	qDebug() << Q_FUNC_INFO << path;
 	QStringList parts = path.split(".");
 	if(parts.isEmpty())
 	{
@@ -107,7 +153,6 @@ QObject* GlobalEventPlayer::findObject(const QString& path)
 	QObject* parent = 0;
 	if(parts.isEmpty())
 	{
-		qDebug() << "Looking for top-level for" << path;
 		// Top level widget
 		Q_FOREACH(QWidget* widget, QApplication::topLevelWidgets())
 		{
@@ -120,17 +165,14 @@ QObject* GlobalEventPlayer::findObject(const QString& path)
 	}
 	else
 	{
-		qDebug() << "Looking for parent for" << path;
 		parent = findObject(parts.join("."));
 		if(!parent)
 		{
 			return 0;
 		}
 	}
-	qDebug() << "Looking at children for" << path;
 	Q_FOREACH(QObject* child, parent->children())
 	{
-		qDebug() << ObjectHookName::objectName(child) << name;
 		if(ObjectHookName::objectName(child) == name)
 		{
 			return child;

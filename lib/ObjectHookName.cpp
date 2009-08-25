@@ -5,16 +5,21 @@
 
 QString ObjectHookName::objectName(QObject* object)
 {
+	return rawObjectName(object).toLower().replace(":", "-");
+}
+
+QString ObjectHookName::rawObjectName(QObject* object)
+{
 	// Grab the object name
 	if(!object->objectName().isEmpty())
 	{
-		return object->objectName().toLower();
+		return object->objectName();
 	}
 
 	// If it's got no parent, classname:0
 	if(!object->parent())
 	{
-		return QString("%1-0").arg(object->metaObject()->className()).toLower();
+		return QString("%1-0").arg(object->metaObject()->className());
 	}
 
 	// It does - classname:Index
@@ -39,7 +44,7 @@ QString ObjectHookName::objectName(QObject* object)
 		object->metaObject()->className()
 	).arg(
 		index
-	).toLower();
+	);
 }
 
 QString ObjectHookName::objectPath(QObject* object)

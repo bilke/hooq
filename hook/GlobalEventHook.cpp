@@ -65,6 +65,9 @@ QList<QPair<QString, QString> > GlobalEventHook::formattedKeyEvent(QKeyEvent* ev
 	QList<QPair<QString, QString> > data;
 	data.append(qMakePair(QString("key"), QString::number(event->key()))); // Qt::Key
 	data.append(qMakePair(QString("modifiers"), QString::number(event->modifiers()))); // Qt::Modifiers
+	data.append(qMakePair(QString("text"), event->text()));
+	data.append(qMakePair(QString("isAutoRepeat"), event->isAutoRepeat() ? QString("true") : QString("false")));
+	data.append(qMakePair(QString("count"), QString::number(event->count())));
 	return data;
 }
 

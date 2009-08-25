@@ -5,19 +5,28 @@
 #include <QObject>
 #include <QPointer>
 #include <QString>
+#include <QTextStream>
 
 class QUrl;
 
-class GlobalEventPlayer
+class GlobalEventPlayer : public QObject
 {
+	Q_OBJECT;
 	public:
 		static void run();
 		static void setLogFile(const QString& targetFilePath);
+	private slots:
+		void readNext();
 	private:
-		static QFile m_logFile;
-		static QHash<QString, QPointer<QObject> > m_objectCache;
-		static QObject* findObject(const QString& path);
+		GlobalEventPlayer(QObject* parent = 0);
+		~GlobalEventPlayer();
 
-		static void postMouseEvent(QObject* object, int type, const QUrl& url);
-		static void sleep(int msec);
+		QTextStream m_logStream;
+		static QFile m_logFile;
+		QHash<QString, QPointer<QObject> > m_objectCache;
+		QObject* findObject(const QString& path);
+
+		void postKeyEvent(QObject* object, int type, const QUrl& url);
+		void postMouseEvent(QObject* object, int type, const QUrl& url);
+		void sleep(int msec);
 };
