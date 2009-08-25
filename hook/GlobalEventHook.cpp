@@ -7,6 +7,7 @@
 #include <QKeyEvent>
 #include <QObject>
 #include <QStringList>
+#include <QTime>
 #include <QUrl>
 
 #include <iostream>
@@ -120,6 +121,18 @@ QString GlobalEventHook::objectPath(QObject* object)
 
 void GlobalEventHook::outputEvent(const QString& object, const char* action, const QList<QPair<QString, QString> >& data)
 {
+	static QTime timer;
+	if(timer.isValid())
+	{
+		QUrl timeUrl;
+		timeUrl.setScheme("msec");
+		timeUrl.setHost(QString::number(timer.restart()));
+		std::cout << qPrintable(timeUrl.toString()) << std::endl;
+	}
+	else
+	{
+		timer.start();
+	}
 	QUrl url;
 	url.setScheme("qevent");
 	url.setHost(object);
