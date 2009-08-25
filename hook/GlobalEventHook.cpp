@@ -7,10 +7,18 @@
 #include <QKeyEvent>
 #include <QObject>
 #include <QStringList>
+#include <QTextStream>
 #include <QTime>
 #include <QUrl>
 
-#include <iostream>
+QFile GlobalEventHook::m_logFile;
+
+void GlobalEventHook::setLogFile(const QString& targetFile)
+{
+	m_logFile.close();
+	m_logFile.setFileName(targetFile);
+	m_logFile.open(QIODevice::WriteOnly | QFile::Truncate);
+}
 
 void GlobalEventHook::activate()
 {
@@ -121,13 +129,14 @@ QString GlobalEventHook::objectPath(QObject* object)
 
 void GlobalEventHook::outputEvent(const QString& object, const char* action, const QList<QPair<QString, QString> >& data)
 {
+	QTextStream out(&m_logFile);
 	static QTime timer;
 	if(timer.isValid())
 	{
 		QUrl timeUrl;
 		timeUrl.setScheme("msec");
 		timeUrl.setHost(QString::number(timer.restart()));
-		std::cout << qPrintable(timeUrl.toString()) << std::endl;
+		out << qPrintable(timeUrl.toString()) << endl;
 	}
 	else
 	{
@@ -138,5 +147,5 @@ void GlobalEventHook::outputEvent(const QString& object, const char* action, con
 	url.setHost(object);
 	url.setPath(action);
 	url.setQueryItems(data);
-	std::cout << qPrintable(url.toString()) << std::endl;
+	out << qPrintable(url.toString()) << endl;
 }

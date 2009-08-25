@@ -1,5 +1,6 @@
 #pragma once
 
+#include <QFile>
 #include <QList>
 #include <QPair>
 #include <QString>
@@ -12,7 +13,10 @@ class GlobalEventHook
 	public:
 		/// Install the hook.
 		static void activate();
+		static void setLogFile(const QString& targetFile);
 	private:
+		// Log file to use
+		static QFile m_logFile;
 		/// The main hook.
 		static bool hook(void** data);
 
