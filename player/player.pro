@@ -7,9 +7,9 @@ CONFIG += debug
 # Input
 HEADERS += \
 	../lib/ObjectHookName.h \
-	GlobalEventPlayer.h \
+	Player.h \
 
 SOURCES += \
 	../lib/ObjectHookName.cpp \
-	GlobalEventPlayer.cpp \
+	Player.cpp \
 	main.cpp \

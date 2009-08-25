@@ -9,7 +9,10 @@
 
 class QUrl;
 
-class GlobalEventPlayer : public QObject
+namespace Hooq
+{
+
+class Player: public QObject
 {
 	Q_OBJECT;
 	public:
@@ -18,9 +21,6 @@ class GlobalEventPlayer : public QObject
 	private slots:
 		void readNext();
 	private:
-		GlobalEventPlayer(QObject* parent = 0);
-		~GlobalEventPlayer();
-
 		QTextStream m_logStream;
 		static QFile m_logFile;
 		QHash<QString, QPointer<QObject> > m_objectCache;
@@ -30,3 +30,5 @@ class GlobalEventPlayer : public QObject
 		void postMouseEvent(QObject* object, int type, const QUrl& url);
 		void sleep(int msec);
 };
+
+} // namespace

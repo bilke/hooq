@@ -8,11 +8,11 @@ CONFIG += debug
 # Input
 HEADERS += \
 	../lib/ObjectHookName.h \
-	GlobalEventHook.h \
+	Logger.h \
 
 SOURCES += \
 	../lib/ObjectHookName.cpp \
-	GlobalEventHook.cpp \
+	Logger.cpp \
 	main.cpp \
 
 win32 {

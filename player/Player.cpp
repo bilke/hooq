@@ -1,4 +1,4 @@
-#include "GlobalEventPlayer.h"
+#include "Player.h"
 #include "../lib/ObjectHookName.h"
 
 #include <QApplication>
@@ -11,20 +11,12 @@
 #include <QUrl>
 #include <QWidget>
 
-#include <unistd.h>
-
-QFile GlobalEventPlayer::m_logFile;
-
-GlobalEventPlayer::GlobalEventPlayer(QObject* parent)
-: QObject(parent)
+namespace Hooq
 {
-}
 
-GlobalEventPlayer::~GlobalEventPlayer()
-{
-}
+QFile Player::m_logFile;
 
-void GlobalEventPlayer::sleep(int msec)
+void Player::sleep(int msec)
 {
 	/*
 	QTime time;
@@ -38,14 +30,14 @@ void GlobalEventPlayer::sleep(int msec)
 	QTimer::singleShot(msec, this, SLOT(readNext()));
 }
 
-void GlobalEventPlayer::run()
+void Player::run()
 {
-	GlobalEventPlayer* player = new GlobalEventPlayer();
+	Player* player = new Player();
 	player->m_logStream.setDevice(&m_logFile);
 	player->readNext();
 }
 
-void GlobalEventPlayer::readNext()
+void Player::readNext()
 {
 	const QString line = m_logStream.readLine();
 	if(line.isNull())
@@ -106,7 +98,7 @@ void GlobalEventPlayer::readNext()
 	}
 }
 
-void GlobalEventPlayer::postKeyEvent(QObject* object, int type, const QUrl& url)
+void Player::postKeyEvent(QObject* object, int type, const QUrl& url)
 {
 	QKeyEvent* event = new QKeyEvent(
 		static_cast<QEvent::Type>(type),
@@ -120,7 +112,7 @@ void GlobalEventPlayer::postKeyEvent(QObject* object, int type, const QUrl& url)
 }
 
 
-void GlobalEventPlayer::postMouseEvent(QObject* object, int type, const QUrl& url)
+void Player::postMouseEvent(QObject* object, int type, const QUrl& url)
 {
 	QMouseEvent* event = new QMouseEvent(
 		static_cast<QEvent::Type>(type),
@@ -135,14 +127,14 @@ void GlobalEventPlayer::postMouseEvent(QObject* object, int type, const QUrl& ur
 	QCoreApplication::postEvent(object, event);
 }
 
-void GlobalEventPlayer::setLogFile(const QString& targetFilePath)
+void Player::setLogFile(const QString& targetFilePath)
 {
 	m_logFile.close();
 	m_logFile.setFileName(targetFilePath);
 	m_logFile.open(QIODevice::ReadOnly);
 }
 
-QObject* GlobalEventPlayer::findObject(const QString& path)
+QObject* Player::findObject(const QString& path)
 {
 	QStringList parts = path.split(".");
 	if(parts.isEmpty())
@@ -181,3 +173,5 @@ QObject* GlobalEventPlayer::findObject(const QString& path)
 	
 	return 0;
 }
+
+} // namespace

@@ -1,11 +1,11 @@
-#include "GlobalEventHook.h"
+#include "Logger.h"
 
 extern "C" void setFredhookLogFile(const char* path)
 {
-	GlobalEventHook::setLogFile(QString::fromLocal8Bit(path));
+	Hooq::Logger::setLogFile(QString::fromLocal8Bit(path));
 }
 
 extern "C" void registerFredhookCallback()
 {
-	GlobalEventHook::activate();
+	Hooq::Logger::activate();
 }

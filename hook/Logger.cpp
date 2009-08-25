@@ -1,4 +1,4 @@
-#include "GlobalEventHook.h"
+#include "Logger.h"
 #include "../lib/ObjectHookName.h"
 
 #include <Qt>
@@ -11,24 +11,27 @@
 #include <QTime>
 #include <QUrl>
 
-QFile GlobalEventHook::m_logFile;
-QTime GlobalEventHook::m_timer;
+namespace Hooq
+{
 
-void GlobalEventHook::setLogFile(const QString& targetFile)
+QFile Logger::m_logFile;
+QTime Logger::m_timer;
+
+void Logger::setLogFile(const QString& targetFile)
 {
 	m_logFile.close();
 	m_logFile.setFileName(targetFile);
 	m_logFile.open(QIODevice::WriteOnly | QFile::Truncate);
 }
 
-void GlobalEventHook::activate()
+void Logger::activate()
 {
 	// Internal API... seems unavoidable
 	QInternal::registerCallback(QInternal::EventNotifyCallback, &hook);
 	m_timer.start();
 }
 
-bool GlobalEventHook::hook(void** data)
+bool Logger::hook(void** data)
 {
 	QObject* receiver = reinterpret_cast<QObject*>(data[0]);
 	QEvent* event = reinterpret_cast<QEvent*>(data[1]);
@@ -60,7 +63,7 @@ bool GlobalEventHook::hook(void** data)
 	return false;
 }
 
-QList<QPair<QString, QString> > GlobalEventHook::formattedKeyEvent(QKeyEvent* event)
+QList<QPair<QString, QString> > Logger::formattedKeyEvent(QKeyEvent* event)
 {
 	QList<QPair<QString, QString> > data;
 	data.append(qMakePair(QString("key"), QString::number(event->key()))); // Qt::Key
@@ -71,7 +74,7 @@ QList<QPair<QString, QString> > GlobalEventHook::formattedKeyEvent(QKeyEvent* ev
 	return data;
 }
 
-QList<QPair<QString, QString> > GlobalEventHook::formattedMouseEvent(QMouseEvent* event)
+QList<QPair<QString, QString> > Logger::formattedMouseEvent(QMouseEvent* event)
 {
 	QList<QPair<QString, QString> > data;
 	data.append(qMakePair(QString("x"), QString::number(event->x())));
@@ -81,7 +84,7 @@ QList<QPair<QString, QString> > GlobalEventHook::formattedMouseEvent(QMouseEvent
 	return data;
 }
 
-void GlobalEventHook::outputEvent(const QString& object, const char* action, const QList<QPair<QString, QString> >& data)
+void Logger::outputEvent(const QString& object, const char* action, const QList<QPair<QString, QString> >& data)
 {
 	QTextStream out(&m_logFile);
 
@@ -97,3 +100,5 @@ void GlobalEventHook::outputEvent(const QString& object, const char* action, con
 	url.setQueryItems(data);
 	out << qPrintable(url.toString()) << endl;
 }
+
+} //namespace

@@ -3,6 +3,9 @@
 #include <QObject>
 #include <QStringList>
 
+namespace Hooq
+{
+
 QString ObjectHookName::objectName(QObject* object)
 {
 	return rawObjectName(object).toLower().replace(":", "-");
@@ -58,3 +61,5 @@ QString ObjectHookName::objectPath(QObject* object)
 	}
 	return components.join(".");
 }
+
+} // namespace

@@ -9,7 +9,10 @@
 class QKeyEvent;
 class QMouseEvent;
 
-class GlobalEventHook
+namespace Hooq
+{
+
+class Logger
 {
 	public:
 		/// Install the hook.
@@ -47,3 +50,5 @@ class GlobalEventHook
 		/// Return a list of parameters for a mouse press event.
 		static QList<QPair<QString, QString> > formattedMouseEvent(QMouseEvent* event);
 };
+
+} // namespace
