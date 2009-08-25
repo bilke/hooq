@@ -59,6 +59,11 @@ void GlobalEventPlayer::run()
 				postMouseEvent(receiver, QEvent::MouseButtonPress, url);
 				continue;
 			}
+			if(url.path() == "/mouseButtonDoubleClick")
+			{
+				postMouseEvent(receiver, QEvent::MouseButtonDblClick, url);
+				continue;
+			}
 			if(url.path() == "/mouseButtonRelease")
 			{
 				postMouseEvent(receiver, QEvent::MouseButtonRelease, url);
