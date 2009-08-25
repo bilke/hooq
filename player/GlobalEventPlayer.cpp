@@ -2,6 +2,7 @@
 #include "../lib/ObjectHookName.h"
 
 #include <QApplication>
+#include <QDebug>
 #include <QMouseEvent>
 #include <QStringList>
 #include <QTextStream>
@@ -42,6 +43,11 @@ void GlobalEventPlayer::run()
 		if(url.scheme() == "qevent")
 		{
 			QObject* receiver = findObject(url.host());
+			if(!receiver)
+			{
+				qDebug() << "Couldn't find receiver for" << url;
+				continue;
+			}
 			if(url.path() == "/mouseMove")
 			{
 				postMouseEvent(receiver, QEvent::MouseMove, url);

@@ -14,7 +14,7 @@ QString ObjectHookName::objectName(QObject* object)
 	// If it's got no parent, classname:0
 	if(!object->parent())
 	{
-		return QString("%1:0").arg(object->metaObject()->className()).toLower();
+		return QString("%1-0").arg(object->metaObject()->className()).toLower();
 	}
 
 	// It does - classname:Index
@@ -34,7 +34,7 @@ QString ObjectHookName::objectName(QObject* object)
 	}
 
 	return QString(
-		"%1:%2"
+		"%1-%2"
 	).arg(
 		object->metaObject()->className()
 	).arg(

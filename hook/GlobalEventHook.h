@@ -4,6 +4,7 @@
 #include <QList>
 #include <QPair>
 #include <QString>
+#include <QTime>
 
 class QKeyEvent;
 class QMouseEvent;
@@ -15,6 +16,7 @@ class GlobalEventHook
 		static void activate();
 		static void setLogFile(const QString& targetFile);
 	private:
+		static QTime m_timer;
 		// Log file to use
 		static QFile m_logFile;
 		/// The main hook.

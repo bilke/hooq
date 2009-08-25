@@ -12,6 +12,7 @@
 #include <QUrl>
 
 QFile GlobalEventHook::m_logFile;
+QTime GlobalEventHook::m_timer;
 
 void GlobalEventHook::setLogFile(const QString& targetFile)
 {
@@ -24,6 +25,7 @@ void GlobalEventHook::activate()
 {
 	// Internal API... seems unavoidable
 	QInternal::registerCallback(QInternal::EventNotifyCallback, &hook);
+	m_timer.start();
 }
 
 bool GlobalEventHook::hook(void** data)
@@ -79,18 +81,12 @@ QList<QPair<QString, QString> > GlobalEventHook::formattedMouseEvent(QMouseEvent
 void GlobalEventHook::outputEvent(const QString& object, const char* action, const QList<QPair<QString, QString> >& data)
 {
 	QTextStream out(&m_logFile);
-	static QTime timer;
-	if(timer.isValid())
-	{
-		QUrl timeUrl;
-		timeUrl.setScheme("msec");
-		timeUrl.setHost(QString::number(timer.restart()));
-		out << qPrintable(timeUrl.toString()) << endl;
-	}
-	else
-	{
-		timer.start();
-	}
+
+	QUrl timeUrl;
+	timeUrl.setScheme("msec");
+	timeUrl.setHost(QString::number(m_timer.restart()));
+	out << qPrintable(timeUrl.toString()) << endl;
+
 	QUrl url;
 	url.setScheme("qevent");
 	url.setHost(object);

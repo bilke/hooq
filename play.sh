@@ -1,6 +1,7 @@
 #!/bin/sh
 PROGRAM=${1:-hooked/hooked}
 LOGFILE=${2:-/dev/stdin}
+BREAKPOINT=${3:-QApplication::exec()}
 
 CWD=$(pwd)
 SCRIPT=$(mktemp)
@@ -8,7 +9,7 @@ SCRIPT=$(mktemp)
 cat > $SCRIPT <<EOF
 break _start
 run
-break QApplication::exec()
+break ${BREAKPOINT}
 continue
 call __dlopen("$CWD/player/libplayer.so.1.0.0", 2)
 call setFredhookLogFile("$LOGFILE")
