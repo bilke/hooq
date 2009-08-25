@@ -1,2 +1,2 @@
 TEMPLATE = subdirs
-SUBDIRS += hook hooked
+SUBDIRS += hook hooked player
