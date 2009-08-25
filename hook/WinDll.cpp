@@ -16,6 +16,7 @@ class GlobalEventHookLoader
 	public:
 		GlobalEventHookLoader()
 		{
+			GlobalEventHook::setLogFile("C:/QEventLog.txt");
 			GlobalEventHook::activate();
 		}
 };
