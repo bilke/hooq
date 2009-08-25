@@ -12,8 +12,8 @@ run
 break ${BREAKPOINT}
 continue
 call __dlopen("$CWD/player/libplayer.so.1.0.0", 2)
-call setFredhookLogFile("$LOGFILE")
-call startFredhookPlayback()
+call setHooqLogFile("$LOGFILE")
+call startHooqPlayback()
 continue
 quit
 EOF

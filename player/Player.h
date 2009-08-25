@@ -5,14 +5,12 @@
 #include <QObject>
 #include <QPointer>
 #include <QString>
-#include <QTextStream>
-
-class QUrl;
+#include <QXmlStreamReader>
 
 namespace Hooq
 {
 
-class Player: public QObject
+class Player: public QObject, private QXmlStreamReader
 {
 	Q_OBJECT;
 	public:
@@ -21,13 +19,13 @@ class Player: public QObject
 	private slots:
 		void readNext();
 	private:
-		QTextStream m_logStream;
+		void handleElement();
 		static QFile m_logFile;
-		QHash<QString, QPointer<QObject> > m_objectCache;
+//		QHash<QString, QPointer<QObject> > m_objectCache;
 		QObject* findObject(const QString& path);
 
-		void postKeyEvent(QObject* object, int type, const QUrl& url);
-		void postMouseEvent(QObject* object, int type, const QUrl& url);
+		void postKeyEvent(int type);
+		void postMouseEvent(int type);
 		void sleep(int msec);
 };
 

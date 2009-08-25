@@ -1,10 +1,9 @@
 #pragma once
 
 #include <QFile>
-#include <QList>
-#include <QPair>
 #include <QString>
 #include <QTime>
+#include <QXmlStreamWriter>
 
 class QKeyEvent;
 class QMouseEvent;
@@ -17,20 +16,15 @@ class Logger
 	public:
 		/// Install the hook.
 		static void activate();
+		static void deactivate();
 		static void setLogFile(const QString& targetFile);
 	private:
+		static QXmlStreamWriter m_writer;
 		static QTime m_timer;
 		// Log file to use
 		static QFile m_logFile;
 		/// The main hook.
 		static bool hook(void** data);
-
-		/// Print out an event.
-		static void outputEvent(
-			const QString& object,
-			const char* action,
-			const QList<QPair<QString, QString> >& data
-		);
 
 		/** Get a name for an object.
 		 * This will be, in order of preference:
@@ -45,10 +39,12 @@ class Logger
 		 */
 		static QString objectPath(QObject* object);
 
+		static void outputEvent(QObject* receiver, const char* event, const QXmlStreamAttributes& attributes);
+
 		/// Return a list of parameters for a key event.
-		static QList<QPair<QString, QString> > formattedKeyEvent(QKeyEvent* event);
+		static QXmlStreamAttributes keyEventAttributes(QKeyEvent* event);
 		/// Return a list of parameters for a mouse press event.
-		static QList<QPair<QString, QString> > formattedMouseEvent(QMouseEvent* event);
+		static QXmlStreamAttributes mouseEventAttributes(QMouseEvent* event);
 };
 
 } // namespace

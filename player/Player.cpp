@@ -24,95 +24,92 @@ void Player::sleep(int msec)
 void Player::run()
 {
 	Player* player = new Player();
-	player->m_logStream.setDevice(&m_logFile);
+	player->setDevice(&m_logFile);
 	player->readNext();
 }
 
 void Player::readNext()
 {
-	const QString line = m_logStream.readLine();
-	if(line.isNull())
+	while(!atEnd())
 	{
-		return;
-	}
-	const QUrl url(line);
-	if(url.scheme() == "msec")
-	{
-		sleep(url.host().toInt());
-		return;
-	}
-	if(url.scheme() == "qevent")
-	{
-		QObject* receiver = findObject(url.host());
-		if(!receiver)
+		QXmlStreamReader::readNext();
+		if(tokenType() == StartElement)
 		{
-			qDebug() << "Couldn't find receiver for" << url;
-			readNext();
-			return;
-		}
-		if(url.path() == "/keyPress")
-		{
-			postKeyEvent(receiver, QEvent::KeyPress, url);
-			readNext();
-			return;
-		}
-		if(url.path() == "/keyRelease")
-		{
-			postKeyEvent(receiver, QEvent::KeyRelease, url);
-			readNext();
-			return;
-		}
-		if(url.path() == "/mouseMove")
-		{
-			postMouseEvent(receiver, QEvent::MouseMove, url);
-			readNext();
-			return;
-		}
-		if(url.path() == "/mouseButtonPress")
-		{
-			postMouseEvent(receiver, QEvent::MouseButtonPress, url);
-			readNext();
-			return;
-		}
-		if(url.path() == "/mouseButtonDoubleClick")
-		{
-			postMouseEvent(receiver, QEvent::MouseButtonDblClick, url);
-			readNext();
-			return;
-		}
-		if(url.path() == "/mouseButtonRelease")
-		{
-			postMouseEvent(receiver, QEvent::MouseButtonRelease, url);
-			readNext();
-			return;
+			handleElement();
+			break;
 		}
 	}
 }
-
-void Player::postKeyEvent(QObject* object, int type, const QUrl& url)
+void Player::handleElement()
 {
+	if(name() == "msec")
+	{
+		sleep(readElementText().toInt());
+		return;
+	}
+	if(name() == "keyPress")
+	{
+		postKeyEvent(QEvent::KeyPress);
+	}
+	if(name() == "keyRelease")
+	{
+		postKeyEvent(QEvent::KeyRelease);
+	}
+	if(name() == "mouseMove")
+	{
+		postMouseEvent(QEvent::MouseMove);
+	}
+	if(name() == "mouseButtonPress")
+	{
+		postMouseEvent(QEvent::MouseButtonPress);
+	}
+	if(name() == "mouseButtonDoubleClick")
+	{
+		postMouseEvent(QEvent::MouseButtonDblClick);
+	}
+	if(name() == "mouseButtonRelease")
+	{
+		postMouseEvent(QEvent::MouseButtonRelease);
+	}
+	readNext();
+}
+
+void Player::postKeyEvent(int type)
+{
+	QObject* object = findObject(attributes().value("target").toString());
+	if(!object)
+	{
+		return;
+	}
+
 	QKeyEvent* event = new QKeyEvent(
 		static_cast<QEvent::Type>(type),
-		url.queryItemValue("key").toInt(),
-		static_cast<Qt::KeyboardModifiers>(url.queryItemValue("modifiers").toInt()),
-		url.queryItemValue("text"),
-		url.queryItemValue("isAutoRepeat") == "true",
-		url.queryItemValue("count").toUShort()
+		attributes().value("key").toString().toInt(),
+		static_cast<Qt::KeyboardModifiers>(attributes().value("modifiers").toString().toInt()),
+		attributes().value("text").toString(),
+		attributes().value("isAutoRepeat") == "true",
+		attributes().value("count").toString().toUShort()
 	);
+
 	QCoreApplication::postEvent(object, event);
 }
 
-
-void Player::postMouseEvent(QObject* object, int type, const QUrl& url)
+void Player::postMouseEvent(int type)
 {
+	QObject* object = findObject(attributes().value("target").toString());
+	if(!object)
+	{
+		return;
+	}
+
 	QMouseEvent* event = new QMouseEvent(
 		static_cast<QEvent::Type>(type),
 		QPoint(
-			url.queryItemValue("x").toInt(),
-			url.queryItemValue("y").toInt()
+			attributes().value("x").toString().toInt(),
+			attributes().value("y").toString().toInt()
 		),
-		static_cast<Qt::MouseButton>(url.queryItemValue("button").toInt()),
-		static_cast<Qt::MouseButtons>(url.queryItemValue("buttons").toInt()),
+		static_cast<Qt::MouseButton>(attributes().value("button").toString().toInt()),
+		static_cast<Qt::MouseButtons>(attributes().value("buttons").toString().toInt()),
 		0
 	);
 	QCoreApplication::postEvent(object, event);
@@ -127,12 +124,13 @@ void Player::setLogFile(const QString& targetFilePath)
 
 QObject* Player::findObject(const QString& path)
 {
-	QStringList parts = path.split(".");
+	const QString separator("::");
+	QStringList parts = path.split(separator);
 	if(parts.isEmpty())
 	{
 		return 0;
 	}
-	const QString name = parts.takeFirst();
+	const QString name = parts.takeLast();
 	QObject* parent = 0;
 	if(parts.isEmpty())
 	{
@@ -148,7 +146,7 @@ QObject* Player::findObject(const QString& path)
 	}
 	else
 	{
-		parent = findObject(parts.join("."));
+		parent = findObject(parts.join(separator));
 		if(!parent)
 		{
 			return 0;

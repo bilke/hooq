@@ -8,7 +8,8 @@ namespace Hooq
 
 QString ObjectHookName::objectName(QObject* object)
 {
-	return rawObjectName(object).toLower().replace(":", "-");
+	//return rawObjectName(object).toLower().replace(":", "-");
+	return rawObjectName(object);
 }
 
 QString ObjectHookName::rawObjectName(QObject* object)
@@ -56,10 +57,10 @@ QString ObjectHookName::objectPath(QObject* object)
 	QObject* current = object;
 	while(current)
 	{
-		components.append(objectName(current));
+		components.prepend(objectName(current));
 		current = current->parent();
 	}
-	return components.join(".");
+	return components.join("::");
 }
 
 } // namespace

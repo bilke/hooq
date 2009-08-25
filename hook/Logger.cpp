@@ -3,16 +3,19 @@
 
 #include <Qt>
 
+#include <QCoreApplication>
+#include <QDebug>
 #include <QEvent>
 #include <QMouseEvent>
 #include <QKeyEvent>
 #include <QObject>
 #include <QTextStream>
 #include <QTime>
-#include <QUrl>
 
 namespace Hooq
 {
+
+QXmlStreamWriter Logger::m_writer;
 
 QFile Logger::m_logFile;
 QTime Logger::m_timer;
@@ -21,14 +24,28 @@ void Logger::setLogFile(const QString& targetFile)
 {
 	m_logFile.close();
 	m_logFile.setFileName(targetFile);
-	m_logFile.open(QIODevice::WriteOnly | QFile::Truncate);
+	m_logFile.open(QIODevice::WriteOnly | QFile::Truncate | QIODevice::Unbuffered);
 }
 
 void Logger::activate()
 {
+	qAddPostRoutine(deactivate);
+
+	m_writer.setDevice(&m_logFile);
+	m_writer.setAutoFormatting(true);
+	m_writer.writeStartDocument();
+	m_writer.writeStartElement("hooq");
+
 	// Internal API... seems unavoidable
 	QInternal::registerCallback(QInternal::EventNotifyCallback, &hook);
+
 	m_timer.start();
+}
+
+void Logger::deactivate()
+{
+	m_writer.writeEndDocument();
+	m_logFile.close();
 }
 
 bool Logger::hook(void** data)
@@ -39,22 +56,22 @@ bool Logger::hook(void** data)
 	switch(event->type())
 	{
 		case QEvent::KeyPress:
-			outputEvent(ObjectHookName::objectPath(receiver), "keyPress", formattedKeyEvent(static_cast<QKeyEvent*>(event)));
+			outputEvent(receiver, "keyPress", keyEventAttributes(static_cast<QKeyEvent*>(event)));
 			break;
 		case QEvent::KeyRelease:
-			outputEvent(ObjectHookName::objectPath(receiver), "keyRelease", formattedKeyEvent(static_cast<QKeyEvent*>(event)));
+			outputEvent(receiver, "keyRelease", keyEventAttributes(static_cast<QKeyEvent*>(event)));
 			break;
 		case QEvent::MouseMove:
-			outputEvent(ObjectHookName::objectPath(receiver), "mouseMove", formattedMouseEvent(static_cast<QMouseEvent*>(event)));
+			outputEvent(receiver, "mouseMove", mouseEventAttributes(static_cast<QMouseEvent*>(event)));
 			break;
 		case QEvent::MouseButtonPress:
-			outputEvent(ObjectHookName::objectPath(receiver), "mouseButtonPress", formattedMouseEvent(static_cast<QMouseEvent*>(event)));
+			outputEvent(receiver, "mouseButtonPress", mouseEventAttributes(static_cast<QMouseEvent*>(event)));
 			break;
 		case QEvent::MouseButtonRelease:
-			outputEvent(ObjectHookName::objectPath(receiver), "mouseButtonRelease", formattedMouseEvent(static_cast<QMouseEvent*>(event)));
+			outputEvent(receiver, "mouseButtonRelease", mouseEventAttributes(static_cast<QMouseEvent*>(event)));
 			break;
 		case QEvent::MouseButtonDblClick:
-			outputEvent(ObjectHookName::objectPath(receiver), "mouseButtonDoubleClick", formattedMouseEvent(static_cast<QMouseEvent*>(event)));
+			outputEvent(receiver, "mouseButtonDoubleClick", mouseEventAttributes(static_cast<QMouseEvent*>(event)));
 			break;
 		default:
 			break;
@@ -63,42 +80,35 @@ bool Logger::hook(void** data)
 	return false;
 }
 
-QList<QPair<QString, QString> > Logger::formattedKeyEvent(QKeyEvent* event)
+void Logger::outputEvent(QObject* receiver, const char* event, const QXmlStreamAttributes& attributes)
 {
-	QList<QPair<QString, QString> > data;
-	data.append(qMakePair(QString("key"), QString::number(event->key()))); // Qt::Key
-	data.append(qMakePair(QString("modifiers"), QString::number(event->modifiers()))); // Qt::Modifiers
-	data.append(qMakePair(QString("text"), event->text()));
-	data.append(qMakePair(QString("isAutoRepeat"), event->isAutoRepeat() ? QString("true") : QString("false")));
-	data.append(qMakePair(QString("count"), QString::number(event->count())));
+	m_writer.writeTextElement("msec", QString::number(m_timer.restart()));
+	
+	m_writer.writeStartElement(event);
+	m_writer.writeAttributes(attributes);
+	m_writer.writeAttribute("target", ObjectHookName::objectPath(receiver));
+	m_writer.writeEndElement(); //event;
+}
+
+QXmlStreamAttributes Logger::keyEventAttributes(QKeyEvent* event)
+{
+	QXmlStreamAttributes data;
+	data.append("key", QString::number(event->key())); // Qt::Key
+	data.append("modifiers", QString::number(event->modifiers())); // Qt::Modifiers
+	data.append("text", event->text());
+	data.append("isAutoRepeat", event->isAutoRepeat() ? "true" : "false");
+	data.append("count", QString::number(event->count()));
 	return data;
 }
 
-QList<QPair<QString, QString> > Logger::formattedMouseEvent(QMouseEvent* event)
+QXmlStreamAttributes Logger::mouseEventAttributes(QMouseEvent* event)
 {
-	QList<QPair<QString, QString> > data;
-	data.append(qMakePair(QString("x"), QString::number(event->x())));
-	data.append(qMakePair(QString("y"), QString::number(event->y())));
-	data.append(qMakePair(QString("button"), QString::number(event->button())));
-	data.append(qMakePair(QString("buttons"), QString::number(event->buttons())));
+	QXmlStreamAttributes data;
+	data.append("x", QString::number(event->x()));
+	data.append("y", QString::number(event->y()));
+	data.append("button", QString::number(event->button()));
+	data.append("buttons", QString::number(event->buttons()));
 	return data;
-}
-
-void Logger::outputEvent(const QString& object, const char* action, const QList<QPair<QString, QString> >& data)
-{
-	QTextStream out(&m_logFile);
-
-	QUrl timeUrl;
-	timeUrl.setScheme("msec");
-	timeUrl.setHost(QString::number(m_timer.restart()));
-	out << qPrintable(timeUrl.toString()) << endl;
-
-	QUrl url;
-	url.setScheme("qevent");
-	url.setHost(object);
-	url.setPath(action);
-	url.setQueryItems(data);
-	out << qPrintable(url.toString()) << endl;
 }
 
 } //namespace

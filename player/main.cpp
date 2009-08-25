@@ -1,11 +1,11 @@
-#include "GlobalEventPlayer.h"
+#include "Player.h"
 
-extern "C" void setFredhookLogFile(const char* path)
+extern "C" void setHooqLogFile(const char* path)
 {
-	GlobalEventPlayer::setLogFile(QString::fromLocal8Bit(path));
+	Hooq::Player::setLogFile(QString::fromLocal8Bit(path));
 }
 
-extern "C" void startFredhookPlayback()
+extern "C" void startHooqPlayback()
 {
-	GlobalEventPlayer::run();
+	Hooq::Player::run();
 }
