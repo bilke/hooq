@@ -8,6 +8,8 @@ call __dlopen("$CWD/hook/libhook.so.1.0.0", 2)
 call registerFredhookCallback()
 c
 EOF
-cd ~/git/desktop/b/
-gdb ./mendeleydesktop.x86_64 -x $SCRIPT
+
+PROGRAM=${1:-hooked/hooked}
+cd $(dirname "$PROGRAM")
+gdb ./$(basename "$PROGRAM") -x $SCRIPT
 rm $SCRIPT
