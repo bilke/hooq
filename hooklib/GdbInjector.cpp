@@ -28,11 +28,23 @@ void GdbInjector::startAndAttach(const QString& application, Action action)
 		<< "-interpreter" << "mi" // machine interface
 		<< application
 	;
-	connect(
-		m_gdb,
-		SIGNAL(started()),
-		SLOT(startProcessWithLogger())
-	);
+	if(action == Record)
+	{
+		connect(
+			m_gdb,
+			SIGNAL(started()),
+			SLOT(startProcessWithLogger())
+		);
+	}
+	else
+	{
+		Q_ASSERT(action == Replay);
+		connect(
+			m_gdb,
+			SIGNAL(started()),
+			SLOT(startProcessWithPlayback())
+		);
+	}
 
 	if(QCoreApplication::arguments().contains("--spam"))
 	{
@@ -52,16 +64,25 @@ void GdbInjector::startAndAttach(const QString& application, Action action)
 
 void GdbInjector::startProcessWithLogger()
 {
+	startProcess("QApplication::exec()", loggerLibrary(), "startHooqRecording()");
+}
+
+void GdbInjector::startProcessWithPlayback()
+{
+	startProcess("QApplication::exec()", playbackLibrary(), "startHooqPlayback()");
+}
+
+void GdbInjector::startProcess(const QString& breakPoint, const QString& library, const QString& call)
+{
 	Q_ASSERT(m_gdb->state() == QProcess::Running);
 	Q_ASSERT(m_gdb->isWritable());
 	m_gdbStream.setDevice(m_gdb);
 	m_gdbStream << "break _start" << endl; // C entry point - after main libraries have been loaded
 	m_gdbStream << "run" << endl; // run until we hit it, and therefore Qt shared libraries are loaded
-	m_gdbStream << "break QApplication::exec()" << endl; // now, we can set this breakpoint...
+	m_gdbStream << QString("break %1").arg(breakPoint) << endl; // now, we can set this breakpoint...
 	m_gdbStream << "continue" << endl;
-	m_gdbStream << QString("call __dlopen(\"%1\", %2)").arg(loggerLibrary()).arg(QString::number(RTLD_NOW)) << endl; // load our library
-//	m_gdbStream << "call setHooqLogFile(\"/dev/stdout\")" << endl;
-	m_gdbStream << "call startHooqRecording()" << endl; // install our plugin (which required QCoreApplication setup)
+	m_gdbStream << QString("call __dlopen(\"%1\", %2)").arg(library).arg(QString::number(RTLD_NOW)) << endl; // load our library
+	m_gdbStream << QString("call %1").arg(call) << endl; // install our plugin (which required QCoreApplication setup)
 	m_gdbStream << "bt" << endl;
 	m_gdbStream << "continue" << endl; // run the app
 	m_gdbStream << "quit" << endl; // after the application has exited, quit gdb
@@ -93,5 +114,12 @@ QString GdbInjector::loggerLibrary()
 	// XXX FIXME XXX
 	return QCoreApplication::applicationDirPath() + "/../hook/libhook.so.1.0.0";
 }
+
+QString GdbInjector::playbackLibrary()
+{
+	// XXX FIXME XXX
+	return QCoreApplication::applicationDirPath() + "/../player/libplayer.so.1.0.0";
+}
+
 
 } // namespace
