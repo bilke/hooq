@@ -48,12 +48,12 @@ int main(int argc, char** argv)
 	if(mode == Injector::Replay)
 	{
 		qDebug() << "Playback!";
-		player.start("../hooked/hooked", &log, &injector);
+		player.start("../demo/demo", &log, &injector);
 	}
 	else
 	{
 		qDebug() << "Logging!";
-		logger.start("../hooked/hooked", &log, &injector);
+		logger.start("../demo/demo", &log, &injector);
 	}
 
 	return app.exec();

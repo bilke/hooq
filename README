@@ -5,9 +5,9 @@ Overview:
  - Useful for pseudo-screencasts (in a significantly bandwidth-reduced form)
 
 Directories:
+ - demo: Simple Qt application for testing/demo purposes
  - hook: the logger/"spy" (requires injection)
  - hooqInjector: library for injecting the libraries
- - hooked: Simple Qt application for testing/demo purposes
  - lib: classes used by both 'hook' and 'player'
  - player: the playback library (requires injection)
 
