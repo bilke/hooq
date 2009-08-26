@@ -1,2 +1,2 @@
 TEMPLATE = subdirs
-SUBDIRS += hook demo player hooqInjector
+SUBDIRS += hook demo hooq player hooqInjector

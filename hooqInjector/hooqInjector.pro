@@ -1,4 +1,4 @@
-TEMPLATE = app
+TEMPLATE = lib
 TARGET = 
 DEPENDPATH += .
 INCLUDEPATH += . ../lib
@@ -22,4 +22,3 @@ SOURCES += \
 	Injector.cpp \
 	RemoteLogger.cpp \
 	RemotePlayback.cpp \
-	main.cpp \
