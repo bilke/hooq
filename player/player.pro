@@ -8,12 +8,12 @@ QT += network
 
 # Input
 HEADERS += \
-	../lib/ObjectHookName.h \
-	../lib/Communication.h \
+	../common/ObjectHookName.h \
+	../common/Communication.h \
 	Player.h \
 
 SOURCES += \
-	../lib/ObjectHookName.cpp \
-	../lib/Communication.cpp \
+	../common/ObjectHookName.cpp \
+	../common/Communication.cpp \
 	Player.cpp \
 	main.cpp \

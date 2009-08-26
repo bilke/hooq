@@ -8,13 +8,13 @@ QT += network
 
 # Input
 HEADERS += \
-	../lib/Communication.h \
-	../lib/ObjectHookName.h \
+	../common/Communication.h \
+	../common/ObjectHookName.h \
 	Logger.h \
 
 SOURCES += \
-	../lib/Communication.cpp \
-	../lib/ObjectHookName.cpp \
+	../common/Communication.cpp \
+	../common/ObjectHookName.cpp \
 	Logger.cpp \
 	main.cpp \
 

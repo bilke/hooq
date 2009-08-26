@@ -1,7 +1,7 @@
 #include "Logger.h"
 
-#include "../lib/Communication.h"
-#include "../lib/ObjectHookName.h"
+#include "../common/Communication.h"
+#include "../common/ObjectHookName.h"
 
 #include <Qt>
 

@@ -2,7 +2,7 @@
 
 #include "Injector.h"
 
-#include "../lib/Communication.h"
+#include "../common/Communication.h"
 
 #include <QDebug>
 #include <QLocalServer>

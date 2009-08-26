@@ -10,14 +10,14 @@ QT += network
 
 # Input
 HEADERS += \
-	../lib/Communication.h \
+	../common/Communication.h \
 	GdbInjector.h \
 	Injector.h \
 	RemoteLogger.h \
 	RemotePlayback.h \
 
 SOURCES += \
-	../lib/Communication.cpp \
+	../common/Communication.cpp \
 	GdbInjector.cpp \
 	Injector.cpp \
 	RemoteLogger.cpp \
