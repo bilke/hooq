@@ -1,6 +1,13 @@
-#include "GdbInjector.h"
 #include "RemoteLogger.h"
 #include "RemotePlayback.h"
+
+#ifdef Q_OS_WIN32
+	#include "WindowsInjector.h"
+	typedef Hooq::WindowsInjector PlatformInjector;
+#else
+	#include "GdbInjector.h"
+	typedef Hooq::GdbInjector PlatformInjector;
+#endif
 
 #include <QCoreApplication>
 #include <QDebug>
@@ -56,7 +63,7 @@ int main(int argc, char** argv)
 		log.open(QIODevice::WriteOnly | QFile::Truncate | QIODevice::Unbuffered);
 	}
 
-	GdbInjector injector;
+	PlatformInjector injector;
 
 	QObject::connect(
 		&injector,

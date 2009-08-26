@@ -4,8 +4,6 @@
 
 #include <QTextStream>
 
-class QProcess;
-
 namespace Hooq
 {
 
@@ -18,7 +16,7 @@ class GdbInjector : public Injector
 		virtual ~GdbInjector();
 
 		virtual void startAndAttach(const QString& application);
-		virtual void attach(int processId);
+		virtual void attach(Q_PID processId);
 	private slots:
 		void printGdbOutput();
 		void printGdbError();

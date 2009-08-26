@@ -1,5 +1,7 @@
 #pragma once
 
+#include "InjectorImport.h"
+
 #include <QObject>
 #include <QString>
 
@@ -12,7 +14,7 @@ namespace Hooq
 {
 class Injector;
 
-class RemoteLogger : public QObject
+class HOOQ_INJECTOR_EXPORT RemoteLogger : public QObject
 {
 	Q_OBJECT
 	public:

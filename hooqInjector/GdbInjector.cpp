@@ -71,7 +71,7 @@ void GdbInjector::startProcess()
 	m_gdbStream << "quit" << endl; // after the application has exited, quit gdb
 }
 
-void GdbInjector::attach(int processId)
+void GdbInjector::attach(Q_PID processId)
 {
 	qDebug() << Q_FUNC_INFO << "TODO";
 	Q_UNUSED(processId);

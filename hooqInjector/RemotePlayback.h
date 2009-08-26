@@ -1,8 +1,9 @@
 #pragma once
 
+#include "InjectorImport.h"
+
 #include <QObject>
 #include <QString>
-
 
 class QIODevice;
 class QLocalServer;
@@ -12,7 +13,7 @@ namespace Hooq
 {
 class Injector;
 
-class RemotePlayback : public QObject
+class HOOQ_INJECTOR_EXPORT RemotePlayback : public QObject
 {
 	Q_OBJECT
 	public:
