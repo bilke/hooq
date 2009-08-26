@@ -1,2 +1,2 @@
 TEMPLATE = subdirs
-SUBDIRS += hook hooked player
+SUBDIRS += hook hooked player hooklib
