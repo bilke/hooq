@@ -80,6 +80,10 @@ void Player::handleElement()
 	{
 		postMouseEvent(QEvent::MouseButtonRelease);
 	}
+	if(name() == "mouseWheel")
+	{
+		postWheelEvent();
+	}
 	readNext();
 }
 
@@ -119,7 +123,28 @@ void Player::postMouseEvent(int type)
 		),
 		static_cast<Qt::MouseButton>(attributes().value("button").toString().toInt()),
 		static_cast<Qt::MouseButtons>(attributes().value("buttons").toString().toInt()),
-		0
+		static_cast<Qt::KeyboardModifiers>(attributes().value("modifiers").toString().toInt())
+	);
+	QCoreApplication::postEvent(object, event);
+}
+
+void Player::postWheelEvent()
+{
+	QObject* object = findObject(attributes().value("target").toString());
+	if(!object)
+	{
+		return;
+	}
+
+	QWheelEvent* event = new QWheelEvent(
+		QPoint(
+			attributes().value("x").toString().toInt(),
+			attributes().value("y").toString().toInt()
+		),
+		attributes().value("delta").toString().toInt(),
+		static_cast<Qt::MouseButtons>(attributes().value("buttons").toString().toInt()),
+		static_cast<Qt::KeyboardModifiers>(attributes().value("modifiers").toString().toInt()),
+		attributes().value("orientation") == "vertical" ? Qt::Vertical : Qt::Horizontal
 	);
 	QCoreApplication::postEvent(object, event);
 }

@@ -8,6 +8,7 @@
 
 class QKeyEvent;
 class QMouseEvent;
+class QWheelEvent;
 
 namespace Hooq
 {
@@ -53,8 +54,11 @@ class Logger : public QObject
 
 		/// Return a list of parameters for a key event.
 		static QXmlStreamAttributes keyEventAttributes(QKeyEvent* event);
-		/// Return a list of parameters for a mouse press event.
+		/// Return a list of parameters for a mouse press/release/move event.
 		static QXmlStreamAttributes mouseEventAttributes(QMouseEvent* event);
+		/// Return a list of parameters for a moue wheel event
+		static QXmlStreamAttributes wheelEventAttributes(QWheelEvent* event);
+
 };
 
 } // namespace

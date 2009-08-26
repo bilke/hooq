@@ -8,11 +8,12 @@
 #include <QCoreApplication>
 #include <QDebug>
 #include <QEvent>
-#include <QMouseEvent>
 #include <QKeyEvent>
+#include <QMouseEvent>
 #include <QObject>
 #include <QTextStream>
 #include <QTime>
+#include <QWheelEvent>
 
 namespace Hooq
 {
@@ -102,6 +103,9 @@ void Logger::hook(QObject* receiver, QEvent* event)
 		case QEvent::MouseButtonDblClick:
 			outputEvent(receiver, "mouseButtonDoubleClick", mouseEventAttributes(static_cast<QMouseEvent*>(event)));
 			break;
+		case QEvent::Wheel:
+			outputEvent(receiver, "mouseWheel", wheelEventAttributes(static_cast<QWheelEvent*>(event)));
+			break;
 		default:
 			break;
 
@@ -136,6 +140,18 @@ QXmlStreamAttributes Logger::mouseEventAttributes(QMouseEvent* event)
 	data.append("y", QString::number(event->y()));
 	data.append("button", QString::number(event->button()));
 	data.append("buttons", QString::number(event->buttons()));
+	data.append("modifiers", QString::number(event->modifiers())); // Qt::Modifiers
+	return data;
+}
+QXmlStreamAttributes Logger::wheelEventAttributes(QWheelEvent* event)
+{
+	QXmlStreamAttributes data;
+	data.append("x", QString::number(event->x()));
+	data.append("y", QString::number(event->y()));
+	data.append("delta", QString::number(event->delta()));
+	data.append("buttons", QString::number(event->buttons()));
+	data.append("modifiers", QString::number(event->modifiers())); // Qt::Modifiers
+	data.append("orientation", event->orientation() == Qt::Vertical ? "vertical" : "horizontal");
 	return data;
 }
 
