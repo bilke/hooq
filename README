@@ -7,6 +7,7 @@ Overview:
 Directories:
  - demo: Simple Qt application for testing/demo purposes
  - hook: the logger/"spy" (requires injection)
+ - hooq: CLI application for testing
  - hooqInjector: library for injecting the libraries
  - lib: classes used in all the other libraries/applications except 'demo'
  - player: the playback library (requires injection)
