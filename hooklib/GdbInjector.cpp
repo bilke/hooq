@@ -83,7 +83,6 @@ void GdbInjector::startProcess(const QString& breakPoint, const QString& library
 	m_gdbStream << "continue" << endl;
 	m_gdbStream << QString("call __dlopen(\"%1\", %2)").arg(library).arg(QString::number(RTLD_NOW)) << endl; // load our library
 	m_gdbStream << QString("call %1").arg(call) << endl; // install our plugin (which required QCoreApplication setup)
-	m_gdbStream << "bt" << endl;
 	m_gdbStream << "continue" << endl; // run the app
 	m_gdbStream << "quit" << endl; // after the application has exited, quit gdb
 }

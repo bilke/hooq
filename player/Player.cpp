@@ -24,13 +24,20 @@ void Player::sleep(int msec)
 void Player::run()
 {
 	QLocalSocket* socket = new QLocalSocket();
-	socket->connectToServer(Communication::serverName());
-	socket->waitForConnected(1000);
-	Q_ASSERT(socket->state() == QLocalSocket::ConnectedState);
 
 	Player* player = new Player();
 	player->setDevice(socket);
-	player->readNext();
+
+	socket->connectToServer(Communication::serverName());
+	socket->waitForConnected(1000);
+	Q_ASSERT(socket->state() == QLocalSocket::ConnectedState && socket->isReadable());
+
+	connect(
+		socket,
+		SIGNAL(readyRead()),
+		player,
+		SLOT(readNext())
+	);
 }
 
 void Player::readNext()
