@@ -16,6 +16,8 @@ class Injector : public QObject
 
 		virtual void startAndAttach(const QString& application) = 0;
 		virtual void attach(int processId) = 0;
+	signals:
+		void finished(int exitCode);
 };
 
 } // namespace

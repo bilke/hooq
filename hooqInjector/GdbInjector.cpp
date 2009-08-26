@@ -34,6 +34,11 @@ void GdbInjector::startAndAttach(const QString& application)
 		SIGNAL(started()),
 		SLOT(startProcess())
 	);
+	connect(
+		m_gdb,
+		SIGNAL(finished(int, QProcess::ExitStatus)),
+		SIGNAL(finished(int))
+	);
 
 	if(QCoreApplication::arguments().contains("--spam"))
 	{

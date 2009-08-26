@@ -48,6 +48,13 @@ int main(int argc, char** argv)
 
 	GdbInjector injector;
 
+	QObject::connect(
+		&injector,
+		SIGNAL(finished(int)),
+		&app,
+		SLOT(quit())
+	);
+
 	RemoteLogger logger;
 	RemotePlayback player;
 
