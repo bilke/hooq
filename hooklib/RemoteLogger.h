@@ -23,6 +23,8 @@ class RemoteLogger : public QObject
 		void logData();
 		void acceptConnection();
 	private:
+		QIODevice* m_log;
+
 		QLocalSocket* m_socket;
 		QLocalServer* m_localServer;
 };

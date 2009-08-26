@@ -13,6 +13,7 @@ namespace Hooq
 
 RemoteLogger::RemoteLogger(QObject* parent)
 : QObject(parent)
+, m_log(0)
 , m_socket(0)
 , m_localServer(0)
 {
@@ -20,7 +21,8 @@ RemoteLogger::RemoteLogger(QObject* parent)
 
 void RemoteLogger::start(const QString& application, QIODevice* logDevice, Injector* injector)
 {
-	Q_UNUSED(logDevice); // XXX FIXME XXX
+	Q_ASSERT(logDevice && logDevice->isOpen() && logDevice->isWritable());
+	m_log = logDevice;
 
 	const QString socketName = Communication::serverName(application);
 
@@ -42,7 +44,7 @@ void RemoteLogger::start(const QString& application, QIODevice* logDevice, Injec
 
 void RemoteLogger::logData()
 {
-	qDebug() << m_socket->readAll().constData();
+	m_log->write(m_socket->readAll().constData());
 }
 
 void RemoteLogger::acceptConnection()
