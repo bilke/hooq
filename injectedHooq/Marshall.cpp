@@ -48,7 +48,7 @@ void Marshall::readCommand()
 	}
 	else
 	{
-		qFatal("Unknown command: %s", command);
+		qFatal("Unknown command: %s", command.constData());
 	}
 }
 
