@@ -7,10 +7,9 @@ Overview:
 Directories:
  - common: classes used in multiple places
  - demo: Simple Qt application for testing/demo purposes
- - hook: the logger/"spy" (requires injection)
- - hooq: CLI application for testing
- - hooqInjector: library for injecting the libraries
- - player: the playback library (requires injection)
+ - hooq: CLI application for testing - uses hooqInjector
+ - hooqInjector: library for injecting injectedHooq into another process
+ - injectedHooq: spy/event injection library inserted into the other process
 
 Method:
  - The logger/player libraries are injected into any Qt application's process

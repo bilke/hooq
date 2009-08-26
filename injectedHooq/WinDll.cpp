@@ -1,4 +1,8 @@
-#include "GlobalEventHook.h"
+// Static initialiser for Hooq.
+// Used on Windows because we don't have a clean way to
+// call the entry point defined in EntryPoint.cpp
+
+#include "Marshall.h"
 
 /** Class that registers the hook in the constructor.
  * This is used on Windows to register the hook when
@@ -11,13 +15,13 @@
  * properly.
  */
 
-class GlobalEventHookLoader
+class HooqLoader
 {
 	public:
-		GlobalEventHookLoader()
+		HooqLoader()
 		{
-			GlobalEventHook::activate();
+			new Hooq::Marshall();
 		}
 };
 
-GlobalEventHookLoader loader;
+HooqLoader loader;

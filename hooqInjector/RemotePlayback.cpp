@@ -47,6 +47,7 @@ void RemotePlayback::acceptConnection()
 	delete m_socket;
 	m_socket = m_localServer->nextPendingConnection();
 	Q_ASSERT(m_socket->state() == QLocalSocket::ConnectedState && m_socket->isWritable() && m_socket->isOpen());
+	m_socket->write("PLAY\n");
 	m_socket->write(m_log->readAll());
 	m_socket->flush();
 }

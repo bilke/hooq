@@ -1,5 +1,7 @@
 #pragma once
 
+#include <QObject>
+#include <QPointer>
 #include <QString>
 #include <QTime>
 #include <QXmlStreamWriter>
@@ -10,17 +12,31 @@ class QMouseEvent;
 namespace Hooq
 {
 
-class Logger
+class Logger : public QObject
 {
+	Q_OBJECT
 	public:
-		/// Install the hook.
+		~Logger();
+		static Logger* instance(QIODevice*);
+	signals:
+		void finished();
+	private slots:
+		void readInput();
+	private:
+		static Logger* instance();
+		Logger(QIODevice* device);
+		static QPointer<Logger> m_instance;
 		static void activate();
 		static void deactivate();
-	private:
-		static QXmlStreamWriter m_writer;
-		static QTime m_timer;
+
 		/// The main hook.
 		static bool hook(void** data);
+		void hook(QObject* receiver, QEvent* event);
+
+		QXmlStreamWriter m_writer;
+		QTime m_timer;
+
+		void outputEvent(QObject* receiver, const char* event, const QXmlStreamAttributes& attributes);
 
 		/** Get a name for an object.
 		 * This will be, in order of preference:
@@ -34,8 +50,6 @@ class Logger
 		 * @see objectName
 		 */
 		static QString objectPath(QObject* object);
-
-		static void outputEvent(QObject* receiver, const char* event, const QXmlStreamAttributes& attributes);
 
 		/// Return a list of parameters for a key event.
 		static QXmlStreamAttributes keyEventAttributes(QKeyEvent* event);

@@ -64,12 +64,12 @@ void GdbInjector::startAndAttach(const QString& application, Action action)
 
 void GdbInjector::startProcessWithLogger()
 {
-	startProcess("QApplication::exec()", loggerLibrary(), "startHooqRecording()");
+	startProcess("QApplication::exec()", loggerLibrary(), "startHooq()");
 }
 
 void GdbInjector::startProcessWithPlayback()
 {
-	startProcess("QApplication::exec()", playbackLibrary(), "startHooqPlayback()");
+	startProcess("QApplication::exec()", playbackLibrary(), "startHooq()");
 }
 
 void GdbInjector::startProcess(const QString& breakPoint, const QString& library, const QString& call)
@@ -111,13 +111,15 @@ void GdbInjector::printGdbError()
 QString GdbInjector::loggerLibrary()
 {
 	// XXX FIXME XXX
-	return QCoreApplication::applicationDirPath() + "/../hook/libhook.so.1.0.0";
+	return QCoreApplication::applicationDirPath() + "/../injectedHooq/libinjectedHooq.so.1.0.0";
+//	return QCoreApplication::applicationDirPath() + "/../hook/libhook.so.1.0.0";
 }
 
 QString GdbInjector::playbackLibrary()
 {
 	// XXX FIXME XXX
-	return QCoreApplication::applicationDirPath() + "/../player/libplayer.so.1.0.0";
+	return QCoreApplication::applicationDirPath() + "/../injectedHooq/libinjectedHooq.so.1.0.0";
+//	return QCoreApplication::applicationDirPath() + "/../player/libplayer.so.1.0.0";
 }
 
 

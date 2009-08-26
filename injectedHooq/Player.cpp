@@ -1,12 +1,10 @@
 #include "Player.h"
-#include "../common/Communication.h"
 #include "../common/ObjectHookName.h"
 
 
 #include <QApplication>
 #include <QDebug>
 #include <QKeyEvent>
-#include <QLocalSocket>
 #include <QMouseEvent>
 #include <QStringList>
 #include <QTimer>
@@ -21,23 +19,16 @@ void Player::sleep(int msec)
 	QTimer::singleShot(msec, this, SLOT(readNext()));
 }
 
-void Player::run()
+Player::Player(QIODevice* device)
 {
-	QLocalSocket* socket = new QLocalSocket();
-
-	Player* player = new Player();
-	player->setDevice(socket);
-
-	socket->connectToServer(Communication::serverName());
-	socket->waitForConnected(1000);
-	Q_ASSERT(socket->state() == QLocalSocket::ConnectedState && socket->isReadable());
-
 	connect(
-		socket,
+		device,
 		SIGNAL(readyRead()),
-		player,
 		SLOT(readNext())
 	);
+
+	setDevice(device);
+	readNext();
 }
 
 void Player::readNext()
@@ -48,10 +39,16 @@ void Player::readNext()
 		if(tokenType() == StartElement)
 		{
 			handleElement();
-			break;
+			return;
+		}
+		if(tokenType() == EndDocument)
+		{
+			emit finished();
+			return;
 		}
 	}
 }
+
 void Player::handleElement()
 {
 	if(name() == "msec")

@@ -56,6 +56,7 @@ void RemoteLogger::acceptConnection()
 		SIGNAL(readyRead()),
 		SLOT(logData())
 	);
+	m_socket->write("RECORD\n");
 }
 
 } // namespace

@@ -11,7 +11,9 @@ class Player: public QObject, private QXmlStreamReader
 {
 	Q_OBJECT;
 	public:
-		static void run();
+		Player(QIODevice* device);
+	signals:
+		void finished();
 	private slots:
 		void readNext();
 	private:
