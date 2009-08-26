@@ -35,6 +35,12 @@ int main(int argc, char** argv)
 		return 1;
 	}
 
+	QString application = "../demo/demo";
+	if(!app.arguments().last().startsWith("--"))
+	{
+		application = app.arguments().last();
+	}
+	
 
 	QFile log("eventLog.txt");
 	if(mode == Replay)
@@ -60,13 +66,11 @@ int main(int argc, char** argv)
 
 	if(mode == Replay)
 	{
-		qDebug() << "Playback!";
-		player.start("../demo/demo", &log, &injector);
+		player.start(application, &log, &injector);
 	}
 	else
 	{
-		qDebug() << "Logging!";
-		logger.start("../demo/demo", &log, &injector);
+		logger.start(application, &log, &injector);
 	}
 
 	return app.exec();
