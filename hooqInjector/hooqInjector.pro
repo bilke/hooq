@@ -3,7 +3,7 @@ TARGET =
 DEPENDPATH += .
 INCLUDEPATH += . ../lib
 
-DEFINES += HOOQ_INJECTOR_EXPORT=__declspec(dllexport)
+win32:DEFINES += HOOQ_INJECTOR_EXPORT=__declspec(dllexport)
 
 CONFIG += debug
 
