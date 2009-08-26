@@ -4,7 +4,9 @@
 
 #include <QCoreApplication>
 #include <QDebug>
+#include <QDir>
 #include <QFile>
+#include <QFileInfo>
 #include <QStringList>
 #include <QTextStream>
 
@@ -40,6 +42,8 @@ int main(int argc, char** argv)
 	{
 		application = app.arguments().last();
 	}
+
+	QDir::setCurrent(QFileInfo(application).absolutePath());
 	
 
 	QFile log("eventLog.txt");
