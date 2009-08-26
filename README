@@ -1,0 +1,27 @@
+Overview:
+ - Records and playbacks QEvents in any dynamically-linked Qt application
+ - Useful for testing
+ - Useful for macros
+ - Useful for pseudo-screencasts (in a significantly bandwidth-reduced form)
+
+Directories:
+ - hook: the logger/"spy" (requires injection)
+ - hooklib: library for injecting the libraries
+ - hooked: Simple Qt application for testing/demo purposes
+ - lib: classes used by both 'hook' and 'player'
+ - player: the playback library (requires injection)
+
+Method:
+ - The logger/player libraries are injected into any Qt application's process
+ - The logger receives all QEvents via QInternal::registerCallback() (sorry for QInternal)
+ - The player posts events via QCoreApplication::postEvent()
+
+Injection method:
+ - Linux/OSX: gdb/gdbserver is attached to the process; then, the extra library is loaded
+ 	via dlopen(), and one of the functions "startHooqRecording()" or "startHooqPlayback()"
+	is called, after calling "setHooqLogFile()"
+ - Windows: The libraries are loaded by calling StartProcessThread, passing LoadLibrary as
+ 	the parameter. Unfortunately, we can't be sure of the address our library (and functions)
+	have been loaded at, so can't call them externally - instead, they've got a fixed
+	configuration, and are initialised by the constructor of an object with a global static
+	instance.
