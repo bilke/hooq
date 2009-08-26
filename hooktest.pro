@@ -1,4 +1,4 @@
 TEMPLATE = subdirs
-SUBDIRS += hook demo hooq player hooqInjector injectedHooq
+SUBDIRS += demo hooq hooqInjector injectedHooq
 
 hooq.depends = hooqInjector
