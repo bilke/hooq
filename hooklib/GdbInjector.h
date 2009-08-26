@@ -22,6 +22,7 @@ class GdbInjector : public Injector
 	private slots:
 		void startProcessWithLogger();
 		void printGdbOutput();
+		void printGdbError();
 	private:
 		static QString loggerLibrary();
 		QProcess* m_gdb;

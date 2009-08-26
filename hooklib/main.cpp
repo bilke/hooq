@@ -1,4 +1,5 @@
 #include "GdbInjector.h"
+#include "RemoteLogger.h"
 
 #include <QCoreApplication>
 
@@ -9,7 +10,8 @@ int main(int argc, char** argv)
 	QCoreApplication app(argc, argv);
 
 	GdbInjector injector;
-	injector.startAndAttach("../hooked/hooked", Injector::Record);
+	RemoteLogger logger;
+	logger.start("../hooked/hooked", 0, &injector);
 
 	return app.exec();
 }

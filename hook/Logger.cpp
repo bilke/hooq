@@ -1,4 +1,6 @@
 #include "Logger.h"
+
+#include "../lib/Communication.h"
 #include "../lib/ObjectHookName.h"
 
 #include <Qt>
@@ -8,6 +10,7 @@
 #include <QEvent>
 #include <QMouseEvent>
 #include <QKeyEvent>
+#include <QLocalSocket>
 #include <QObject>
 #include <QTextStream>
 #include <QTime>
@@ -17,21 +20,20 @@ namespace Hooq
 
 QXmlStreamWriter Logger::m_writer;
 
-QFile Logger::m_logFile;
 QTime Logger::m_timer;
-
-void Logger::setLogFile(const QString& targetFile)
-{
-	m_logFile.close();
-	m_logFile.setFileName(targetFile);
-	m_logFile.open(QIODevice::WriteOnly | QFile::Truncate | QIODevice::Unbuffered);
-}
 
 void Logger::activate()
 {
-	qAddPostRoutine(deactivate);
 
-	m_writer.setDevice(&m_logFile);
+	delete(m_writer.device());
+	QLocalSocket* socket = new QLocalSocket();
+	socket->connectToServer(Communication::serverName());
+	//qDebug() << Q_FUNC_INFO << "Socket name:" << Communication::serverName();
+	socket->waitForConnected(1000);
+	Q_ASSERT(socket->state() == QLocalSocket::ConnectedState);
+	m_writer.setDevice(socket);
+
+	qAddPostRoutine(deactivate);
 	m_writer.setAutoFormatting(true);
 	m_writer.writeStartDocument();
 	m_writer.writeStartElement("hooq");
@@ -45,7 +47,9 @@ void Logger::activate()
 void Logger::deactivate()
 {
 	m_writer.writeEndDocument();
-	m_logFile.close();
+	qobject_cast<QLocalSocket*>(m_writer.device())->flush();
+	m_writer.device()->close();
+	delete m_writer.device();
 }
 
 bool Logger::hook(void** data)

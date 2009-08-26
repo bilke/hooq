@@ -33,11 +33,20 @@ void GdbInjector::startAndAttach(const QString& application, Action action)
 		SIGNAL(started()),
 		SLOT(startProcessWithLogger())
 	);
-	connect(
-		m_gdb,
-		SIGNAL(readyReadStandardOutput()),
-		SLOT(printGdbOutput())
-	);
+
+	if(QCoreApplication::arguments().contains("--spam"))
+	{
+		connect(
+			m_gdb,
+			SIGNAL(readyReadStandardOutput()),
+			SLOT(printGdbOutput())
+		);
+		connect(
+			m_gdb,
+			SIGNAL(readyReadStandardError()),
+			SLOT(printGdbError())
+		);
+	}
 	m_gdb->start("gdb", arguments);
 }
 
@@ -51,8 +60,9 @@ void GdbInjector::startProcessWithLogger()
 	m_gdbStream << "break QApplication::exec()" << endl; // now, we can set this breakpoint...
 	m_gdbStream << "continue" << endl;
 	m_gdbStream << QString("call __dlopen(\"%1\", %2)").arg(loggerLibrary()).arg(QString::number(RTLD_NOW)) << endl; // load our library
-	m_gdbStream << "call setHooqLogFile(\"/dev/stdout\")" << endl;
+//	m_gdbStream << "call setHooqLogFile(\"/dev/stdout\")" << endl;
 	m_gdbStream << "call startHooqRecording()" << endl; // install our plugin (which required QCoreApplication setup)
+	m_gdbStream << "bt" << endl;
 	m_gdbStream << "continue" << endl; // run the app
 	m_gdbStream << "quit" << endl; // after the application has exited, quit gdb
 }
@@ -67,7 +77,15 @@ void GdbInjector::attach(int processId, Action action)
 void GdbInjector::printGdbOutput()
 {
 	// SPAM SPAM SPAM
-//	qDebug() << m_gdbStream.readAll();
+	m_gdb->setReadChannel(QProcess::StandardOutput);
+	qDebug() << m_gdbStream.readAll();
+}
+
+void GdbInjector::printGdbError()
+{
+	// SPAM SPAM SPAM
+	m_gdb->setReadChannel(QProcess::StandardError);
+	qDebug() << m_gdbStream.readAll();
 }
 
 QString GdbInjector::loggerLibrary()

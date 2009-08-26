@@ -1,6 +1,5 @@
 #pragma once
 
-#include <QFile>
 #include <QString>
 #include <QTime>
 #include <QXmlStreamWriter>
@@ -17,12 +16,9 @@ class Logger
 		/// Install the hook.
 		static void activate();
 		static void deactivate();
-		static void setLogFile(const QString& targetFile);
 	private:
 		static QXmlStreamWriter m_writer;
 		static QTime m_timer;
-		// Log file to use
-		static QFile m_logFile;
 		/// The main hook.
 		static bool hook(void** data);
 
