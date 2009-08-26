@@ -19,7 +19,7 @@ GdbInjector::~GdbInjector()
 {
 }
 
-void GdbInjector::startAndAttach(const QString& application, Action action)
+void GdbInjector::startAndAttach(const QString& application)
 {
 	delete m_gdb;
 	m_gdb = new QProcess(this);
@@ -28,23 +28,12 @@ void GdbInjector::startAndAttach(const QString& application, Action action)
 		<< "-interpreter" << "mi" // machine interface
 		<< application
 	;
-	if(action == Record)
-	{
-		connect(
-			m_gdb,
-			SIGNAL(started()),
-			SLOT(startProcessWithLogger())
-		);
-	}
-	else
-	{
-		Q_ASSERT(action == Replay);
-		connect(
-			m_gdb,
-			SIGNAL(started()),
-			SLOT(startProcessWithPlayback())
-		);
-	}
+
+	connect(
+		m_gdb,
+		SIGNAL(started()),
+		SLOT(startProcess())
+	);
 
 	if(QCoreApplication::arguments().contains("--spam"))
 	{
@@ -62,36 +51,25 @@ void GdbInjector::startAndAttach(const QString& application, Action action)
 	m_gdb->start("gdb", arguments);
 }
 
-void GdbInjector::startProcessWithLogger()
-{
-	startProcess("QApplication::exec()", loggerLibrary(), "startHooq()");
-}
-
-void GdbInjector::startProcessWithPlayback()
-{
-	startProcess("QApplication::exec()", playbackLibrary(), "startHooq()");
-}
-
-void GdbInjector::startProcess(const QString& breakPoint, const QString& library, const QString& call)
+void GdbInjector::startProcess()
 {
 	Q_ASSERT(m_gdb->state() == QProcess::Running);
 	Q_ASSERT(m_gdb->isWritable());
 	m_gdbStream.setDevice(m_gdb);
 	m_gdbStream << "break _start" << endl; // C entry point - after main libraries have been loaded
 	m_gdbStream << "run" << endl; // run until we hit it, and therefore Qt shared libraries are loaded
-	m_gdbStream << QString("break %1").arg(breakPoint) << endl; // now, we can set this breakpoint...
+	m_gdbStream << "break QCoreApplication::exec()" << endl; // now, we can set this breakpoint...
 	m_gdbStream << "continue" << endl;
-	m_gdbStream << QString("call __dlopen(\"%1\", %2)").arg(library).arg(QString::number(RTLD_NOW)) << endl; // load our library
-	m_gdbStream << QString("call %1").arg(call) << endl; // install our plugin (which required QCoreApplication setup)
+	m_gdbStream << QString("call __dlopen(\"%1\", %2)").arg(libraryPath()).arg(QString::number(RTLD_NOW)) << endl; // load our library
+	m_gdbStream << "call startHooq()" << endl; // install our plugin (which required QCoreApplication setup)
 	m_gdbStream << "continue" << endl; // run the app
 	m_gdbStream << "quit" << endl; // after the application has exited, quit gdb
 }
 
-void GdbInjector::attach(int processId, Action action)
+void GdbInjector::attach(int processId)
 {
 	qDebug() << Q_FUNC_INFO << "TODO";
 	Q_UNUSED(processId);
-	Q_UNUSED(action);
 }
 
 void GdbInjector::printGdbOutput()
@@ -108,18 +86,10 @@ void GdbInjector::printGdbError()
 	qDebug() << m_gdbStream.readAll();
 }
 
-QString GdbInjector::loggerLibrary()
+QString GdbInjector::libraryPath()
 {
 	// XXX FIXME XXX
 	return QCoreApplication::applicationDirPath() + "/../injectedHooq/libinjectedHooq.so.1.0.0";
-//	return QCoreApplication::applicationDirPath() + "/../hook/libhook.so.1.0.0";
-}
-
-QString GdbInjector::playbackLibrary()
-{
-	// XXX FIXME XXX
-	return QCoreApplication::applicationDirPath() + "/../injectedHooq/libinjectedHooq.so.1.0.0";
-//	return QCoreApplication::applicationDirPath() + "/../player/libplayer.so.1.0.0";
 }
 
 

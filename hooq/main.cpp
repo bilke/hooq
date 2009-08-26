@@ -10,17 +10,23 @@
 
 using namespace Hooq;
 
+enum Mode
+{
+	Record,
+	Replay
+};
+
 int main(int argc, char** argv)
 {
 	QCoreApplication app(argc, argv);
-	Injector::Action mode;
+	Mode mode;
 	if(app.arguments().contains("--record"))
 	{
-		mode = Injector::Record;
+		mode = Record;
 	}
 	else if(app.arguments().contains("--play"))
 	{
-		mode = Injector::Replay;
+		mode = Replay;
 	}
 	else
 	{
@@ -31,7 +37,7 @@ int main(int argc, char** argv)
 
 
 	QFile log("eventLog.txt");
-	if(mode == Injector::Replay)
+	if(mode == Replay)
 	{
 		log.open(QIODevice::ReadOnly);
 	}
@@ -45,7 +51,7 @@ int main(int argc, char** argv)
 	RemoteLogger logger;
 	RemotePlayback player;
 
-	if(mode == Injector::Replay)
+	if(mode == Replay)
 	{
 		qDebug() << "Playback!";
 		player.start("../demo/demo", &log, &injector);

@@ -11,17 +11,11 @@ class Injector : public QObject
 {
 	Q_OBJECT
 	public:
-		enum Action
-		{
-			Record,
-			Replay
-		};
-
 		Injector(QObject* parent = 0);
 		virtual ~Injector();
 
-		virtual void startAndAttach(const QString& application, Action action) = 0;
-		virtual void attach(int processId, Action action) = 0;
+		virtual void startAndAttach(const QString& application) = 0;
+		virtual void attach(int processId) = 0;
 };
 
 } // namespace

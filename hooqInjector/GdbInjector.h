@@ -17,17 +17,14 @@ class GdbInjector : public Injector
 		GdbInjector(QObject* parent = 0);
 		virtual ~GdbInjector();
 
-		virtual void startAndAttach(const QString& application, Action action);
-		virtual void attach(int processId, Action action);
+		virtual void startAndAttach(const QString& application);
+		virtual void attach(int processId);
 	private slots:
-		void startProcessWithLogger();
-		void startProcessWithPlayback();
 		void printGdbOutput();
 		void printGdbError();
+		void startProcess();
 	private:
-		void startProcess(const QString& breakPoint, const QString& library, const QString& call);
-		static QString loggerLibrary();
-		static QString playbackLibrary();
+		static QString libraryPath();
 		QProcess* m_gdb;
 		QTextStream m_gdbStream;
 };

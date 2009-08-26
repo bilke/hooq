@@ -39,7 +39,7 @@ void RemoteLogger::start(const QString& application, QIODevice* logDevice, Injec
 	QLocalServer::removeServer(socketName);
 	m_localServer->listen(socketName);
 
-	injector->startAndAttach(application, Injector::Record);
+	injector->startAndAttach(application);
 }
 
 void RemoteLogger::logData()

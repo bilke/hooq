@@ -39,7 +39,7 @@ void RemotePlayback::start(const QString& application, QIODevice* logDevice, Inj
 	QLocalServer::removeServer(socketName);
 	m_localServer->listen(socketName);
 
-	injector->startAndAttach(application, Injector::Replay);
+	injector->startAndAttach(application);
 }
 
 void RemotePlayback::acceptConnection()
