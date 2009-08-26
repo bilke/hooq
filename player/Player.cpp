@@ -1,20 +1,20 @@
 #include "Player.h"
+#include "../lib/Communication.h"
 #include "../lib/ObjectHookName.h"
+
 
 #include <QApplication>
 #include <QDebug>
 #include <QKeyEvent>
+#include <QLocalSocket>
 #include <QMouseEvent>
 #include <QStringList>
-#include <QTextStream>
 #include <QTimer>
 #include <QUrl>
 #include <QWidget>
 
 namespace Hooq
 {
-
-QFile Player::m_logFile;
 
 void Player::sleep(int msec)
 {
@@ -23,8 +23,13 @@ void Player::sleep(int msec)
 
 void Player::run()
 {
+	QLocalSocket* socket = new QLocalSocket();
+	socket->connectToServer(Communication::serverName());
+	socket->waitForConnected(1000);
+	Q_ASSERT(socket->state() == QLocalSocket::ConnectedState);
+
 	Player* player = new Player();
-	player->setDevice(&m_logFile);
+	player->setDevice(socket);
 	player->readNext();
 }
 
@@ -113,13 +118,6 @@ void Player::postMouseEvent(int type)
 		0
 	);
 	QCoreApplication::postEvent(object, event);
-}
-
-void Player::setLogFile(const QString& targetFilePath)
-{
-	m_logFile.close();
-	m_logFile.setFileName(targetFilePath);
-	m_logFile.open(QIODevice::ReadOnly);
 }
 
 QObject* Player::findObject(const QString& path)

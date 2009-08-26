@@ -4,6 +4,8 @@ DEPENDPATH += .
 INCLUDEPATH += .
 CONFIG += debug
 
+QT += network
+
 # Input
 HEADERS += \
 	../lib/ObjectHookName.h \
