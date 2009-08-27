@@ -31,6 +31,7 @@ class Marshall : public QObject
 	Q_OBJECT
 	public:
 		static Marshall* instance();
+		~Marshall();
 	private slots:
 		void readCommand();
 	private:

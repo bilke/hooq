@@ -63,7 +63,8 @@ void RemoteLogger::start(const QString& application, QIODevice* logDevice, Injec
 
 void RemoteLogger::logData()
 {
-	m_log->write(m_socket->readAll().constData());
+	const QByteArray data = m_socket->readAll();
+	m_log->write(data);
 }
 
 void RemoteLogger::acceptConnection()
