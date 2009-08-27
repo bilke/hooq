@@ -78,7 +78,7 @@ QString XmlToQtScript::parseHooq()
 				skipElement();
 				break;
 			case EndElement:
-				return items.join("\n");
+				return items.join("\n") + "\n";
 			default:
 				break;
 		}

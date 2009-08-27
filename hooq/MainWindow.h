@@ -24,6 +24,8 @@ class MainWindow : public QMainWindow, private Ui::MainWindow
 		void browseForApplication();
 		void startRecording();
 		void finishRecording();
+		void updateAddState();
+		void addTestSet();
 	private:
 		void populateTestSets();
 

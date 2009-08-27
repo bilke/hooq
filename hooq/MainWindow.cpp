@@ -12,7 +12,9 @@
 // Qt
 #include <QDebug>
 #include <QDir>
+#include <QFile>
 #include <QFileDialog>
+#include <QInputDialog>
 #include <QString>
 #include <QStringList>
 #include <QTemporaryFile>
@@ -63,6 +65,18 @@ MainWindow::MainWindow(QWidget* parent)
 		SIGNAL(finished(int)),
 		SLOT(finishRecording())
 	);
+
+	connect(
+		m_testNameEdit,
+		SIGNAL(textChanged(QString)),
+		SLOT(updateAddState())
+	);
+
+	connect(
+		m_addTestSetButton,
+		SIGNAL(clicked()),
+		SLOT(addTestSet())
+	);
 }
 
 void MainWindow::startRecording()
@@ -85,12 +99,31 @@ void MainWindow::finishRecording()
 	m_xmlDump->close();
 	m_xmlDump->open();
 
-	XmlToQtScript parser;
-	qDebug() << parser.parse(m_xmlDump);
+	QFile script(Locations::scriptPath(m_testModel->testSet(), m_testNameEdit->text()));
+	script.open(QIODevice::WriteOnly | QFile::Truncate);
+	Q_ASSERT(script.isOpen() && script.isWritable());
 
+	XmlToQtScript parser;
+	script.write(parser.parse(m_xmlDump).toUtf8());
+	script.close();
 
 	delete m_xmlDump;
 	m_xmlDump = 0;
+
+	m_testNameEdit->setText(QString());
+}
+
+void MainWindow::updateAddState()
+{
+	m_addTestButton->setEnabled(
+		(!m_testModel->testSet().isEmpty())
+		&&
+		(!m_testNameEdit->text().isEmpty())
+		&&
+		(!m_applicationEdit->text().isEmpty())
+		&&
+		QFile::exists(QDir::fromNativeSeparators(m_applicationEdit->text()))
+	);
 }
 
 void MainWindow::browseForApplication()
@@ -121,5 +154,17 @@ void MainWindow::populateTestSets()
 	Q_FOREACH(const QString& set, dataDir.entryList(QDir::Dirs | QDir::NoDotAndDotDot))
 	{
 		m_testSetEdit->addItem(set);
+	}
+}
+
+void MainWindow::addTestSet()
+{
+	const QString newName = QInputDialog::getText(this, tr("Test set name"), tr("Enter a name for your new test set"));
+	if(!newName.isEmpty())
+	{
+		// todo: check unique
+		m_testSetEdit->addItem(newName);
+		m_testSetEdit->setCurrentIndex(m_testSetEdit->findText(newName));
+		setTestSet(newName);
 	}
 }

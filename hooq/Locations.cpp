@@ -28,6 +28,11 @@ QString Locations::testSetsLocation()
 	return QDesktopServices::storageLocation(QDesktopServices::DataLocation) + "/tests";
 }
 
+QString Locations::scriptPath(const QString& testSet, const QString& testName)
+{
+	return QString("%1/%2.qs").arg(testSetLocation(testSet)).arg(testName);
+}
+
 QString Locations::testSetLocation(const QString& testSet)
 {
 	if(testSet.isEmpty())
