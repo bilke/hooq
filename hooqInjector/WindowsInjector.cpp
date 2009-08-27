@@ -55,7 +55,7 @@ void WindowsInjector::startAndAttach(const QString& application)
 
 	m_attachTimer = new QTimer(this);
 	m_attachTimer->setSingleShot(true);
-	m_attachTimer->setInterval(2000);
+	m_attachTimer->setInterval(500);
 	connect(
 		m_attachTimer,
 		SIGNAL(timeout()),

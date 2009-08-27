@@ -77,6 +77,7 @@ void Logger::readInput()
 Logger::~Logger()
 {
 	m_writer.writeEndDocument();
+	qDebug() << Q_FUNC_INFO;
 }
 
 void Logger::activate()
@@ -140,6 +141,8 @@ void Logger::outputEvent(QObject* receiver, const char* event, const QXmlStreamA
 	m_writer.writeAttributes(attributes);
 	m_writer.writeAttribute("target", ObjectHookName::objectPath(receiver));
 	m_writer.writeEndElement(); //event;
+
+	qDebug() << "Sent event" << event << "to socket";
 }
 
 QXmlStreamAttributes Logger::keyEventAttributes(QKeyEvent* event)
