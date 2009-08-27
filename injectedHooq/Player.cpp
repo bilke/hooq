@@ -41,12 +41,14 @@ void Player::sleep(int msec)
 
 Player::Player(QIODevice* device)
 {
+	qDebug() << Q_FUNC_INFO;
 	setDevice(device);
 	readNext();
 }
 
 void Player::readNext()
 {
+	qDebug() << Q_FUNC_INFO;
 	while(!atEnd())
 	{
 		QXmlStreamReader::readNext();

@@ -38,7 +38,7 @@
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
 
-#include <QCoreApplication>
+#include <QApplication>
 #include <QDebug>
 
 BOOL APIENTRY DllMain(HANDLE hModule, DWORD ul_reason_for_call, LPVOID lpReserved)
@@ -50,7 +50,7 @@ BOOL APIENTRY DllMain(HANDLE hModule, DWORD ul_reason_for_call, LPVOID lpReserve
 		wchar_t path[MAX_PATH];
 		::GetModuleFileNameW(static_cast<HMODULE>(hModule), path, MAX_PATH);
 		::LoadLibrary(path);
-//		new Hooq::Marshall();
+
 
 		// Remove hook
 		//::UnhookWindowsHookEx(g_hHook);
@@ -69,7 +69,8 @@ LRESULT CALLBACK dummyHook(int nCode, WPARAM wParam, LPARAM lParam)
 
 void installHooq(HINSTANCE hMod, DWORD dwThreadId)
 {
-	::SetWindowsHookEx(WH_CALLWNDPROC, dummyHook, hMod, dwThreadId);
+	HHOOK hook = ::SetWindowsHookEx(WH_GETMESSAGE, dummyHook, hMod, dwThreadId);
+	::PostThreadMessage(dwThreadId, WM_NULL, 0, 0); // map the DLL in the other thread
 }
 
 }
