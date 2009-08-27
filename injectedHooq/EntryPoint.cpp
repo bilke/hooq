@@ -25,5 +25,5 @@
 
 extern "C" void startHooq()
 {
-	new Hooq::Marshall();
+	Hooq::Marshall::instance();
 }
