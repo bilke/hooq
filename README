@@ -6,7 +6,6 @@ Overview:
 
 Directories:
  - common: classes used in multiple places
- - demo: Simple Qt application for testing/demo purposes
  - hooqcli: CLI application for testing - uses hooqInjector
  - hooqInjector: library for injecting injectedHooq into another process
  - injectedHooq: spy/event injection library inserted into the other process

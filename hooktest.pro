@@ -1,6 +1,5 @@
 TEMPLATE = subdirs
 SUBDIRS += \
-	demo \
 	hooq \
 	hooqcli \
 	hooqInjector \
