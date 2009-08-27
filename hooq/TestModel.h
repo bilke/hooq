@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QAbstractTableModel>
+#include <QStringList>
 
 class TestModel : public QAbstractTableModel
 {
@@ -18,5 +19,6 @@ class TestModel : public QAbstractTableModel
 	public slots:
 		void setTestSet(const QString&);
 	private:
+		QStringList m_items;
 		QString m_testSet;
 };

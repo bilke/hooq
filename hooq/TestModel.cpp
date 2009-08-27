@@ -21,7 +21,7 @@ int TestModel::rowCount(const QModelIndex& index) const
 	{
 		return 0;
 	}
-	return 0; // FIXME
+	return m_items.count();
 }
 
 QString TestModel::testSet() const
@@ -44,14 +44,32 @@ void TestModel::setTestSet(const QString& testSet)
 		testSetDir.mkpath("."); // relative to the dir
 	}
 
-	// TODO: update
+	m_items = testSetDir.entryList(QDir::Files);
+	m_items.replaceInStrings(".qs", QString());
+	m_items.sort();
 }
 
 QVariant TestModel::data(const QModelIndex& index, int role) const
 {
-	// FIXME
-	Q_UNUSED(index);
-	Q_UNUSED(role);
+	if(!index.isValid())
+	{
+		return QVariant();
+	}
+	if(role != Qt::DisplayRole)
+	{
+		return QVariant();
+	}
+
+	Q_ASSERT(index.row() >= 0 && index.row() < m_items.count());
+	Q_ASSERT(index.column() >= 0 && index.column() < columnCount());
+	switch(index.column())
+	{
+		case 0:
+			return m_items.at(index.row());
+		default:
+			break;
+	}
+
 	return QVariant();
 }
 
