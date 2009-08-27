@@ -3,6 +3,7 @@
 // Hooq
 #include "Locations.h"
 #include "TestModel.h"
+#include "XmlToQtScript.h"
 
 // hooqInjector
 #include "RemoteLogger.h"
@@ -78,9 +79,18 @@ void MainWindow::startRecording()
 
 void MainWindow::finishRecording()
 {
-	qDebug() << "Saved XML to" << m_xmlDump->fileName();
-	m_xmlDump->close();
 	delete m_hooqLogger;
+	m_hooqLogger = 0;
+	
+	m_xmlDump->close();
+	m_xmlDump->open();
+
+	XmlToQtScript parser;
+	qDebug() << parser.parse(m_xmlDump);
+
+
+	delete m_xmlDump;
+	m_xmlDump = 0;
 }
 
 void MainWindow::browseForApplication()
