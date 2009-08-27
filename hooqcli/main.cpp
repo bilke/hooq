@@ -63,8 +63,6 @@ int main(int argc, char** argv)
 	{
 		application = app.arguments().last();
 	}
-
-	QDir::setCurrent(QFileInfo(application).absolutePath());
 	
 
 	QFile log("eventLog.txt");
@@ -76,6 +74,8 @@ int main(int argc, char** argv)
 	{
 		log.open(QIODevice::WriteOnly | QFile::Truncate | QIODevice::Unbuffered);
 	}
+
+	QDir::setCurrent(QFileInfo(application).absolutePath());
 
 	PlatformInjector injector;
 

@@ -1,7 +1,11 @@
 TEMPLATE = app
 TARGET = 
 DEPENDPATH += .
-INCLUDEPATH += .
+INCLUDEPATH += . ../hooqInjector/
+
+unix:LIBS += -L../hooqInjector -lhooqInjector
+win32:LIBS += "..\hooqInjector\debug\hooqInjector.lib"
+QMAKE_RPATHDIR += $$(PWD)/../hooqInjector/
 
 CONFIG += debug
 

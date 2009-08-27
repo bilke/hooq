@@ -5,6 +5,13 @@
 #include <QMainWindow>
 
 class TestModel;
+class QTemporaryFile;
+
+namespace Hooq
+{
+	class Injector;
+	class RemoteLogger;
+}
 
 class MainWindow : public QMainWindow, private Ui::MainWindow
 {
@@ -15,8 +22,14 @@ class MainWindow : public QMainWindow, private Ui::MainWindow
 		void setTestSet(const QString&);
 		void saveApplicationPath();
 		void browseForApplication();
+		void startRecording();
+		void finishRecording();
 	private:
 		void populateTestSets();
 
+		Hooq::Injector* m_hooqInjector;
+		Hooq::RemoteLogger* m_hooqLogger;
+
 		TestModel* m_testModel;
+		QTemporaryFile* m_xmlDump;
 };

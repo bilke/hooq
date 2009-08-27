@@ -13,6 +13,11 @@ QString Locations::applicationPath(const QString& testSet)
 
 void Locations::setApplicationPath(const QString& testSet, const QString& application)
 {
+	if(testSet.isEmpty())
+	{
+		return;
+	}
+
 	QSettings settings;
 	settings.beginGroup(testSet);
 	settings.setValue("application", application);

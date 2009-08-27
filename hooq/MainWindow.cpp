@@ -1,23 +1,33 @@
 #include "MainWindow.h"
 
+// Hooq
 #include "Locations.h"
 #include "TestModel.h"
 
+// hooqInjector
+#include "RemoteLogger.h"
+#include "PlatformInjector.h"
+
+// Qt
 #include <QDebug>
 #include <QDir>
 #include <QFileDialog>
 #include <QString>
 #include <QStringList>
+#include <QTemporaryFile>
 
 MainWindow::MainWindow(QWidget* parent)
 : QMainWindow(parent)
+, m_hooqInjector(new PlatformInjector(this))
+, m_hooqLogger(0)
+, m_testModel(new TestModel(this))
+, m_xmlDump(0)
 {
 	setupUi(this);
 	setStatusBar(0);
 
 	populateTestSets();
 
-	m_testModel = new TestModel(this);
 
 	m_testList->setModel(m_testModel);
 
@@ -40,6 +50,37 @@ MainWindow::MainWindow(QWidget* parent)
 		SIGNAL(clicked()),
 		SLOT(browseForApplication())
 	);
+
+	connect(
+		m_addTestButton,
+		SIGNAL(clicked()),
+		SLOT(startRecording())
+	);
+
+	connect(
+		m_hooqInjector,
+		SIGNAL(finished(int)),
+		SLOT(finishRecording())
+	);
+}
+
+void MainWindow::startRecording()
+{
+	delete m_hooqLogger;
+	delete m_xmlDump;
+
+	m_xmlDump = new QTemporaryFile();
+	m_xmlDump->open();
+
+	m_hooqLogger = new Hooq::RemoteLogger();
+	m_hooqLogger->start(QDir::fromNativeSeparators(m_applicationEdit->text()), m_xmlDump, m_hooqInjector);
+}
+
+void MainWindow::finishRecording()
+{
+	qDebug() << "Saved XML to" << m_xmlDump->fileName();
+	m_xmlDump->close();
+	delete m_hooqLogger;
 }
 
 void MainWindow::browseForApplication()
