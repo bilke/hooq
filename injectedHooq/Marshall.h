@@ -30,10 +30,14 @@ class Marshall : public QObject
 {
 	Q_OBJECT
 	public:
-		Marshall();
+		static Marshall* instance();
 	private slots:
 		void readCommand();
 	private:
+		Marshall();
+
+		static Marshall* m_instance;
+
 		static void flushSocket();
 		static QLocalSocket* m_socket;
 };

@@ -5,6 +5,9 @@ INCLUDEPATH += .
 
 CONFIG += debug
 
+win32:DEFINES += HOOQ_INJECTED_EXPORT=__declspec(dllexport)
+win32:LIBS += user32.lib
+
 QT += network
 
 # Input

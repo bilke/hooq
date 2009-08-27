@@ -36,6 +36,16 @@ namespace Hooq
 
 QFile debugFile;
 QTextStream debugStream;
+Marshall* Marshall::m_instance = 0;
+
+Marshall* Marshall::instance()
+{
+	if(!m_instance)
+	{
+		m_instance = new Marshall();
+	}
+	return m_instance;
+}
 
 void logMessage(QtMsgType type, const char* message)
 {
@@ -66,6 +76,7 @@ Marshall::Marshall()
 	debugStream.setDevice(&debugFile);
 	qInstallMsgHandler(logMessage);
 
+	qDebug() << QCoreApplication::applicationFilePath();
 	qDebug() << __FILE__ << __LINE__;
 	m_socket = new QLocalSocket();
 	m_socket->connectToServer(Communication::serverName());

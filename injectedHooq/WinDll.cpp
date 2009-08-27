@@ -22,6 +22,7 @@
 // call the entry point defined in EntryPoint.cpp
 
 #include "Marshall.h"
+#include "WinDll.h"
 
 /** Class that registers the hook in the constructor.
  * This is used on Windows to register the hook when
@@ -37,34 +38,38 @@
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
 
-/*
+#include <QCoreApplication>
+#include <QDebug>
+
 BOOL APIENTRY DllMain(HANDLE hModule, DWORD ul_reason_for_call, LPVOID lpReserved)
 {
 	if(ul_reason_for_call == DLL_PROCESS_ATTACH)
 	{
+		qDebug() << Q_FUNC_INFO << QCoreApplication::applicationFilePath();
 		// Increase reference count
-		wchar_t* path[MAX_PATH];
-		::GetModuleFileNameW(hModule, path, MAX_PATH);
+		wchar_t path[MAX_PATH];
+		::GetModuleFileNameW(static_cast<HMODULE>(hModule), path, MAX_PATH);
 		::LoadLibrary(path);
+//		new Hooq::Marshall();
 
 		// Remove hook
-		::UnhookWindowsHookEx(g_hHook);
+		//::UnhookWindowsHookEx(g_hHook);
 	}
 	return TRUE;
 }
-*/
 
-class HooqLoader
+
+namespace Hooq
 {
-	public:
-		HooqLoader()
-		{
-			// Increase reference count
-			char path[MAX_PATH];
-			::GetModuleFileNameA(::GetModuleHandleA(reinterpret_cast<LPCSTR>("injectedHooq")), path, MAX_PATH);
-			::LoadLibraryA(path);
-			new Hooq::Marshall();
-		}
-};
+LRESULT CALLBACK dummyHook(int nCode, WPARAM wParam, LPARAM lParam)
+{
+	Marshall::instance();
+	return ::CallNextHookEx(NULL, nCode, wParam, lParam);
+}
 
-HooqLoader loader;
+void installHooq(HINSTANCE hMod, DWORD dwThreadId)
+{
+	::SetWindowsHookEx(WH_CALLWNDPROC, dummyHook, hMod, dwThreadId);
+}
+
+}

@@ -23,6 +23,8 @@
 
 #include "Injector.h"
 
+class QTimer;
+
 namespace Hooq
 {
 
@@ -41,6 +43,7 @@ class HOOQ_INJECTOR_EXPORT WindowsInjector : public Injector
 	private:
 		static QString libraryPath();
 		QProcess* m_process;
+		QTimer* m_attachTimer;
 };
 
 } // namespace

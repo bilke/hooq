@@ -4,6 +4,7 @@ DEPENDPATH += .
 INCLUDEPATH += . ../lib
 
 win32:DEFINES += HOOQ_INJECTOR_EXPORT=__declspec(dllexport)
+win32:LIBS += user32.lib
 
 CONFIG += debug
 
