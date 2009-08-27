@@ -1,16 +1,46 @@
 #include "TestModelDelegate.h"
 
+#include <QAbstractItemView>
 #include <QApplication>
 #include <QDebug>
 #include <QStyle>
 #include <QPainter>
 
-TestModelDelegate::TestModelDelegate(QObject* parent)
+TestModelDelegate::TestModelDelegate(QAbstractItemView* view, QObject* parent)
 : QStyledItemDelegate(parent)
 , m_runIcon(QApplication::style()->standardIcon(QStyle::SP_MediaPlay))
 , m_editIcon(QApplication::style()->standardIcon(QStyle::SP_FileIcon))
 {
-//	m_editButton->setIcon(QApplication::style()->standardIcon(QStyle::SP_FileIcon));
+	// All of these connections are required to get the fake push buttons redrawn every time they need to be, and drawn in the proper state
+	connect(
+		view,
+		SIGNAL(pressed(QModelIndex)),
+		SLOT(depressIndex(QModelIndex))
+	);
+	connect(
+		view,
+		SIGNAL(pressed(QModelIndex)),
+		view,
+		SLOT(update(QModelIndex))
+	);
+	connect(
+		view,
+		SIGNAL(entered(QModelIndex)),
+		this,
+		SLOT(hoverIndex(QModelIndex))
+	);
+	connect(
+		view,
+		SIGNAL(clicked(QModelIndex)),
+		this,
+		SLOT(release())
+	);
+	connect(
+		view,
+		SIGNAL(clicked(QModelIndex)),
+		view,
+		SLOT(update(QModelIndex))
+	);
 }
 
 void TestModelDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const

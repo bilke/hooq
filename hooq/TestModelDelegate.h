@@ -10,7 +10,7 @@ class TestModelDelegate: public QStyledItemDelegate
 {
 	Q_OBJECT;
 	public:
-		TestModelDelegate(QObject* parent = 0);
+		TestModelDelegate(QAbstractItemView* view, QObject* parent = 0);
 		~TestModelDelegate();
 
 		virtual void paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const;

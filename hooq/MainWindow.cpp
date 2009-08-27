@@ -32,46 +32,16 @@ MainWindow::MainWindow(QWidget* parent)
 
 	populateTestSets();
 
-
 	m_testList->setModel(m_testModel);
-	TestModelDelegate* delegate = new TestModelDelegate(this);
-	m_testList->setMouseTracking(true);
+	TestModelDelegate* delegate = new TestModelDelegate(m_testList, this);
 	m_testList->setItemDelegate(delegate);
+
+	m_testList->setMouseTracking(true);
+
 	m_testList->header()->setResizeMode(0, QHeaderView::Stretch);
 	m_testList->header()->setResizeMode(1, QHeaderView::Fixed);
 	m_testList->header()->setResizeMode(2, QHeaderView::Fixed);
 	m_testList->header()->setStretchLastSection(false);
-
-	connect(
-		m_testList,
-		SIGNAL(pressed(QModelIndex)),
-		delegate,
-		SLOT(depressIndex(QModelIndex))
-	);
-	connect(
-		m_testList,
-		SIGNAL(pressed(QModelIndex)),
-		m_testList,
-		SLOT(update(QModelIndex))
-	);
-	connect(
-		m_testList,
-		SIGNAL(entered(QModelIndex)),
-		delegate,
-		SLOT(hoverIndex(QModelIndex))
-	);
-	connect(
-		m_testList,
-		SIGNAL(clicked(QModelIndex)),
-		delegate,
-		SLOT(release())
-	);
-	connect(
-		m_testList,
-		SIGNAL(clicked(QModelIndex)),
-		m_testList,
-		SLOT(update(QModelIndex))
-	);
 
 	setTestSet(m_testSetEdit->currentText());
 
