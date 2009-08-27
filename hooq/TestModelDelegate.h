@@ -21,6 +21,7 @@ class TestModelDelegate: public QStyledItemDelegate
 	private:
 		void initStyleOption(QStyleOptionButton* out, const QStyleOptionViewItem& in, const QIcon& icon, const QModelIndex& index) const;
 		const QIcon m_runIcon;
+		const QIcon m_editIcon;
 		QPersistentModelIndex m_hoverIndex;
 		QPersistentModelIndex m_pressedIndex;
 };

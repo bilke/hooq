@@ -37,6 +37,10 @@ MainWindow::MainWindow(QWidget* parent)
 	TestModelDelegate* delegate = new TestModelDelegate(this);
 	m_testList->setMouseTracking(true);
 	m_testList->setItemDelegate(delegate);
+	m_testList->header()->setResizeMode(0, QHeaderView::Stretch);
+	m_testList->header()->setResizeMode(1, QHeaderView::Fixed);
+	m_testList->header()->setResizeMode(2, QHeaderView::Fixed);
+	m_testList->header()->setStretchLastSection(false);
 
 	connect(
 		m_testList,

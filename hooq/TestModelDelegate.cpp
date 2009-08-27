@@ -8,6 +8,7 @@
 TestModelDelegate::TestModelDelegate(QObject* parent)
 : QStyledItemDelegate(parent)
 , m_runIcon(QApplication::style()->standardIcon(QStyle::SP_MediaPlay))
+, m_editIcon(QApplication::style()->standardIcon(QStyle::SP_FileIcon))
 {
 //	m_editButton->setIcon(QApplication::style()->standardIcon(QStyle::SP_FileIcon));
 }
@@ -25,7 +26,9 @@ void TestModelDelegate::paint(QPainter* painter, const QStyleOptionViewItem& opt
 		}
 		else if(index.column() == 2)
 		{
-//			m_editButton->render(painter, option.rect.topLeft(), QRegion(), QWidget::DrawChildren);
+			QStyleOptionButton opt;
+			initStyleOption(&opt, option, m_editIcon, index);
+			QApplication::style()->drawControl(QStyle::CE_PushButton, &opt, painter);
 		}
 	}
 }
