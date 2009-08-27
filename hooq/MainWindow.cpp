@@ -3,6 +3,7 @@
 // Hooq
 #include "Locations.h"
 #include "TestModel.h"
+#include "TestModelDelegate.h"
 #include "XmlToQtScript.h"
 
 // hooqInjector
@@ -33,6 +34,7 @@ MainWindow::MainWindow(QWidget* parent)
 
 
 	m_testList->setModel(m_testModel);
+	m_testList->setItemDelegate(new TestModelDelegate(this));
 
 	setTestSet(m_testSetEdit->currentText());
 

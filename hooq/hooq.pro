@@ -13,6 +13,7 @@ HEADERS += \
 	Locations.h \
 	MainWindow.h \
 	TestModel.h \
+	TestModelDelegate.h \
 	XmlToQtScript.h \
 
 FORMS += \
@@ -22,6 +23,7 @@ SOURCES += \
 	Locations.cpp \
 	MainWindow.cpp \
 	TestModel.cpp \
+	TestModelDelegate.cpp \
 	XmlToQtScript.cpp \
 	main.cpp \
 

@@ -3,6 +3,7 @@
 #include "Locations.h"
 
 #include <QDir>
+#include <QSize>
 
 TestModel::TestModel(QObject* parent)
 : QAbstractTableModel(parent)
@@ -55,17 +56,38 @@ QVariant TestModel::data(const QModelIndex& index, int role) const
 	{
 		return QVariant();
 	}
-	if(role != Qt::DisplayRole)
-	{
-		return QVariant();
-	}
 
 	Q_ASSERT(index.row() >= 0 && index.row() < m_items.count());
 	Q_ASSERT(index.column() >= 0 && index.column() < columnCount());
 	switch(index.column())
 	{
 		case 0:
-			return m_items.at(index.row());
+			if(role == Qt::DisplayRole)
+			{
+				return m_items.at(index.row());
+			}
+			else
+			{
+				return QVariant();
+			}
+		case 1:
+			if(role == Qt::SizeHintRole)
+			{
+				return QSize(32, 32);
+			}
+			else if(role == Qt::ToolTipRole)
+			{
+				return tr("Run Test");
+			}
+		case 2:
+			if(role == Qt::SizeHintRole)
+			{
+				return QSize(32, 32);
+			}
+			else if(role == Qt::ToolTipRole)
+			{
+				return tr("Edit Test");
+			}
 		default:
 			break;
 	}
