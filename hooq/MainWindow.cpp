@@ -34,7 +34,40 @@ MainWindow::MainWindow(QWidget* parent)
 
 
 	m_testList->setModel(m_testModel);
-	m_testList->setItemDelegate(new TestModelDelegate(this));
+	TestModelDelegate* delegate = new TestModelDelegate(this);
+	m_testList->setMouseTracking(true);
+	m_testList->setItemDelegate(delegate);
+
+	connect(
+		m_testList,
+		SIGNAL(pressed(QModelIndex)),
+		delegate,
+		SLOT(depressIndex(QModelIndex))
+	);
+	connect(
+		m_testList,
+		SIGNAL(pressed(QModelIndex)),
+		m_testList,
+		SLOT(update(QModelIndex))
+	);
+	connect(
+		m_testList,
+		SIGNAL(entered(QModelIndex)),
+		delegate,
+		SLOT(hoverIndex(QModelIndex))
+	);
+	connect(
+		m_testList,
+		SIGNAL(clicked(QModelIndex)),
+		delegate,
+		SLOT(release())
+	);
+	connect(
+		m_testList,
+		SIGNAL(clicked(QModelIndex)),
+		m_testList,
+		SLOT(update(QModelIndex))
+	);
 
 	setTestSet(m_testSetEdit->currentText());
 

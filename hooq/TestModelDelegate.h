@@ -2,7 +2,9 @@
 
 #include <QStyledItemDelegate>
 
-class QToolButton;
+#include <QIcon>
+
+class QStyleOptionButton;
 
 class TestModelDelegate: public QStyledItemDelegate
 {
@@ -12,7 +14,13 @@ class TestModelDelegate: public QStyledItemDelegate
 		~TestModelDelegate();
 
 		virtual void paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const;
+	public slots:
+		void hoverIndex(const QModelIndex& index);
+		void depressIndex(const QModelIndex& index);
+		void release();
 	private:
-		QToolButton* m_runButton;
-		QToolButton* m_editButton;
+		void initStyleOption(QStyleOptionButton* out, const QStyleOptionViewItem& in, const QIcon& icon, const QModelIndex& index) const;
+		const QIcon m_runIcon;
+		QPersistentModelIndex m_hoverIndex;
+		QPersistentModelIndex m_pressedIndex;
 };
