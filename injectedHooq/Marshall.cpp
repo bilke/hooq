@@ -27,24 +27,61 @@
 #include <QCoreApplication>
 #include <QLocalSocket>
 
+#include <QFile>
+#include <QTextStream>
+
 namespace Hooq
 {
+
+
+QFile debugFile;
+QTextStream debugStream;
+
+void logMessage(QtMsgType type, const char* message)
+{
+	switch(type)
+	{
+		case QtDebugMsg:
+			debugStream << "DEBUG: " << message << endl;
+			break;
+		case QtWarningMsg:
+			debugStream << "WARNING: " << message << endl;
+			break;
+		case QtCriticalMsg:
+			debugStream << "CRITICAL: " << message << endl;
+			break;
+		case QtFatalMsg:
+			debugStream << "FATAL: " << message << endl;
+			abort();
+	}
+}
 
 QLocalSocket* Marshall::m_socket;
 
 Marshall::Marshall()
 : QObject()
 {
+	debugFile.setFileName("hookedDebugLog.txt");
+	debugFile.open(QIODevice::WriteOnly | QIODevice::Unbuffered | QFile::Truncate);
+	debugStream.setDevice(&debugFile);
+	qInstallMsgHandler(logMessage);
+
+	qDebug() << __FILE__ << __LINE__;
 	m_socket = new QLocalSocket();
 	m_socket->connectToServer(Communication::serverName());
+	qDebug() << __FILE__ << __LINE__;
 	m_socket->waitForConnected(1000);
+	qDebug() << __FILE__ << __LINE__;
 	Q_ASSERT(m_socket->state() == QLocalSocket::ConnectedState && m_socket->isReadable());
+	qDebug() << __FILE__ << __LINE__;
 	connect(
 		m_socket,
 		SIGNAL(readyRead()),
 		SLOT(readCommand())
 	);
+	qDebug() << __FILE__ << __LINE__;
 	qAddPostRoutine(flushSocket);
+	qDebug() << __FILE__ << __LINE__;
 }
 
 void Marshall::flushSocket()
