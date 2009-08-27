@@ -7,7 +7,7 @@ Overview:
 Directories:
  - common: classes used in multiple places
  - demo: Simple Qt application for testing/demo purposes
- - hooq: CLI application for testing - uses hooqInjector
+ - hooqcli: CLI application for testing - uses hooqInjector
  - hooqInjector: library for injecting injectedHooq into another process
  - injectedHooq: spy/event injection library inserted into the other process
 
@@ -18,10 +18,10 @@ Method:
 
 Injection method:
  - Linux/OSX: gdb/gdbserver is attached to the process; then, the extra library is loaded
- 	via dlopen(), and one of the functions "startHooqRecording()" or "startHooqPlayback()"
-	is called, after calling "setHooqLogFile()"
- - Windows: The libraries are loaded by calling StartProcessThread, passing LoadLibrary as
- 	the parameter. Unfortunately, we can't be sure of the address our library (and functions)
-	have been loaded at, so can't call them externally - instead, they've got a fixed
-	configuration, and are initialised by the constructor of an object with a global static
-	instance.
+ 	via dlopen(), and "startHooq()" is called.
+ - Windows: we install injectedHooq as a Windows Message hook for the main thread for the
+ 	process; this makes Windows map the DLL into the other processes' memory. On the
+	first windows message received in that thread, Hooq gets started; we trigger this
+	by sending a WM_NULL message. Previously, LoadLibrary was called via
+	CreateRemoteThread - while simpler, this approach didn't end up working, as we need
+	our setup code to be ran from the GUI thread to setup the network socket.

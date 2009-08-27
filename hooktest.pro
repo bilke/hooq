@@ -1,4 +1,4 @@
 TEMPLATE = subdirs
-SUBDIRS += demo hooq hooqInjector injectedHooq
+SUBDIRS += demo hooqcli hooqInjector injectedHooq
 
-hooq.depends = hooqInjector
+hooqcli.depends = hooqInjector
