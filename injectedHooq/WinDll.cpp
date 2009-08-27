@@ -34,11 +34,35 @@
  * properly.
  */
 
+#define WIN32_LEAN_AND_MEAN
+#include <Windows.h>
+
+/*
+BOOL APIENTRY DllMain(HANDLE hModule, DWORD ul_reason_for_call, LPVOID lpReserved)
+{
+	if(ul_reason_for_call == DLL_PROCESS_ATTACH)
+	{
+		// Increase reference count
+		wchar_t* path[MAX_PATH];
+		::GetModuleFileNameW(hModule, path, MAX_PATH);
+		::LoadLibrary(path);
+
+		// Remove hook
+		::UnhookWindowsHookEx(g_hHook);
+	}
+	return TRUE;
+}
+*/
+
 class HooqLoader
 {
 	public:
 		HooqLoader()
 		{
+			// Increase reference count
+			char path[MAX_PATH];
+			::GetModuleFileNameA(::GetModuleHandleA(reinterpret_cast<LPCSTR>("injectedHooq")), path, MAX_PATH);
+			::LoadLibraryA(path);
 			new Hooq::Marshall();
 		}
 };

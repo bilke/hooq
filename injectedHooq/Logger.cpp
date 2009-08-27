@@ -36,6 +36,7 @@
 
 namespace Hooq
 {
+
 QPointer<Logger> Logger::m_instance;
 
 Logger* Logger::instance(QIODevice* device)
