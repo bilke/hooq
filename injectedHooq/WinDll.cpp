@@ -24,33 +24,21 @@
 #include "Marshall.h"
 #include "WinDll.h"
 
-/** Class that registers the hook in the constructor.
- * This is used on Windows to register the hook when
- * the dll is mapped to the appropriate process, via,
- * eg, the StartRemoteThread/LoadLibrary hack.
- *
- * As opposed to providing a DllMain, this way we
- * leave it up to the C runtime to initialise everything,
- * so it definitely won't be called before it's set up
- * properly.
- */
-
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
 
 #include <QApplication>
 #include <QDebug>
 
+// this can probably be removed now?
 BOOL APIENTRY DllMain(HANDLE hModule, DWORD ul_reason_for_call, LPVOID lpReserved)
 {
 	if(ul_reason_for_call == DLL_PROCESS_ATTACH)
 	{
-		qDebug() << Q_FUNC_INFO << QCoreApplication::applicationFilePath();
 		// Increase reference count
 		wchar_t path[MAX_PATH];
 		::GetModuleFileNameW(static_cast<HMODULE>(hModule), path, MAX_PATH);
 		::LoadLibrary(path);
-
 
 		// Remove hook
 		//::UnhookWindowsHookEx(g_hHook);
@@ -61,6 +49,7 @@ BOOL APIENTRY DllMain(HANDLE hModule, DWORD ul_reason_for_call, LPVOID lpReserve
 
 namespace Hooq
 {
+
 LRESULT CALLBACK dummyHook(int nCode, WPARAM wParam, LPARAM lParam)
 {
 	Marshall::instance();
@@ -73,4 +62,4 @@ void installHooq(HINSTANCE hMod, DWORD dwThreadId)
 	::PostThreadMessage(dwThreadId, WM_NULL, 0, 0); // map the DLL in the other thread
 }
 
-}
+} // namespace

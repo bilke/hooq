@@ -34,8 +34,6 @@ namespace Hooq
 {
 
 
-QFile debugFile;
-QTextStream debugStream;
 Marshall* Marshall::m_instance = 0;
 
 Marshall* Marshall::instance()
@@ -47,57 +45,25 @@ Marshall* Marshall::instance()
 	return m_instance;
 }
 
-void logMessage(QtMsgType type, const char* message)
-{
-	switch(type)
-	{
-		case QtDebugMsg:
-			debugStream << "DEBUG: " << message << endl;
-			break;
-		case QtWarningMsg:
-			debugStream << "WARNING: " << message << endl;
-			break;
-		case QtCriticalMsg:
-			debugStream << "CRITICAL: " << message << endl;
-			break;
-		case QtFatalMsg:
-			debugStream << "FATAL: " << message << endl;
-			abort();
-	}
-}
-
 QLocalSocket* Marshall::m_socket;
 
 Marshall::Marshall()
 : QObject()
 {
-	debugFile.setFileName("hookedDebugLog.txt");
-	debugFile.open(QIODevice::WriteOnly | QIODevice::Unbuffered | QFile::Truncate);
-	debugStream.setDevice(&debugFile);
-	qInstallMsgHandler(logMessage);
-
-	qDebug() << QCoreApplication::applicationFilePath();
-	qDebug() << __FILE__ << __LINE__;
 	m_socket = new QLocalSocket();
 	m_socket->connectToServer(Communication::serverName());
-	qDebug() << __FILE__ << __LINE__;
 	m_socket->waitForConnected(1000);
-	qDebug() << __FILE__ << __LINE__;
 	Q_ASSERT(m_socket->state() == QLocalSocket::ConnectedState && m_socket->isReadable());
-	qDebug() << __FILE__ << __LINE__;
 	connect(
 		m_socket,
 		SIGNAL(readyRead()),
 		SLOT(readCommand())
 	);
-	qDebug() << __FILE__ << __LINE__;
 	qAddPostRoutine(flushSocket);
-	qDebug() << __FILE__ << __LINE__;
 }
 
 void Marshall::flushSocket()
 {
-	qDebug() << Q_FUNC_INFO;
 	m_socket->flush();
 	m_socket->waitForBytesWritten(1000);
 	m_socket->close();
@@ -108,7 +74,6 @@ void Marshall::flushSocket()
 
 Marshall::~Marshall()
 {
-	qDebug() << Q_FUNC_INFO;
 }
 
 void Marshall::readCommand()

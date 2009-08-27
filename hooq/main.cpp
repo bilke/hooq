@@ -32,28 +32,6 @@
 
 using namespace Hooq;
 
-QFile debugFile;
-QTextStream debugStream;
-
-void logMessage(QtMsgType type, const char* message)
-{
-	switch(type)
-	{
-		case QtDebugMsg:
-			debugStream << "DEBUG: " << message << endl;
-			break;
-		case QtWarningMsg:
-			debugStream << "WARNING: " << message << endl;
-			break;
-		case QtCriticalMsg:
-			debugStream << "CRITICAL: " << message << endl;
-			break;
-		case QtFatalMsg:
-			debugStream << "FATAL: " << message << endl;
-			abort();
-	}
-}
-
 enum Mode
 {
 	Record,
@@ -63,12 +41,7 @@ enum Mode
 int main(int argc, char** argv)
 {
 	QCoreApplication app(argc, argv);
-	debugFile.setFileName("debugLog.txt");
-	debugFile.open(QIODevice::WriteOnly | QIODevice::Unbuffered | QFile::Truncate);
-	debugStream.setDevice(&debugFile);
-	qInstallMsgHandler(logMessage);
 
-	qDebug() << Q_FUNC_INFO;
 	Mode mode;
 	if(app.arguments().contains("--record"))
 	{

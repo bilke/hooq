@@ -35,20 +35,17 @@ namespace Hooq
 
 void Player::sleep(int msec)
 {
-	qDebug() << Q_FUNC_INFO << msec;
 	QTimer::singleShot(msec, this, SLOT(readNext()));
 }
 
 Player::Player(QIODevice* device)
 {
-	qDebug() << Q_FUNC_INFO;
 	setDevice(device);
 	readNext();
 }
 
 void Player::readNext()
 {
-	qDebug() << Q_FUNC_INFO;
 	while(!atEnd())
 	{
 		QXmlStreamReader::readNext();
@@ -67,7 +64,6 @@ void Player::readNext()
 
 void Player::handleElement()
 {
-	qDebug() << Q_FUNC_INFO << "EVENT:" <<name();
 	if(name() == "msec")
 	{
 		sleep(readElementText().toInt());

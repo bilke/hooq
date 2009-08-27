@@ -39,17 +39,14 @@ WindowsInjector::WindowsInjector(QObject* parent)
 : Injector(parent)
 , m_process(0)
 {
-	qDebug() << Q_FUNC_INFO;
 }
 
 WindowsInjector::~WindowsInjector()
 {
-	qDebug() << Q_FUNC_INFO;
 }
 
 void WindowsInjector::startAndAttach(const QString& application)
 {
-	qDebug() << Q_FUNC_INFO;
 	delete m_process;
 	m_process = new QProcess(this);
 
@@ -69,8 +66,6 @@ void WindowsInjector::startAndAttach(const QString& application)
 		m_attachTimer,
 		SLOT(start())
 	);
-
-	qDebug() << Q_FUNC_INFO;
 
 	connect(
 		m_process,
@@ -92,13 +87,7 @@ void WindowsInjector::attach(Q_PID processId)
 	const int pathLength = libraryPath().toWCharArray(path);
 	path[pathLength] = 0;
 
-	qDebug() << "Trying to load library" << libraryPath();
-	qDebug() << QString::fromUtf16(path);
-
-	qDebug() << "Calling loadlibrary...";
 	HMODULE library = ::LoadLibraryW(path);
-	qDebug() << "LoadLibrary says:";
-	qDebug() << library << GetLastError();
 	FARPROC hook = ::GetProcAddress(library, "installHooq");
 
 	typedef void(*Installer)(HINSTANCE, DWORD);
