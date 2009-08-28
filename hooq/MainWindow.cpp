@@ -124,7 +124,10 @@ void MainWindow::editTestScript(const QModelIndex& index)
 
 void MainWindow::runTestScript(const QModelIndex& index)
 {
-	m_interpreter->run(index.data(TestModel::FilePathRole).toString());
+	QFile out("/tmp/hooq.xml");
+	out.open(QIODevice::Unbuffered | QIODevice::WriteOnly);
+	m_interpreter->run(index.data(TestModel::FilePathRole).toString(), &out);
+	out.close();
 }
 
 void MainWindow::startRecording()

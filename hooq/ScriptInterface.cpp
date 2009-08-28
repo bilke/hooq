@@ -24,7 +24,6 @@ QScriptValue ScriptInterface::usleep(QScriptContext* context, QScriptEngine* eng
 {
 	Q_UNUSED(engine);
 	const int msec = context->argument(0).toInteger();
-	qDebug() << Q_FUNC_INFO << msec;
 	emit instance()->usleep(msec);
 	return QScriptValue();
 }
@@ -32,6 +31,7 @@ QScriptValue ScriptInterface::usleep(QScriptContext* context, QScriptEngine* eng
 QScriptValue ScriptInterface::objectFromPath(QScriptContext* context, QScriptEngine* engine)
 {
 	const QString path = context->argument(0).toString();
-	qDebug() << Q_FUNC_INFO << path;
-	return engine->newQObject(new RemoteObjectPrototype(path), QScriptEngine::ScriptOwnership);
+	RemoteObjectPrototype* object = new RemoteObjectPrototype(path);
+	emit instance()->newRemoteObject(object);
+	return engine->newQObject(object, QScriptEngine::ScriptOwnership);
 }
