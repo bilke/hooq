@@ -3,6 +3,8 @@
 #include <QScriptable>
 #include <QVariant>
 
+class QKeySequence;
+
 class RemoteObjectPrototype : public QObject, public QScriptable
 {
 	Q_OBJECT
@@ -26,6 +28,7 @@ class RemoteObjectPrototype : public QObject, public QScriptable
 		void wheelEvent(const QString& path, const QPoint& position, int delta, Qt::MouseButtons buttons, Qt::KeyboardModifiers modifiers, Qt::Orientation orientation);
 		void keyPressEvent(const QString& path, int key, Qt::KeyboardModifiers modifiers, const QString& text, bool autorepeat, ushort count);
 		void keyReleaseEvent(const QString& path, int key, Qt::KeyboardModifiers modifiers, const QString& text, bool autorepeat, ushort count);
+		void shortcutEvent(const QString& path, const QKeySequence& sequence, int id, bool ambiguous);
 	private:
 		const QString m_path;
 };

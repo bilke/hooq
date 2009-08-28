@@ -5,6 +5,7 @@ class RemoteObjectPrototype;
 #include <QObject>
 #include <QXmlStreamWriter>
 
+class QKeySequence;
 class QPoint;
 class QScriptEngine;
 class QScriptEngineDebugger;
@@ -22,6 +23,7 @@ class Interpreter : public QObject, private QXmlStreamWriter
 		void writeMouseMoveEvent(const QString& path, const QPoint& position, Qt::MouseButton button, Qt::MouseButtons buttons, Qt::KeyboardModifiers modifiers);
 		void writeMousePressEvent(const QString& path, const QPoint& position, Qt::MouseButton button, Qt::MouseButtons buttons, Qt::KeyboardModifiers modifiers);
 		void writeMouseReleaseEvent(const QString& path, const QPoint& position, Qt::MouseButton button, Qt::MouseButtons buttons, Qt::KeyboardModifiers modifiers);
+		void writeShortcutEvent(const QString& path, const QKeySequence& sequence, int id, bool ambiguous);
 		void writeSleep(int msec);
 		void writeWheelEvent(const QString& path, const QPoint& position, int delta, Qt::MouseButtons buttons, Qt::KeyboardModifiers modifiers, Qt::Orientation orientation);
 	private:

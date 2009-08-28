@@ -1,6 +1,7 @@
 #include "RemoteObjectPrototype.h"
 
 #include <QDebug>
+#include <QKeySequence>
 #include <QPoint>
 
 Q_DECLARE_METATYPE(Qt::Key);
@@ -92,7 +93,12 @@ void RemoteObjectPrototype::releaseKey(const QVariantMap& parameters)
 
 void RemoteObjectPrototype::shortcut(const QVariantMap& parameters)
 {
-	Q_UNUSED(parameters);
+	emit shortcutEvent(
+		parameters.value("target").toString(),
+		QKeySequence::fromString(parameters.value("string").toString()),
+		parameters.value("id").toInt(),
+		parameters.value("ambiguous").toBool()
+	);
 }
 
 void RemoteObjectPrototype::mouseWheel(const QVariantMap& parameters)

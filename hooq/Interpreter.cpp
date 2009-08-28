@@ -5,6 +5,7 @@
 
 #include <QDebug>
 #include <QFile>
+#include <QKeySequence>
 #include <QPoint>
 #include <QScriptEngine>
 #include <QScriptEngineDebugger>
@@ -134,6 +135,16 @@ void Interpreter::writeKeyAttributes(const QString& path, int key, Qt::KeyboardM
 	writeAttribute("autorepeat", autorepeat ? "true" : "false");
 	writeAttribute("count", QString::number(count));
 	writeAttribute("target", path);
+}
+
+void Interpreter::writeShortcutEvent(const QString& path, const QKeySequence& sequence, int id, bool ambiguous)
+{
+	writeStartElement("shortcut");
+	writeAttribute("string", sequence.toString());
+	writeAttribute("id", QString::number(id));
+	writeAttribute("ambiguous", ambiguous ? "true" : "false");
+	writeAttribute("target", path);
+	writeEndElement();
 }
 
 void Interpreter::writeWheelEvent(const QString& path, const QPoint& position, int delta, Qt::MouseButtons buttons, Qt::KeyboardModifiers modifiers, Qt::Orientation orientation)
