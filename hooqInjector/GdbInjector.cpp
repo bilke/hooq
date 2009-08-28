@@ -81,7 +81,7 @@ void GdbInjector::startProcess()
 	Q_ASSERT(m_gdb->isWritable());
 	m_gdbStream.setDevice(m_gdb);
 	m_gdbStream << "set auto-solib-add off" << endl; // avoid loading symbols for shared libraries
-													 // that we do not need to interact with from GDB
+	                                                 // that we do not need to interact with from GDB
 	m_gdbStream << "break _start" << endl; // C entry point - after main libraries have been loaded
 	m_gdbStream << "run" << endl; // run until we hit it, and therefore Qt shared libraries are loaded
 	m_gdbStream << "sharedlibrary libdl" << endl; // load the libdl library so that we can call __dlopen()
