@@ -18,8 +18,11 @@ class Interpreter : public QObject, private QXmlStreamWriter
 	private slots:
 		void connectRemoteObject(RemoteObjectPrototype*);
 		void writeMouseMoveEvent(const QString& path, const QPoint& position, Qt::MouseButton button, Qt::MouseButtons buttons, Qt::KeyboardModifiers modifiers);
+		void writeMousePressEvent(const QString& path, const QPoint& position, Qt::MouseButton button, Qt::MouseButtons buttons, Qt::KeyboardModifiers modifiers);
+		void writeMouseReleaseEvent(const QString& path, const QPoint& position, Qt::MouseButton button, Qt::MouseButtons buttons, Qt::KeyboardModifiers modifiers);
 		void writeSleep(int msec);
 	private:
+		void writeMouseAttributes(const QString& path, const QPoint& position, Qt::MouseButton button, Qt::MouseButtons buttons, Qt::KeyboardModifiers modifiers);
 		QScriptEngine* m_engine;
 		QScriptEngineDebugger* m_debugger;
 };

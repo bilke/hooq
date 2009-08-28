@@ -38,10 +38,30 @@ void RemoteObjectPrototype::moveMouse(const QVariantMap& parameters)
 
 void RemoteObjectPrototype::pressMouseButton(const QVariantMap& parameters)
 {
+	emit mousePressEvent(
+		path(),
+		QPoint(
+			parameters.value("x").toInt(),
+			parameters.value("y").toInt()
+		),
+		parameters.value("button").value<Qt::MouseButton>(),
+		parameters.value("buttons").value<Qt::MouseButtons>(),
+		parameters.value("modifeirs").value<Qt::KeyboardModifiers>()
+	);
 }
 
 void RemoteObjectPrototype::releaseMouseButton(const QVariantMap& parameters)
 {
+	emit mouseReleaseEvent(
+		path(),
+		QPoint(
+			parameters.value("x").toInt(),
+			parameters.value("y").toInt()
+		),
+		parameters.value("button").value<Qt::MouseButton>(),
+		parameters.value("buttons").value<Qt::MouseButtons>(),
+		parameters.value("modifeirs").value<Qt::KeyboardModifiers>()
+	);
 }
 
 void RemoteObjectPrototype::pressKey(const QVariantMap& parameters)

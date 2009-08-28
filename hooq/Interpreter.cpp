@@ -54,18 +54,47 @@ void Interpreter::connectRemoteObject(RemoteObjectPrototype* object)
 		SIGNAL(mouseMoveEvent(QString, QPoint, Qt::MouseButton, Qt::MouseButtons, Qt::KeyboardModifiers)),
 		SLOT(writeMouseMoveEvent(QString, QPoint, Qt::MouseButton, Qt::MouseButtons, Qt::KeyboardModifiers))
 	);
+	connect(
+		object,
+		SIGNAL(mousePressEvent(QString, QPoint, Qt::MouseButton, Qt::MouseButtons, Qt::KeyboardModifiers)),
+		SLOT(writeMousePressEvent(QString, QPoint, Qt::MouseButton, Qt::MouseButtons, Qt::KeyboardModifiers))
+	);
+	connect(
+		object,
+		SIGNAL(mouseReleaseEvent(QString, QPoint, Qt::MouseButton, Qt::MouseButtons, Qt::KeyboardModifiers)),
+		SLOT(writeMouseReleaseEvent(QString, QPoint, Qt::MouseButton, Qt::MouseButtons, Qt::KeyboardModifiers))
+	);
 }
 
 void Interpreter::writeMouseMoveEvent(const QString& path, const QPoint& position, Qt::MouseButton button, Qt::MouseButtons buttons, Qt::KeyboardModifiers modifiers)
 {
 	writeStartElement("mouseMove");
+	writeMouseAttributes(path, position, button, buttons, modifiers);
+	writeEndElement();
+}
+
+void Interpreter::writeMousePressEvent(const QString& path, const QPoint& position, Qt::MouseButton button, Qt::MouseButtons buttons, Qt::KeyboardModifiers modifiers)
+{
+	writeStartElement("mouseButtonPress");
+	writeMouseAttributes(path, position, button, buttons, modifiers);
+	writeEndElement();
+}
+
+void Interpreter::writeMouseReleaseEvent(const QString& path, const QPoint& position, Qt::MouseButton button, Qt::MouseButtons buttons, Qt::KeyboardModifiers modifiers)
+{
+	writeStartElement("mouseButtonRelease");
+	writeMouseAttributes(path, position, button, buttons, modifiers);
+	writeEndElement();
+}
+
+void Interpreter::writeMouseAttributes(const QString& path, const QPoint& position, Qt::MouseButton button, Qt::MouseButtons buttons, Qt::KeyboardModifiers modifiers)
+{
 	writeAttribute("x", QString::number(position.x()));
 	writeAttribute("y", QString::number(position.y()));
 	writeAttribute("button", QString::number(button));
 	writeAttribute("buttons", QString::number(buttons));
 	writeAttribute("modifiers", QString::number(modifiers));
 	writeAttribute("target", path);
-	writeEndElement();
 }
 
 void Interpreter::run(const QString& script, QIODevice* xmlOut)
