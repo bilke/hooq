@@ -1,6 +1,7 @@
 #include "MainWindow.h"
 
 // Hooq
+#include "Interpreter.h"
 #include "Locations.h"
 #include "TestModel.h"
 #include "TestModelDelegate.h"
@@ -26,6 +27,7 @@ MainWindow::MainWindow(QWidget* parent)
 : QMainWindow(parent)
 , m_hooqInjector(new PlatformInjector(this))
 , m_hooqLogger(0)
+, m_interpreter(new Interpreter(this))
 , m_testModel(new TestModel(this))
 , m_xmlDump(0)
 {
@@ -102,15 +104,27 @@ void MainWindow::handleTestAction(const QModelIndex& index)
 	{
 		return;
 	}
-	if(index.column() == 2)
+	switch(index.column())
 	{
-		editTestScript(index);
+		case 0:
+			return;
+		case 1:
+			runTestScript(index);
+			return;
+		case 2:
+			editTestScript(index);
+			return;
 	}
 }
 
 void MainWindow::editTestScript(const QModelIndex& index)
 {
 	QDesktopServices::openUrl(QUrl::fromLocalFile(index.data(TestModel::FilePathRole).toString()));
+}
+
+void MainWindow::runTestScript(const QModelIndex& index)
+{
+	m_interpreter->run(index.data(TestModel::FilePathRole).toString());
 }
 
 void MainWindow::startRecording()

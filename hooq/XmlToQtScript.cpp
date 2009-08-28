@@ -110,14 +110,14 @@ QString XmlToQtScript::parseKeyEvent()
 	const QString text = attributes().value("text").toString();
 	const QString autoRepeat = attributes().value("isAutoRepeat").toString();
 	const QString count = attributes().value("count").toString();;
-	const QString key = "Qt::" + EnumConverter::stringFromValue(attributes().value("key").toString().toInt(), "Key");
+	const QString key = "Qt." + EnumConverter::stringFromValue(attributes().value("key").toString().toInt(), "Key");
 	const QString modifiers = stringForModifiers(attributes().value("modifiers").toString().toInt());
 
 	// skip to end of element
 	readElementText();
 
 	return QString(
-		"objectFromPath(\"%1\")->%2({\"key\": %3, \"modifiers\": %4, \"text\": \"%5\", \"autorepeat\": %6, \"count\": %7});"
+		"objectFromPath(\"%1\").%2({\"key\": %3, \"modifiers\": %4, \"text\": \"%5\", \"autorepeat\": %6, \"count\": %7});"
 	).arg(
 		target
 	).arg(
@@ -163,7 +163,7 @@ QString XmlToQtScript::parseMouseEvent()
 	readElementText();
 
 	return QString(
-		"objectFromPath(\"%1\")->%2({\"x\": %3, \"y\": %4, \"button\": %5, \"buttons\": %6, \"modifiers\": %7});"
+		"objectFromPath(\"%1\").%2({\"x\": %3, \"y\": %4, \"button\": %5, \"buttons\": %6, \"modifiers\": %7});"
 	).arg(
 		target
 	).arg(
@@ -186,17 +186,17 @@ QString XmlToQtScript::stringForMouseButton(int button)
 	switch(button)
 	{
 		case Qt::LeftButton:
-			return "Qt::LeftButton";
+			return "Qt.LeftButton";
 		case Qt::RightButton:
-			return "Qt::RightButton";
+			return "Qt.RightButton";
 		case Qt::MidButton:
-			return "Qt::MidButton";
+			return "Qt.MidButton";
 		case Qt::XButton1:
-			return "Qt::XButton1";
+			return "Qt.XButton1";
 		case Qt::XButton2:
-			return "Qt::XButton2";
+			return "Qt.XButton2";
 	}
-	return "Qt::NoButton";
+	return "Qt.NoButton";
 }
 
 QString XmlToQtScript::stringForModifier(int modifier)
@@ -204,19 +204,19 @@ QString XmlToQtScript::stringForModifier(int modifier)
 	switch(modifier)
 	{
 		case Qt::ShiftModifier:
-			return "Qt::ShiftModifier";
+			return "Qt.ShiftModifier";
 		case Qt::ControlModifier:
-			return "Qt::ControlModifier";
+			return "Qt.ControlModifier";
 		case Qt::AltModifier:
-			return "Qt::AltModifier";
+			return "Qt.AltModifier";
 		case Qt::MetaModifier:
-			return "Qt::MetaModifier";
+			return "Qt.MetaModifier";
 		case Qt::KeypadModifier:
-			return "Qt::KeypadModifier";
+			return "Qt.KeypadModifier";
 		case Qt::GroupSwitchModifier:
-			return "Qt::GroupSwitchModifier";
+			return "Qt.GroupSwitchModifier";
 	}
-	return "Qt::NoModifier";
+	return "Qt.NoModifier";
 }
 
 QString XmlToQtScript::parseWheelEvent()
@@ -226,7 +226,7 @@ QString XmlToQtScript::parseWheelEvent()
 	const QString target = attributes().value("target").toString();
 	const QString x = attributes().value("x").toString();
 	const QString y = attributes().value("y").toString();
-	const QString orientation = attributes().value("orientation").toString() == "horizontal" ? "Qt::Horizontal" : "Qt::Vertical";
+	const QString orientation = attributes().value("orientation").toString() == "horizontal" ? "Qt.Horizontal" : "Qt.Vertical";
 	const QString buttons = stringForMouseButtons(attributes().value("buttons").toString().toInt());
 	const QString modifiers = stringForModifiers(attributes().value("modifiers").toString().toInt());
 	const QString delta = attributes().value("delta").toString();
@@ -235,7 +235,7 @@ QString XmlToQtScript::parseWheelEvent()
 	readElementText();
 
 	return QString(
-		"objectFromPath(\"%1\")->%2({\"x\": %3, \"y\": %4, \"delta\": %5, \"buttons\": %6, \"modifiers\": %7, \"orientation\": \"%8\"});"
+		"objectFromPath(\"%1\").%2({\"x\": %3, \"y\": %4, \"delta\": %5, \"buttons\": %6, \"modifiers\": %7, \"orientation\": \"%8\"});"
 	).arg(
 		target
 	).arg(

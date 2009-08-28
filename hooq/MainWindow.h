@@ -4,6 +4,7 @@
 
 #include <QMainWindow>
 
+class Interpreter;
 class TestModel;
 
 class QModelIndex;
@@ -31,11 +32,13 @@ class MainWindow : public QMainWindow, private Ui::MainWindow
 		void addTestSet();
 	private:
 		void editTestScript(const QModelIndex& index);
+		void runTestScript(const QModelIndex& index);
 		void populateTestSets();
 
 		Hooq::Injector* m_hooqInjector;
 		Hooq::RemoteLogger* m_hooqLogger;
 
+		Interpreter* m_interpreter;
 		TestModel* m_testModel;
 		QTemporaryFile* m_xmlDump;
 };
