@@ -8,8 +8,8 @@ int main(int argc, char** argv)
 
 	app.setApplicationName("Hooq");
 	app.setApplicationVersion("0.1");
-	app.setOrganizationDomain("mendeley.com");
-	app.setOrganizationName("Mendeley Ltd.");
+	app.setOrganizationDomain("hooq.org");
+	app.setOrganizationName("Hooq Developers");
 
 	MainWindow window;
 	window.show();
