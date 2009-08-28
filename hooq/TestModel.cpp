@@ -59,9 +59,8 @@ void TestModel::setTestSet(const QString& testSet)
 		testSetDir.mkpath("."); // relative to the dir
 	}
 
-	m_items = testSetDir.entryList(QDir::Files);
+	m_items = testSetDir.entryList(QStringList("*.qs"), QDir::Files, QDir::Name);
 	m_items.replaceInStrings(".qs", QString());
-	m_items.sort();
 	reset();
 }
 
