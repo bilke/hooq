@@ -163,7 +163,7 @@ QString XmlToQtScript::parseMouseEvent()
 	readElementText();
 
 	return QString(
-		"objectFromPath(%1)->%2({\"x\": %3, \"y\": %4, \"button\": %5, \"buttons\": %6, \"modifiers\": %7});"
+		"objectFromPath(\"%1\")->%2({\"x\": %3, \"y\": %4, \"button\": %5, \"buttons\": %6, \"modifiers\": %7});"
 	).arg(
 		target
 	).arg(
@@ -235,7 +235,7 @@ QString XmlToQtScript::parseWheelEvent()
 	readElementText();
 
 	return QString(
-		"objectFromPath(%1)->%2({\"x\": %3, \"y\": %4, \"delta\": %5, \"buttons\": %6, \"modifiers\": %7, \"orientation\": \"%8\"});"
+		"objectFromPath(\"%1\")->%2({\"x\": %3, \"y\": %4, \"delta\": %5, \"buttons\": %6, \"modifiers\": %7, \"orientation\": \"%8\"});"
 	).arg(
 		target
 	).arg(
