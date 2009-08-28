@@ -3,6 +3,8 @@
 #include <QAbstractTableModel>
 #include <QStringList>
 
+class QFileSystemWatcher;
+
 class TestModel : public QAbstractTableModel
 {
 	Q_OBJECT;
@@ -22,7 +24,9 @@ class TestModel : public QAbstractTableModel
 		QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
 	public slots:
 		void setTestSet(const QString&);
+		void rescan();
 	private:
 		QStringList m_items;
 		QString m_testSet;
+		QFileSystemWatcher* m_watcher;
 };

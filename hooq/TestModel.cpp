@@ -4,10 +4,17 @@
 
 #include <QDir>
 #include <QSize>
+#include <QFileSystemWatcher>
 
 TestModel::TestModel(QObject* parent)
 : QAbstractTableModel(parent)
+, m_watcher(new QFileSystemWatcher(this))
 {
+	connect(
+		m_watcher,
+		SIGNAL(directoryChanged(QString)),
+		SLOT(rescan())
+	);
 }
 
 int TestModel::columnCount(const QModelIndex& index) const
@@ -30,6 +37,11 @@ QString TestModel::testSet() const
 	return m_testSet;
 }
 
+void TestModel::rescan()
+{
+	setTestSet(testSet());
+}
+
 void TestModel::setTestSet(const QString& testSet)
 {
 	m_testSet = testSet;
@@ -40,6 +52,8 @@ void TestModel::setTestSet(const QString& testSet)
 	}
 
 	QDir testSetDir(Locations::testSetLocation(testSet));
+	m_watcher->addPath(testSetDir.path());
+
 	if(!testSetDir.exists())
 	{
 		testSetDir.mkpath("."); // relative to the dir
@@ -48,6 +62,7 @@ void TestModel::setTestSet(const QString& testSet)
 	m_items = testSetDir.entryList(QDir::Files);
 	m_items.replaceInStrings(".qs", QString());
 	m_items.sort();
+	reset();
 }
 
 QVariant TestModel::data(const QModelIndex& index, int role) const
