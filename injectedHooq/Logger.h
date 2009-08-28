@@ -27,6 +27,7 @@
 
 class QKeyEvent;
 class QMouseEvent;
+class QShortcutEvent;
 class QWheelEvent;
 
 namespace Hooq
@@ -71,6 +72,7 @@ class Logger : public QObject
 		 */
 		static QString objectPath(QObject* object);
 
+		static QXmlStreamAttributes shortcutEventAttributes(QShortcutEvent* event);
 		/// Return a list of parameters for a key event.
 		static QXmlStreamAttributes keyEventAttributes(QKeyEvent* event);
 		/// Return a list of parameters for a mouse press/release/move event.

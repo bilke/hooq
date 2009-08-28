@@ -25,6 +25,7 @@
 #include <QDebug>
 #include <QKeyEvent>
 #include <QMouseEvent>
+#include <QShortcutEvent>
 #include <QStringList>
 #include <QTimer>
 #include <QUrl>
@@ -97,7 +98,28 @@ void Player::handleElement()
 	{
 		postWheelEvent();
 	}
+	if(name() == "shortcut")
+	{
+		postShortcutEvent();
+	}
 	readNext();
+}
+
+void Player::postShortcutEvent()
+{
+	QObject* object = findObject(attributes().value("target").toString());
+	if(!object)
+	{
+		return;
+	}
+
+	QShortcutEvent* event = new QShortcutEvent(
+		QKeySequence::fromString(attributes().value("string").toString()),
+		attributes().value("id").toString().toInt(),
+		attributes().value("ambiguous").toString() == "true"
+	);
+
+	QCoreApplication::postEvent(object, event);
 }
 
 void Player::postKeyEvent(int type)

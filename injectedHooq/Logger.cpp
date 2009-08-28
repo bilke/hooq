@@ -30,6 +30,7 @@
 #include <QKeyEvent>
 #include <QMouseEvent>
 #include <QObject>
+#include <QShortcutEvent>
 #include <QTextStream>
 #include <QTime>
 #include <QWheelEvent>
@@ -123,6 +124,9 @@ void Logger::hook(QObject* receiver, QEvent* event)
 		case QEvent::MouseButtonDblClick:
 			outputEvent(receiver, "mouseButtonDoubleClick", mouseEventAttributes(static_cast<QMouseEvent*>(event)));
 			break;
+		case QEvent::Shortcut:
+			outputEvent(receiver, "shortcut", shortcutEventAttributes(static_cast<QShortcutEvent*>(event)));
+			break;
 		case QEvent::Wheel:
 			outputEvent(receiver, "mouseWheel", wheelEventAttributes(static_cast<QWheelEvent*>(event)));
 			break;
@@ -172,6 +176,15 @@ QXmlStreamAttributes Logger::wheelEventAttributes(QWheelEvent* event)
 	data.append("buttons", QString::number(event->buttons()));
 	data.append("modifiers", QString::number(event->modifiers())); // Qt::Modifiers
 	data.append("orientation", event->orientation() == Qt::Vertical ? "vertical" : "horizontal");
+	return data;
+}
+
+QXmlStreamAttributes Logger::shortcutEventAttributes(QShortcutEvent* event)
+{
+	QXmlStreamAttributes data;
+	data.append("string", event->key().toString());
+	data.append("id", QString::number(event->shortcutId()));
+	data.append("ambiguous", event->isAmbiguous() ? "true" : "false");
 	return data;
 }
 
