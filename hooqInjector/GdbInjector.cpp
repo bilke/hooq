@@ -80,11 +80,17 @@ void GdbInjector::startProcess()
 	Q_ASSERT(m_gdb->state() == QProcess::Running);
 	Q_ASSERT(m_gdb->isWritable());
 	m_gdbStream.setDevice(m_gdb);
+	m_gdbStream << "set auto-solib-add off" << endl; // avoid loading symbols for shared libraries
+													 // that we do not need to interact with from GDB
 	m_gdbStream << "break _start" << endl; // C entry point - after main libraries have been loaded
 	m_gdbStream << "run" << endl; // run until we hit it, and therefore Qt shared libraries are loaded
+	m_gdbStream << "sharedlibrary libdl" << endl; // load the libdl library so that we can call __dlopen()
+	m_gdbStream << "sharedlibrary libc" << endl;  // load the libc library so that we can call __dlopen()
+	m_gdbStream << "sharedlibrary libQtCore" << endl; // load QtCore for breaking on QCoreApplication::exec()
 	m_gdbStream << "break QCoreApplication::exec()" << endl; // now, we can set this breakpoint...
 	m_gdbStream << "continue" << endl;
 	m_gdbStream << QString("call __dlopen(\"%1\", %2)").arg(libraryPath()).arg(QString::number(RTLD_NOW)) << endl; // load our library
+	m_gdbStream << "sharedlibrary hooq" << endl; // load the hooq injector library so that we can call startHooq()
 	m_gdbStream << "call startHooq()" << endl; // install our plugin (which required QCoreApplication setup)
 	m_gdbStream << "continue" << endl; // run the app
 	m_gdbStream << "quit" << endl; // after the application has exited, quit gdb
