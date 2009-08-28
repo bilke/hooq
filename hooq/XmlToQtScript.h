@@ -21,4 +21,6 @@ class XmlToQtScript : private QXmlStreamReader
 		static QString stringForModifiers(int modifier);
 
 		void skipElement();
+
+		static QString escapeString(const QString&);
 };

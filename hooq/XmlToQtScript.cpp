@@ -93,6 +93,14 @@ QString XmlToQtScript::parseMsec()
 	return QString("usleep(%1);").arg(readElementText());
 }
 
+QString XmlToQtScript::escapeString(const QString& _string)
+{
+	QString string(_string);
+	string.replace("\"", "\\\"");
+	string.replace("\r", "\\r");
+	return string;
+}
+
 QString XmlToQtScript::parseKeyEvent()
 {
 	QString call;
@@ -107,7 +115,7 @@ QString XmlToQtScript::parseKeyEvent()
 	Q_ASSERT(!call.isEmpty());
 
 	const QString target = attributes().value("target").toString();
-	const QString text = attributes().value("text").toString();
+	const QString text = escapeString(attributes().value("text").toString());
 	const QString autoRepeat = attributes().value("isAutoRepeat").toString();
 	const QString count = attributes().value("count").toString();;
 	const QString key = "Qt." + EnumConverter::stringFromValue(attributes().value("key").toString().toInt(), "Key");
