@@ -8,6 +8,7 @@
 #include "XmlToQtScript.h"
 
 // hooqInjector
+#include "RemotePlayback.h"
 #include "RemoteLogger.h"
 #include "PlatformInjector.h"
 
@@ -27,6 +28,7 @@ MainWindow::MainWindow(QWidget* parent)
 : QMainWindow(parent)
 , m_hooqInjector(new PlatformInjector(this))
 , m_hooqLogger(0)
+, m_hooqPlayer(0)
 , m_interpreter(new Interpreter(this))
 , m_testModel(new TestModel(this))
 , m_xmlDump(0)
@@ -124,10 +126,20 @@ void MainWindow::editTestScript(const QModelIndex& index)
 
 void MainWindow::runTestScript(const QModelIndex& index)
 {
-	QFile out("/tmp/hooq.xml");
-	out.open(QIODevice::Unbuffered | QIODevice::WriteOnly);
-	m_interpreter->run(index.data(TestModel::FilePathRole).toString(), &out);
-	out.close();
+	delete m_hooqPlayer;
+	delete m_xmlDump;
+
+	m_xmlDump = new QTemporaryFile();
+	m_xmlDump->open();
+
+	m_interpreter->run(index.data(TestModel::FilePathRole).toString(), m_xmlDump);
+
+	m_xmlDump->close();
+	m_xmlDump->open();
+
+	m_hooqPlayer = new Hooq::RemotePlayback();
+	m_hooqPlayer->start(QDir::fromNativeSeparators(m_applicationEdit->text()), m_xmlDump, m_hooqInjector);
+	
 }
 
 void MainWindow::startRecording()

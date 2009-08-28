@@ -14,6 +14,7 @@ namespace Hooq
 {
 	class Injector;
 	class RemoteLogger;
+	class RemotePlayback;
 }
 
 class MainWindow : public QMainWindow, private Ui::MainWindow
@@ -37,6 +38,7 @@ class MainWindow : public QMainWindow, private Ui::MainWindow
 
 		Hooq::Injector* m_hooqInjector;
 		Hooq::RemoteLogger* m_hooqLogger;
+		Hooq::RemotePlayback* m_hooqPlayer;
 
 		Interpreter* m_interpreter;
 		TestModel* m_testModel;
