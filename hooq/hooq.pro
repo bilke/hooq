@@ -10,6 +10,7 @@ QMAKE_RPATHDIR += $$(PWD)/../hooqInjector/
 CONFIG += debug
 
 HEADERS += \
+	EnumConverter.h \
 	Locations.h \
 	MainWindow.h \
 	TestModel.h \
@@ -20,6 +21,7 @@ FORMS += \
 	MainWindow.ui \
 
 SOURCES += \
+	EnumConverter.cpp \
 	Locations.cpp \
 	MainWindow.cpp \
 	TestModel.cpp \

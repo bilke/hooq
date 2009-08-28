@@ -1,5 +1,7 @@
 #include "XmlToQtScript.h"
 
+#include "EnumConverter.h"
+
 #include <QDebug>
 #include <QStringList>
 
@@ -108,9 +110,8 @@ QString XmlToQtScript::parseKeyEvent()
 	const QString text = attributes().value("text").toString();
 	const QString autoRepeat = attributes().value("isAutoRepeat").toString();
 	const QString count = attributes().value("count").toString();;
-	// TODO: enums
-	const QString key = attributes().value("key").toString();
-	const QString modifiers = attributes().value("modifiers").toString();
+	const QString key = "Qt::" + EnumConverter::stringFromValue(attributes().value("key").toString().toInt(), "Key");
+	const QString modifiers = stringForModifiers(attributes().value("modifiers").toString().toInt());
 
 	// skip to end of element
 	readElementText();
@@ -154,10 +155,9 @@ QString XmlToQtScript::parseMouseEvent()
 	const QString target = attributes().value("target").toString();
 	const QString x = attributes().value("x").toString();
 	const QString y = attributes().value("y").toString();
-	// TODO: enums
-	const QString button = attributes().value("button").toString();
-	const QString buttons = attributes().value("buttons").toString();;
-	const QString modifiers = attributes().value("modifiers").toString();
+	const QString button = stringForMouseButton(attributes().value("button").toString().toInt());
+	const QString buttons = stringForMouseButtons(attributes().value("buttons").toString().toInt());
+	const QString modifiers = stringForModifiers(attributes().value("modifiers").toString().toInt());
 
 	// skip to end of element
 	readElementText();
@@ -181,6 +181,44 @@ QString XmlToQtScript::parseMouseEvent()
 	);
 }
 
+QString XmlToQtScript::stringForMouseButton(int button)
+{
+	switch(button)
+	{
+		case Qt::LeftButton:
+			return "Qt::LeftButton";
+		case Qt::RightButton:
+			return "Qt::RightButton";
+		case Qt::MidButton:
+			return "Qt::MidButton";
+		case Qt::XButton1:
+			return "Qt::XButton1";
+		case Qt::XButton2:
+			return "Qt::XButton2";
+	}
+	return "Qt::NoButton";
+}
+
+QString XmlToQtScript::stringForModifier(int modifier)
+{
+	switch(modifier)
+	{
+		case Qt::ShiftModifier:
+			return "Qt::ShiftModifier";
+		case Qt::ControlModifier:
+			return "Qt::ControlModifier";
+		case Qt::AltModifier:
+			return "Qt::AltModifier";
+		case Qt::MetaModifier:
+			return "Qt::MetaModifier";
+		case Qt::KeypadModifier:
+			return "Qt::KeypadModifier";
+		case Qt::GroupSwitchModifier:
+			return "Qt::GroupSwitchModifier";
+	}
+	return "Qt::NoModifier";
+}
+
 QString XmlToQtScript::parseWheelEvent()
 {
 	const QString call = "mouseWheel";
@@ -188,11 +226,10 @@ QString XmlToQtScript::parseWheelEvent()
 	const QString target = attributes().value("target").toString();
 	const QString x = attributes().value("x").toString();
 	const QString y = attributes().value("y").toString();
-	// TODO: enums
+	const QString orientation = attributes().value("orientation").toString() == "horizontal" ? "Qt::Horizontal" : "Qt::Vertical";
+	const QString buttons = stringForMouseButtons(attributes().value("buttons").toString().toInt());
+	const QString modifiers = stringForModifiers(attributes().value("modifiers").toString().toInt());
 	const QString delta = attributes().value("delta").toString();
-	const QString buttons = attributes().value("buttons").toString();;
-	const QString modifiers = attributes().value("modifiers").toString();
-	const QString orientation = attributes().value("orientation").toString();
 
 	// skip to end of element
 	readElementText();
@@ -216,4 +253,42 @@ QString XmlToQtScript::parseWheelEvent()
 	).arg(
 		orientation
 	);
+}
+
+QString XmlToQtScript::stringForModifiers(int modifiers)
+{
+	QStringList out;
+	unsigned int bits = sizeof(int) * 8;
+	for(unsigned int i = 0; i < bits; ++i)
+	{
+		const int modifier = 1 << i;
+		if(modifiers & modifier)
+		{
+			out.append(stringForModifier(modifier));
+		}
+	}
+	if(out.isEmpty())
+	{
+		out.append(stringForModifier(Qt::NoModifier));
+	}
+	return out.join(" | ");
+}
+
+QString XmlToQtScript::stringForMouseButtons(int buttons)
+{
+	QStringList out;
+	unsigned int bits = sizeof(int) * 8;
+	for(unsigned int i = 0; i < bits; ++i)
+	{
+		const int button = 1 << i;
+		if(buttons & button)
+		{
+			out.append(stringForMouseButton(button));
+		}
+	}
+	if(out.isEmpty())
+	{
+		out.append(stringForMouseButton(Qt::NoButton));
+	}
+	return out.join(" | ");
 }

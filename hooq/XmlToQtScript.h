@@ -14,5 +14,11 @@ class XmlToQtScript : private QXmlStreamReader
 		QString parseMouseEvent();
 		QString parseWheelEvent();
 
+		static QString stringForMouseButton(int button);
+		static QString stringForMouseButtons(int buttons);
+
+		static QString stringForModifier(int modifier);
+		static QString stringForModifiers(int modifier);
+
 		void skipElement();
 };
