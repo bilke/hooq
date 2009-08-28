@@ -7,7 +7,7 @@ Q_DECLARE_METATYPE(Qt::Key);
 Q_DECLARE_METATYPE(Qt::MouseButton);
 Q_DECLARE_METATYPE(Qt::MouseButtons);
 Q_DECLARE_METATYPE(Qt::Orientation);
-Q_DECLARE_METATYPE(Qt::KeyboardModifiers);
+Q_DECLARE_METATYPE(Qt::KeyboardModifier);
 
 RemoteObjectPrototype::RemoteObjectPrototype(const QString& path, QObject* parent)
 : QObject(parent)
@@ -34,7 +34,7 @@ void RemoteObjectPrototype::moveMouse(const QVariantMap& parameters)
 		),
 		parameters.value("button").value<Qt::MouseButton>(),
 		parameters.value("buttons").value<Qt::MouseButtons>(),
-		parameters.value("modifiers").value<Qt::KeyboardModifiers>()
+		Qt::KeyboardModifiers(static_cast<int>(parameters.value("modifiers").value<Qt::KeyboardModifier>()))
 	);
 }
 
@@ -48,7 +48,7 @@ void RemoteObjectPrototype::pressMouseButton(const QVariantMap& parameters)
 		),
 		parameters.value("button").value<Qt::MouseButton>(),
 		parameters.value("buttons").value<Qt::MouseButtons>(),
-		parameters.value("modifiers").value<Qt::KeyboardModifiers>()
+		Qt::KeyboardModifiers(static_cast<int>(parameters.value("modifiers").value<Qt::KeyboardModifier>()))
 	);
 }
 
@@ -62,7 +62,7 @@ void RemoteObjectPrototype::releaseMouseButton(const QVariantMap& parameters)
 		),
 		parameters.value("button").value<Qt::MouseButton>(),
 		parameters.value("buttons").value<Qt::MouseButtons>(),
-		parameters.value("modifiers").value<Qt::KeyboardModifiers>()
+		Qt::KeyboardModifiers(static_cast<int>(parameters.value("modifiers").value<Qt::KeyboardModifier>()))
 	);
 }
 
@@ -71,7 +71,7 @@ void RemoteObjectPrototype::pressKey(const QVariantMap& parameters)
 	emit keyPressEvent(
 		path(),
 		static_cast<int>(parameters.value("key").value<Qt::Key>()),
-		parameters.value("modifiers").value<Qt::KeyboardModifiers>(),
+		Qt::KeyboardModifiers(static_cast<int>(parameters.value("modifiers").value<Qt::KeyboardModifier>())),
 		parameters.value("text").toString(),
 		parameters.value("autorepeat").toBool(),
 		parameters.value("count").value<ushort>()
@@ -83,7 +83,7 @@ void RemoteObjectPrototype::releaseKey(const QVariantMap& parameters)
 	emit keyReleaseEvent(
 		path(),
 		static_cast<int>(parameters.value("key").value<Qt::Key>()),
-		parameters.value("modifiers").value<Qt::KeyboardModifiers>(),
+		Qt::KeyboardModifiers(static_cast<int>(parameters.value("modifiers").value<Qt::KeyboardModifier>())),
 		parameters.value("text").toString(),
 		parameters.value("autorepeat").toBool(),
 		parameters.value("count").value<ushort>()
@@ -100,7 +100,7 @@ void RemoteObjectPrototype::mouseWheel(const QVariantMap& parameters)
 		),
 		parameters.value("delta").toInt(),
 		parameters.value("buttons").value<Qt::MouseButtons>(),
-		parameters.value("modifiers").value<Qt::KeyboardModifiers>(),
+		Qt::KeyboardModifiers(static_cast<int>(parameters.value("modifiers").value<Qt::KeyboardModifier>())),
 		parameters.value("orientation").value<Qt::Orientation>()
 	);
 }
