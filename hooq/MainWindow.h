@@ -5,6 +5,8 @@
 #include <QMainWindow>
 
 class TestModel;
+
+class QModelIndex;
 class QTemporaryFile;
 
 namespace Hooq
@@ -19,6 +21,7 @@ class MainWindow : public QMainWindow, private Ui::MainWindow
 	public:
 		MainWindow(QWidget* parent = 0);
 	private slots:
+		void handleTestAction(const QModelIndex& index);
 		void setTestSet(const QString&);
 		void saveApplicationPath();
 		void browseForApplication();
@@ -27,6 +30,7 @@ class MainWindow : public QMainWindow, private Ui::MainWindow
 		void updateAddState();
 		void addTestSet();
 	private:
+		void editTestScript(const QModelIndex& index);
 		void populateTestSets();
 
 		Hooq::Injector* m_hooqInjector;

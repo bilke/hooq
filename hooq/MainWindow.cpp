@@ -12,6 +12,7 @@
 
 // Qt
 #include <QDebug>
+#include <QDesktopServices>
 #include <QDir>
 #include <QFile>
 #include <QFileDialog>
@@ -19,6 +20,7 @@
 #include <QString>
 #include <QStringList>
 #include <QTemporaryFile>
+#include <QUrl>
 
 MainWindow::MainWindow(QWidget* parent)
 : QMainWindow(parent)
@@ -86,6 +88,29 @@ MainWindow::MainWindow(QWidget* parent)
 		SIGNAL(clicked()),
 		SLOT(addTestSet())
 	);
+
+	connect(
+		m_testList,
+		SIGNAL(clicked(QModelIndex)),
+		SLOT(handleTestAction(QModelIndex))
+	);
+}
+
+void MainWindow::handleTestAction(const QModelIndex& index)
+{
+	if(!index.isValid())
+	{
+		return;
+	}
+	if(index.column() == 2)
+	{
+		editTestScript(index);
+	}
+}
+
+void MainWindow::editTestScript(const QModelIndex& index)
+{
+	QDesktopServices::openUrl(QUrl::fromLocalFile(index.data(TestModel::FilePathRole).toString()));
 }
 
 void MainWindow::startRecording()
