@@ -3,6 +3,7 @@
 #include <QDebug>
 #include <QPoint>
 
+Q_DECLARE_METATYPE(Qt::Key);
 Q_DECLARE_METATYPE(Qt::MouseButton);
 Q_DECLARE_METATYPE(Qt::MouseButtons);
 Q_DECLARE_METATYPE(Qt::Orientation);
@@ -67,10 +68,26 @@ void RemoteObjectPrototype::releaseMouseButton(const QVariantMap& parameters)
 
 void RemoteObjectPrototype::pressKey(const QVariantMap& parameters)
 {
+	emit keyPressEvent(
+		path(),
+		static_cast<int>(parameters.value("key").value<Qt::Key>()),
+		parameters.value("modifiers").value<Qt::KeyboardModifiers>(),
+		parameters.value("text").toString(),
+		parameters.value("autorepeat").toBool(),
+		parameters.value("count").value<ushort>()
+	);
 }
 
 void RemoteObjectPrototype::releaseKey(const QVariantMap& parameters)
 {
+	emit keyReleaseEvent(
+		path(),
+		static_cast<int>(parameters.value("key").value<Qt::Key>()),
+		parameters.value("modifiers").value<Qt::KeyboardModifiers>(),
+		parameters.value("text").toString(),
+		parameters.value("autorepeat").toBool(),
+		parameters.value("count").value<ushort>()
+	);
 }
 
 void RemoteObjectPrototype::mouseWheel(const QVariantMap& parameters)

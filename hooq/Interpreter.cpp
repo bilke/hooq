@@ -69,6 +69,30 @@ void Interpreter::connectRemoteObject(RemoteObjectPrototype* object)
 		SIGNAL(wheelEvent(QString, QPoint, int, Qt::MouseButtons, Qt::KeyboardModifiers, Qt::Orientation)),
 		SLOT(writeWheelEvent(QString, QPoint, int, Qt::MouseButtons, Qt::KeyboardModifiers, Qt::Orientation))
 	);
+	connect(
+		object,
+		SIGNAL(keyPressEvent(QString, int, Qt::KeyboardModifiers, QString, bool, ushort)),
+		SLOT(writeKeyPressEvent(QString, int, Qt::KeyboardModifiers, QString, bool, ushort))
+	);
+	connect(
+		object,
+		SIGNAL(keyReleaseEvent(QString, int, Qt::KeyboardModifiers, QString, bool, ushort)),
+		SLOT(writeKeyReleaseEvent(QString, int, Qt::KeyboardModifiers, QString, bool, ushort))
+	);
+}
+
+void Interpreter::writeKeyPressEvent(const QString& path, int key, Qt::KeyboardModifiers modifiers, const QString& text, bool autorepeat, ushort count)
+{
+	writeStartElement("keyPress");
+	writeKeyAttributes(path, key, modifiers, text, autorepeat, count);
+	writeEndElement();
+}
+
+void Interpreter::writeKeyReleaseEvent(const QString& path, int key, Qt::KeyboardModifiers modifiers, const QString& text, bool autorepeat, ushort count)
+{
+	writeStartElement("keyRelease");
+	writeKeyAttributes(path, key, modifiers, text, autorepeat, count);
+	writeEndElement();
 }
 
 void Interpreter::writeMouseMoveEvent(const QString& path, const QPoint& position, Qt::MouseButton button, Qt::MouseButtons buttons, Qt::KeyboardModifiers modifiers)
@@ -99,6 +123,16 @@ void Interpreter::writeMouseAttributes(const QString& path, const QPoint& positi
 	writeAttribute("button", QString::number(button));
 	writeAttribute("buttons", QString::number(buttons));
 	writeAttribute("modifiers", QString::number(modifiers));
+	writeAttribute("target", path);
+}
+
+void Interpreter::writeKeyAttributes(const QString& path, int key, Qt::KeyboardModifiers modifiers, const QString& text, bool autorepeat, ushort count)
+{
+	writeAttribute("key", QString::number(key));
+	writeAttribute("modifiers", QString::number(modifiers));
+	writeAttribute("text", text);
+	writeAttribute("autorepeat", autorepeat ? "true" : "false");
+	writeAttribute("count", QString::number(count));
 	writeAttribute("target", path);
 }
 
