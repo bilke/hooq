@@ -38,6 +38,12 @@ enum Mode
 	Replay
 };
 
+void printSyntax()
+{
+	QTextStream cerr(stderr);
+	cerr << "Syntax: " << QCoreApplication::arguments().first() << " {--record|--play} [--spam] applicationPath" << endl;
+}
+
 int main(int argc, char** argv)
 {
 	QCoreApplication app(argc, argv);
@@ -53,17 +59,16 @@ int main(int argc, char** argv)
 	}
 	else
 	{
-		QTextStream cerr(stderr);
-		cerr << "Syntax: " << app.arguments().first() << " {--record|--play} [--spam]" << endl;
+		printSyntax();
 		return 1;
 	}
 
-	QString application = "../demo/demo";
-	if(!app.arguments().last().startsWith("--"))
+	const QString application = QDir::fromNativeSeparators(app.arguments().last());
+	if(!QFile::exists(application))
 	{
-		application = app.arguments().last();
+		printSyntax();
+		return 1;
 	}
-	
 
 	QFile log("eventLog.txt");
 	if(mode == Replay)
