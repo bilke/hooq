@@ -116,7 +116,7 @@ QString XmlToQtScript::parseKeyEvent()
 	readElementText();
 
 	return QString(
-		"objectFromPath(\"%1\")->%2(%3, %4, \"%5\", %6, %7);"
+		"objectFromPath(\"%1\")->%2({\"key\": %3, \"modifiers\": %4, \"text\": \"%5\", \"autorepeat\": %6, \"count\": %7});"
 	).arg(
 		target
 	).arg(
@@ -163,7 +163,7 @@ QString XmlToQtScript::parseMouseEvent()
 	readElementText();
 
 	return QString(
-		"objectFromPath(%1)->%2(QPoint(%3, %4), %5, %6, %7);"
+		"objectFromPath(%1)->%2({\"x\": %3, \"y\": %4, \"button\": %5, \"buttons\": %6, \"modifiers\": %7});"
 	).arg(
 		target
 	).arg(
@@ -198,7 +198,7 @@ QString XmlToQtScript::parseWheelEvent()
 	readElementText();
 
 	return QString(
-		"objectFromPath(%1)->%2(QPoint(%3, %4), %5, %6, %7, %8);"
+		"objectFromPath(%1)->%2({\"x\": %3, \"y\": %4, \"delta\": %5, \"buttons\": %6, \"modifiers\": %7, \"orientation\": \"%8\"});"
 	).arg(
 		target
 	).arg(
