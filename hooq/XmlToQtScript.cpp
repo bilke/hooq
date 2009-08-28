@@ -76,6 +76,11 @@ QString XmlToQtScript::parseHooq()
 					items.append(parseWheelEvent());
 					continue;
 				}
+				if(name() == "shortcut")
+				{
+					items.append(parseShortcutEvent());
+					continue;
+				}
 				qDebug() << Q_FUNC_INFO << "skipping unknown element" << name();
 				skipElement();
 				break;
@@ -260,6 +265,33 @@ QString XmlToQtScript::parseWheelEvent()
 		modifiers
 	).arg(
 		orientation
+	);
+}
+
+QString XmlToQtScript::parseShortcutEvent()
+{
+	const QString call = "shortcut";
+
+	const QString target = attributes().value("target").toString();
+	const QString string = attributes().value("string").toString();
+	const QString id = attributes().value("id").toString();
+	const QString ambiguous = attributes().value("ambiguous").toString();
+
+	// skip to end of element
+	readElementText();
+
+	return QString(
+		"objectFromPath(\"%1\").%2({\"string\": %3, \"id\": %4, \"ambiguous\": %5});"
+	).arg(
+		target
+	).arg(
+		call
+	).arg(
+		string
+	).arg(
+		id
+	).arg(
+		ambiguous
 	);
 }
 

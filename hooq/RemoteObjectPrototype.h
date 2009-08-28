@@ -18,6 +18,7 @@ class RemoteObjectPrototype : public QObject, public QScriptable
 		void mouseWheel(const QVariantMap& parameters);
 		void pressKey(const QVariantMap& parameters);
 		void releaseKey(const QVariantMap& parameters);
+		void shortcut(const QVariantMap& parameters);
 	signals:
 		void mouseMoveEvent(const QString& path, const QPoint& position, Qt::MouseButton button, Qt::MouseButtons buttons, Qt::KeyboardModifiers modifiers);
 		void mousePressEvent(const QString& path, const QPoint& position, Qt::MouseButton button, Qt::MouseButtons buttons, Qt::KeyboardModifiers modifiers);

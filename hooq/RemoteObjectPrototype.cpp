@@ -90,6 +90,11 @@ void RemoteObjectPrototype::releaseKey(const QVariantMap& parameters)
 	);
 }
 
+void RemoteObjectPrototype::shortcut(const QVariantMap& parameters)
+{
+	Q_UNUSED(parameters);
+}
+
 void RemoteObjectPrototype::mouseWheel(const QVariantMap& parameters)
 {
 	emit wheelEvent(
