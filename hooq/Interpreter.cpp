@@ -64,6 +64,11 @@ void Interpreter::connectRemoteObject(RemoteObjectPrototype* object)
 		SIGNAL(mouseReleaseEvent(QString, QPoint, Qt::MouseButton, Qt::MouseButtons, Qt::KeyboardModifiers)),
 		SLOT(writeMouseReleaseEvent(QString, QPoint, Qt::MouseButton, Qt::MouseButtons, Qt::KeyboardModifiers))
 	);
+	connect(
+		object,
+		SIGNAL(wheelEvent(QString, QPoint, int, Qt::MouseButtons, Qt::KeyboardModifiers, Qt::Orientation)),
+		SLOT(writeWheelEvent(QString, QPoint, int, Qt::MouseButtons, Qt::KeyboardModifiers, Qt::Orientation))
+	);
 }
 
 void Interpreter::writeMouseMoveEvent(const QString& path, const QPoint& position, Qt::MouseButton button, Qt::MouseButtons buttons, Qt::KeyboardModifiers modifiers)
@@ -95,6 +100,19 @@ void Interpreter::writeMouseAttributes(const QString& path, const QPoint& positi
 	writeAttribute("buttons", QString::number(buttons));
 	writeAttribute("modifiers", QString::number(modifiers));
 	writeAttribute("target", path);
+}
+
+void Interpreter::writeWheelEvent(const QString& path, const QPoint& position, int delta, Qt::MouseButtons buttons, Qt::KeyboardModifiers modifiers, Qt::Orientation orientation)
+{
+	writeStartElement("mouseWheel");
+	writeAttribute("x", QString::number(position.x()));
+	writeAttribute("y", QString::number(position.y()));
+	writeAttribute("delta", QString::number(delta));
+	writeAttribute("buttons", QString::number(buttons));
+	writeAttribute("modifiers", QString::number(modifiers));
+	writeAttribute("orientation", QString::number(orientation));
+	writeAttribute("target", path);
+	writeEndElement();
 }
 
 void Interpreter::run(const QString& script, QIODevice* xmlOut)

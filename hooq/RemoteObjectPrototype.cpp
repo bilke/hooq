@@ -5,6 +5,7 @@
 
 Q_DECLARE_METATYPE(Qt::MouseButton);
 Q_DECLARE_METATYPE(Qt::MouseButtons);
+Q_DECLARE_METATYPE(Qt::Orientation);
 Q_DECLARE_METATYPE(Qt::KeyboardModifiers);
 
 RemoteObjectPrototype::RemoteObjectPrototype(const QString& path, QObject* parent)
@@ -32,7 +33,7 @@ void RemoteObjectPrototype::moveMouse(const QVariantMap& parameters)
 		),
 		parameters.value("button").value<Qt::MouseButton>(),
 		parameters.value("buttons").value<Qt::MouseButtons>(),
-		parameters.value("modifeirs").value<Qt::KeyboardModifiers>()
+		parameters.value("modifiers").value<Qt::KeyboardModifiers>()
 	);
 }
 
@@ -46,7 +47,7 @@ void RemoteObjectPrototype::pressMouseButton(const QVariantMap& parameters)
 		),
 		parameters.value("button").value<Qt::MouseButton>(),
 		parameters.value("buttons").value<Qt::MouseButtons>(),
-		parameters.value("modifeirs").value<Qt::KeyboardModifiers>()
+		parameters.value("modifiers").value<Qt::KeyboardModifiers>()
 	);
 }
 
@@ -60,7 +61,7 @@ void RemoteObjectPrototype::releaseMouseButton(const QVariantMap& parameters)
 		),
 		parameters.value("button").value<Qt::MouseButton>(),
 		parameters.value("buttons").value<Qt::MouseButtons>(),
-		parameters.value("modifeirs").value<Qt::KeyboardModifiers>()
+		parameters.value("modifiers").value<Qt::KeyboardModifiers>()
 	);
 }
 
@@ -74,4 +75,15 @@ void RemoteObjectPrototype::releaseKey(const QVariantMap& parameters)
 
 void RemoteObjectPrototype::mouseWheel(const QVariantMap& parameters)
 {
+	emit wheelEvent(
+		path(),
+		QPoint(
+			parameters.value("x").toInt(),
+			parameters.value("y").toInt()
+		),
+		parameters.value("delta").toInt(),
+		parameters.value("buttons").value<Qt::MouseButtons>(),
+		parameters.value("modifiers").value<Qt::KeyboardModifiers>(),
+		parameters.value("orientation").value<Qt::Orientation>()
+	);
 }
