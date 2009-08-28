@@ -59,6 +59,12 @@ QVariant TestModel::data(const QModelIndex& index, int role) const
 
 	Q_ASSERT(index.row() >= 0 && index.row() < m_items.count());
 	Q_ASSERT(index.column() >= 0 && index.column() < columnCount());
+
+	if(role == FilePathRole)
+	{
+		return Locations::scriptPath(testSet(), m_items.at(index.row()));
+	}
+
 	switch(index.column())
 	{
 		case 0:

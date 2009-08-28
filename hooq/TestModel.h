@@ -7,6 +7,10 @@ class TestModel : public QAbstractTableModel
 {
 	Q_OBJECT;
 	public:
+		enum DisplayRoles
+		{
+			FilePathRole = Qt::UserRole
+		};
 		TestModel(QObject* parent);
 
 		QString testSet() const;
