@@ -157,6 +157,17 @@ void MainWindow::handleTestAction(const QModelIndex& index)
 void MainWindow::editTestScript(const QModelIndex& index)
 {
 	ScriptEditor* editor = new ScriptEditor(this);
+	editor->setWindowTitle(
+		QString(
+			"%3 - %2 - %1"
+		).arg(
+			QCoreApplication::applicationName()
+		).arg(
+			m_testModel->testSet()
+		).arg(
+			index.data(TestModel::ScriptNameRole).toString()
+		)
+	);
 	editor->open(index.data(TestModel::FilePathRole).toString());
 	editor->show();
 }

@@ -30,7 +30,8 @@ class TestModel : public QAbstractTableModel
 	public:
 		enum DisplayRoles
 		{
-			FilePathRole = Qt::UserRole
+			FilePathRole = Qt::UserRole,
+			ScriptNameRole
 		};
 		TestModel(QObject* parent);
 
