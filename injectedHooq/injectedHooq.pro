@@ -14,6 +14,7 @@ QT += network
 HEADERS += \
 	../common/ObjectHookName.h \
 	../common/Communication.h \
+	Event.h \
 	Logger.h \
 	Marshall.h \
 	Player.h \
@@ -21,6 +22,7 @@ HEADERS += \
 SOURCES += \
 	../common/ObjectHookName.cpp \
 	../common/Communication.cpp \
+	Event.cpp \
 	Logger.cpp \
 	Marshall.cpp \
 	Player.cpp \

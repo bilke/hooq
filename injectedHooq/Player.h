@@ -20,11 +20,13 @@
 #pragma once
 
 #include <QObject>
+#include <QQueue>
 #include <QString>
 #include <QXmlStreamReader>
 
 namespace Hooq
 {
+class Event;
 
 class Player: public QObject, private QXmlStreamReader
 {
@@ -47,6 +49,12 @@ class Player: public QObject, private QXmlStreamReader
 		void sleep(int msec);
 
 		void ack();
+
+		void processEvents();
+
+		bool m_processingEvents;
+
+		QQueue<Event*> m_eventQueue;
 };
 
 } // namespace

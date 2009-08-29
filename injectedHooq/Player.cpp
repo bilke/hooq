@@ -19,6 +19,8 @@
 */
 #include "Player.h"
 
+#include "Event.h"
+
 #include "../common/ObjectHookName.h"
 
 #include <QApplication>
@@ -42,7 +44,8 @@ void Player::sleep(int msec)
 void Player::waitFinished()
 {
 	ack();
-	readNext();
+	m_processingEvents = false;
+	processEvents();
 }
 
 void Player::ack()
@@ -52,8 +55,14 @@ void Player::ack()
 
 Player::Player(QIODevice* device)
 : QObject()
+, m_processingEvents(false)
 {
 	setDevice(device);
+	connect(
+		device,
+		SIGNAL(readyRead()),
+		SLOT(readNext())
+	);
 	readNext();
 }
 
@@ -65,26 +74,54 @@ void Player::readNext()
 		if(tokenType() == StartElement)
 		{
 			handleElement();
-			return;
+			processEvents();
 		}
 		if(tokenType() == EndDocument)
 		{
 			emit finished();
-			return;
 		}
 	}
-	device()->waitForReadyRead(100);
-	if(device()->bytesAvailable())
+	processEvents();
+}
+
+void Player::processEvents()
+{
+	if(m_processingEvents)
 	{
-		readNext();
+		return;
 	}
+	m_processingEvents = true;
+	while(!m_eventQueue.isEmpty())
+	{
+		Event* event = m_eventQueue.dequeue();
+		switch(event->type())
+		{
+			case Event::Sleep:
+				sleep(static_cast<SleepEvent*>(event)->msec());
+				delete event;
+				return;
+			case Event::Object:
+			{
+				ObjectEvent* o = static_cast<ObjectEvent*>(event);
+				QObject* receiver = findObject(o->objectPath());
+				if(!receiver)
+				{
+					qDebug() << "Couldn't find receiver" << receiver;
+					continue;
+				}
+				QCoreApplication::postEvent(receiver, o->qtEvent());
+				ack();
+			}
+		}
+	}
+	m_processingEvents = false;
 }
 
 void Player::handleElement()
 {
 	if(name() == "msec")
 	{
-		sleep(readElementText().toInt());
+		m_eventQueue.enqueue(new SleepEvent(readElementText().toInt()));
 		return;
 	}
 	if(name() == "keyPress")
@@ -119,36 +156,21 @@ void Player::handleElement()
 	{
 		postShortcutEvent();
 	}
-
-	readNext();
 }
 
 void Player::postShortcutEvent()
 {
-	QObject* object = findObject(attributes().value("target").toString());
-	if(!object)
-	{
-		return;
-	}
-
 	QShortcutEvent* event = new QShortcutEvent(
 		QKeySequence::fromString(attributes().value("string").toString()),
 		attributes().value("id").toString().toInt(),
 		attributes().value("ambiguous").toString() == "true"
 	);
 
-	QCoreApplication::postEvent(object, event);
-	ack();
+	m_eventQueue.enqueue(new ObjectEvent(attributes().value("target").toString(), event));
 }
 
 void Player::postKeyEvent(int type)
 {
-	QObject* object = findObject(attributes().value("target").toString());
-	if(!object)
-	{
-		return;
-	}
-
 	QKeyEvent* event = new QKeyEvent(
 		static_cast<QEvent::Type>(type),
 		attributes().value("key").toString().toInt(),
@@ -158,18 +180,11 @@ void Player::postKeyEvent(int type)
 		attributes().value("count").toString().toUShort()
 	);
 
-	QCoreApplication::postEvent(object, event);
-	ack();
+	m_eventQueue.enqueue(new ObjectEvent(attributes().value("target").toString(), event));
 }
 
 void Player::postMouseEvent(int type)
 {
-	QObject* object = findObject(attributes().value("target").toString());
-	if(!object)
-	{
-		return;
-	}
-
 	QMouseEvent* event = new QMouseEvent(
 		static_cast<QEvent::Type>(type),
 		QPoint(
@@ -180,18 +195,11 @@ void Player::postMouseEvent(int type)
 		static_cast<Qt::MouseButtons>(attributes().value("buttons").toString().toInt()),
 		static_cast<Qt::KeyboardModifiers>(attributes().value("modifiers").toString().toInt())
 	);
-	QCoreApplication::postEvent(object, event);
-	ack();
+	m_eventQueue.enqueue(new ObjectEvent(attributes().value("target").toString(), event));
 }
 
 void Player::postWheelEvent()
 {
-	QObject* object = findObject(attributes().value("target").toString());
-	if(!object)
-	{
-		return;
-	}
-
 	QWheelEvent* event = new QWheelEvent(
 		QPoint(
 			attributes().value("x").toString().toInt(),
@@ -202,8 +210,8 @@ void Player::postWheelEvent()
 		static_cast<Qt::KeyboardModifiers>(attributes().value("modifiers").toString().toInt()),
 		attributes().value("orientation") == "vertical" ? Qt::Vertical : Qt::Horizontal
 	);
-	QCoreApplication::postEvent(object, event);
-	ack();
+
+	m_eventQueue.enqueue(new ObjectEvent(attributes().value("target").toString(), event));
 }
 
 QObject* Player::findObject(const QString& path)
