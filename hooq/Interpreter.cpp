@@ -38,14 +38,8 @@ Interpreter::Interpreter(QObject* parent)
 , m_debugger(new QScriptEngineDebugger(this))
 , m_engine(new QScriptEngine(this))
 {
-	if(m_engine->importExtension("qt.core").isError())
-	{
-		qDebug() << Q_FUNC_INFO << "Failed to load qt.core QtScript plugin";
-	}
-	else
-	{
-		qDebug() << Q_FUNC_INFO << "Loaded qt.core QtScript plugin";
-	}
+	importExtension("qt.core");
+	importExtension("qt.gui");
 
 	m_debugger->attachTo(m_engine);
 	m_engine->globalObject().setProperty(
@@ -262,6 +256,20 @@ void Interpreter::run(QLocalSocket* socket)
 
 	writeEndElement(); // hooq
 	writeEndDocument();
+}
+
+bool Interpreter::importExtension(const QString& extension)
+{
+	if(m_engine->importExtension(extension).isError())
+	{
+		qDebug() << qPrintable(QString("Failed to load %1 QtScript plugin").arg(extension));
+		return false;
+	}
+	else
+	{
+		qDebug() << qPrintable(QString("Loaded %1 QtScript plugin").arg(extension));
+		return true;
+	}
 }
 
 void Interpreter::writeSleep(int msec)

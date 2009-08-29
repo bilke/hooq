@@ -50,6 +50,8 @@ class Interpreter : public QObject, private QXmlStreamWriter
 		void writeSleep(int msec);
 		void writeWheelEvent(const QString& path, const QPoint& position, int delta, Qt::MouseButtons buttons, Qt::KeyboardModifiers modifiers, Qt::Orientation orientation);
 	private:
+		bool importExtension(const QString& extension);
+
 		bool ack() const;
 		void waitForAck();
 		void setAck(bool ack = true);
