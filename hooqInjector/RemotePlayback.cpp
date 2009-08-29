@@ -19,12 +19,9 @@
 */
 #include "RemotePlayback.h"
 
-#include "Injector.h"
-
-#include "../common/Communication.h"
+#include "RemoteConnection.h"
 
 #include <QDebug>
-#include <QLocalServer>
 #include <QLocalSocket>
 
 namespace Hooq
@@ -33,9 +30,14 @@ namespace Hooq
 RemotePlayback::RemotePlayback(QObject* parent)
 : QObject(parent)
 , m_log(0)
+, m_server(new RemoteConnection(this))
 , m_socket(0)
-, m_localServer(0)
 {
+	connect(
+		m_server,
+		SIGNAL(connected(QLocalSocket*)),
+		SLOT(startPlayback(QLocalSocket*))
+	);
 }
 
 void RemotePlayback::start(const QString& application, QIODevice* logDevice, Injector* injector)
@@ -43,28 +45,13 @@ void RemotePlayback::start(const QString& application, QIODevice* logDevice, Inj
 	Q_ASSERT(logDevice && logDevice->isOpen() && logDevice->isReadable());
 	m_log = logDevice;
 
-	const QString socketName = Communication::serverName(application);
-
-	delete m_localServer;
-	delete m_socket;
-
-	m_localServer = new QLocalServer(this);
-	connect(
-		m_localServer,
-		SIGNAL(newConnection()),
-		SLOT(acceptConnection())
-	);
-
-	QLocalServer::removeServer(socketName);
-	m_localServer->listen(socketName);
-
-	injector->startAndAttach(application);
+	m_server->start(application, injector);
 }
 
-void RemotePlayback::acceptConnection()
+void RemotePlayback::startPlayback(QLocalSocket* socket)
 {
 	delete m_socket;
-	m_socket = m_localServer->nextPendingConnection();
+	m_socket = socket;
 	Q_ASSERT(m_socket->state() == QLocalSocket::ConnectedState && m_socket->isWritable() && m_socket->isOpen());
 	m_socket->write("PLAY\n");
 	m_socket->write(m_log->readAll());

@@ -25,12 +25,12 @@
 #include <QString>
 
 class QIODevice;
-class QLocalServer;
 class QLocalSocket;
 
 namespace Hooq
 {
 class Injector;
+class RemoteConnection;
 
 class HOOQ_INJECTOR_EXPORT RemotePlayback : public QObject
 {
@@ -40,12 +40,11 @@ class HOOQ_INJECTOR_EXPORT RemotePlayback : public QObject
 		void start(const QString& application, QIODevice* logDevice, Injector* injector);
 		// TODO: attach()
 	private slots:
-		void acceptConnection();
+		void startPlayback(QLocalSocket* socket);
 	private:
 		QIODevice* m_log;
-
+		RemoteConnection* m_server;
 		QLocalSocket* m_socket;
-		QLocalServer* m_localServer;
 };
 
 } // namespace

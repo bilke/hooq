@@ -19,12 +19,9 @@
 */
 #include "RemoteLogger.h"
 
-#include "Injector.h"
-
-#include "../common/Communication.h"
+#include "RemoteConnection.h"
 
 #include <QDebug>
-#include <QLocalServer>
 #include <QLocalSocket>
 
 namespace Hooq
@@ -33,32 +30,21 @@ namespace Hooq
 RemoteLogger::RemoteLogger(QObject* parent)
 : QObject(parent)
 , m_log(0)
+, m_server(new RemoteConnection(this))
 , m_socket(0)
-, m_localServer(0)
 {
+	connect(
+		m_server,
+		SIGNAL(connected(QLocalSocket*)),
+		SLOT(startLogging(QLocalSocket*))
+	);
 }
 
 void RemoteLogger::start(const QString& application, QIODevice* logDevice, Injector* injector)
 {
 	Q_ASSERT(logDevice && logDevice->isOpen() && logDevice->isWritable());
 	m_log = logDevice;
-
-	const QString socketName = Communication::serverName(application);
-
-	delete m_localServer;
-	delete m_socket;
-
-	m_localServer = new QLocalServer(this);
-	connect(
-		m_localServer,
-		SIGNAL(newConnection()),
-		SLOT(acceptConnection())
-	);
-
-	QLocalServer::removeServer(socketName);
-	m_localServer->listen(socketName);
-
-	injector->startAndAttach(application);
+	m_server->start(application, injector);
 }
 
 void RemoteLogger::logData()
@@ -67,10 +53,9 @@ void RemoteLogger::logData()
 	m_log->write(data);
 }
 
-void RemoteLogger::acceptConnection()
+void RemoteLogger::startLogging(QLocalSocket* socket)
 {
-	delete m_socket;
-	m_socket = m_localServer->nextPendingConnection();
+	m_socket = socket;
 	connect(
 		m_socket,
 		SIGNAL(readyRead()),

@@ -15,12 +15,14 @@ QT += network
 HEADERS += \
 	../common/Communication.h \
 	Injector.h \
+	RemoteConnection.h \
 	RemoteLogger.h \
 	RemotePlayback.h \
 
 SOURCES += \
 	../common/Communication.cpp \
 	Injector.cpp \
+	RemoteConnection.cpp \
 	RemoteLogger.cpp \
 	RemotePlayback.cpp \
 
