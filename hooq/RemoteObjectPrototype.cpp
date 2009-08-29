@@ -94,7 +94,7 @@ void RemoteObjectPrototype::releaseKey(const QVariantMap& parameters)
 void RemoteObjectPrototype::shortcut(const QVariantMap& parameters)
 {
 	emit shortcutEvent(
-		parameters.value("target").toString(),
+		path(),
 		QKeySequence::fromString(parameters.value("string").toString()),
 		parameters.value("id").toInt(),
 		parameters.value("ambiguous").toBool()

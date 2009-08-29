@@ -80,6 +80,11 @@ void Interpreter::connectRemoteObject(RemoteObjectPrototype* object)
 		SIGNAL(keyReleaseEvent(QString, int, Qt::KeyboardModifiers, QString, bool, ushort)),
 		SLOT(writeKeyReleaseEvent(QString, int, Qt::KeyboardModifiers, QString, bool, ushort))
 	);
+	connect(
+		object,
+		SIGNAL(shortcutEvent(QString, QKeySequence, int, bool)),
+		SLOT(writeShortcutEvent(QString, QKeySequence, int, bool))
+	);
 }
 
 void Interpreter::writeKeyPressEvent(const QString& path, int key, Qt::KeyboardModifiers modifiers, const QString& text, bool autorepeat, ushort count)

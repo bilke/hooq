@@ -281,7 +281,7 @@ QString XmlToQtScript::parseShortcutEvent()
 	readElementText();
 
 	return QString(
-		"objectFromPath(\"%1\").%2({\"string\": %3, \"id\": %4, \"ambiguous\": %5});"
+		"objectFromPath(\"%1\").%2({\"string\": \"%3\", \"id\": %4, \"ambiguous\": %5});"
 	).arg(
 		target
 	).arg(
