@@ -38,6 +38,7 @@
 #include <QFile>
 #include <QFileDialog>
 #include <QInputDialog>
+#include <QMessageBox>
 #include <QString>
 #include <QStringList>
 #include <QTemporaryFile>
@@ -69,7 +70,20 @@ MainWindow::MainWindow(QWidget* parent)
 	m_testList->header()->setResizeMode(2, QHeaderView::Fixed);
 	m_testList->header()->setStretchLastSection(false);
 
+	m_contextMenu = new QMenu(this);
+	m_contextMenu->addAction(tr("Run"), this, SLOT(runCurrentTest()));
+	m_contextMenu->addAction(tr("Edit"), this, SLOT(editCurrentTest()));
+	m_contextMenu->addSeparator();
+	m_contextMenu->addAction(tr("Delete"), this, SLOT(deleteCurrentTest()));
+
 	setTestSet(m_testSetEdit->currentText());
+
+	m_testList->setContextMenuPolicy(Qt::CustomContextMenu);
+	connect(
+		m_testList,
+		SIGNAL(customContextMenuRequested(QPoint)),
+		SLOT(showTestContextMenu(QPoint))
+	);
 
 	connect(
 		m_testSetEdit,
@@ -237,6 +251,49 @@ void MainWindow::populateTestSets()
 	{
 		m_testSetEdit->addItem(set);
 	}
+}
+
+void MainWindow::runCurrentTest()
+{
+	runTestScript(m_testList->currentIndex());
+}
+
+void MainWindow::editCurrentTest()
+{
+	editTestScript(m_testList->currentIndex());
+}
+
+void MainWindow::deleteCurrentTest()
+{
+	const QModelIndex index = m_testList->currentIndex();
+	if(!index.isValid())
+	{
+		return;
+	}
+
+	const QMessageBox::StandardButton result = QMessageBox::warning(
+		this,
+		tr("Delete Test?"),
+		tr("Are you sure you want to delete the test '%1'?").arg(index.data().toString()),
+		QMessageBox::Yes | QMessageBox::No,
+		QMessageBox::No
+	);
+
+	if(result == QMessageBox::Yes)
+	{
+		QFile::remove(index.data(TestModel::FilePathRole).toString());
+	}
+}
+
+void MainWindow::showTestContextMenu(const QPoint& position)
+{
+	const QModelIndex& index = m_testList->indexAt(position);
+	if((!index.isValid()) || index.column() != 0)
+	{
+		return;
+	}
+
+	m_contextMenu->popup(m_testList->viewport()->mapToGlobal(position));
 }
 
 void MainWindow::addTestSet()

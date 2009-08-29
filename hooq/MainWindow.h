@@ -26,6 +26,7 @@
 class Interpreter;
 class TestModel;
 
+class QMenu;
 class QModelIndex;
 class QTemporaryFile;
 
@@ -42,6 +43,10 @@ class MainWindow : public QMainWindow, private Ui::MainWindow
 	public:
 		MainWindow(QWidget* parent = 0);
 	private slots:
+		void runCurrentTest();
+		void editCurrentTest();
+		void deleteCurrentTest();
+
 		void handleTestAction(const QModelIndex& index);
 		void setTestSet(const QString&);
 		void saveApplicationPath();
@@ -50,10 +55,13 @@ class MainWindow : public QMainWindow, private Ui::MainWindow
 		void finishRecording();
 		void updateAddState();
 		void addTestSet();
+		void showTestContextMenu(const QPoint& position);
 	private:
 		void editTestScript(const QModelIndex& index);
 		void runTestScript(const QModelIndex& index);
 		void populateTestSets();
+
+		QMenu* m_contextMenu;
 
 		Hooq::Injector* m_hooqPlayInjector;
 		Hooq::Injector* m_hooqRecordInjector;
