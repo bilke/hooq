@@ -25,6 +25,7 @@
 #include <QDebug>
 #include <QFile>
 #include <QKeySequence>
+#include <QLocalSocket>
 #include <QPoint>
 #include <QScriptEngine>
 #include <QScriptEngineDebugger>
@@ -32,8 +33,8 @@
 
 Interpreter::Interpreter(QObject* parent)
 : QObject(parent)
-, m_engine(new QScriptEngine(this))
 , m_debugger(new QScriptEngineDebugger(this))
+, m_engine(new QScriptEngine(this))
 {
 	if(m_engine->importExtension("qt.core").isError())
 	{
@@ -184,20 +185,25 @@ void Interpreter::writeWheelEvent(const QString& path, const QPoint& position, i
 	writeEndElement();
 }
 
-void Interpreter::run(const QString& script, QIODevice* xmlOut)
+void Interpreter::setScriptPath(const QString& scriptPath)
 {
-	setDevice(xmlOut);
-
-	QFile file(script);
+	m_scriptPath = scriptPath;
+	QFile file(scriptPath);
 	file.open(QIODevice::ReadOnly);
 	Q_ASSERT(file.isOpen() && file.isReadable());
-	const QString text = QString::fromUtf8(file.readAll());
+	m_script = QString::fromUtf8(file.readAll());
 	file.close();
+}
+
+void Interpreter::run(QLocalSocket* socket)
+{
+	socket->write("PLAY\n");
+	setDevice(socket);
 
 	writeStartDocument();
 	writeStartElement("hooq");
 
-	m_engine->evaluate(text, script);
+	m_engine->evaluate(m_script, m_scriptPath);
 
 	writeEndElement(); // hooq
 	writeEndDocument();

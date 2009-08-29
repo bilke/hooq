@@ -32,8 +32,8 @@ class QTemporaryFile;
 namespace Hooq
 {
 	class Injector;
+	class RemoteConnection;
 	class RemoteLogger;
-	class RemotePlayback;
 }
 
 class MainWindow : public QMainWindow, private Ui::MainWindow
@@ -55,9 +55,10 @@ class MainWindow : public QMainWindow, private Ui::MainWindow
 		void runTestScript(const QModelIndex& index);
 		void populateTestSets();
 
-		Hooq::Injector* m_hooqInjector;
+		Hooq::Injector* m_hooqPlayInjector;
+		Hooq::Injector* m_hooqRecordInjector;
 		Hooq::RemoteLogger* m_hooqLogger;
-		Hooq::RemotePlayback* m_hooqPlayer;
+		Hooq::RemoteConnection* m_hooqPlayer;
 
 		Interpreter* m_interpreter;
 		TestModel* m_testModel;

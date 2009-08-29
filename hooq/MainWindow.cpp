@@ -27,7 +27,7 @@
 #include "XmlToQtScript.h"
 
 // hooqInjector
-#include "RemotePlayback.h"
+#include "RemoteConnection.h"
 #include "RemoteLogger.h"
 #include "PlatformInjector.h"
 
@@ -45,7 +45,8 @@
 
 MainWindow::MainWindow(QWidget* parent)
 : QMainWindow(parent)
-, m_hooqInjector(new PlatformInjector(this))
+, m_hooqPlayInjector(new PlatformInjector(this))
+, m_hooqRecordInjector(new PlatformInjector(this))
 , m_hooqLogger(0)
 , m_hooqPlayer(0)
 , m_interpreter(new Interpreter(this))
@@ -95,7 +96,7 @@ MainWindow::MainWindow(QWidget* parent)
 	);
 
 	connect(
-		m_hooqInjector,
+		m_hooqRecordInjector,
 		SIGNAL(finished(int)),
 		SLOT(finishRecording())
 	);
@@ -146,18 +147,17 @@ void MainWindow::editTestScript(const QModelIndex& index)
 void MainWindow::runTestScript(const QModelIndex& index)
 {
 	delete m_hooqPlayer;
-	delete m_xmlDump;
 
-	m_xmlDump = new QTemporaryFile();
-	m_xmlDump->open();
+	m_interpreter->setScriptPath(index.data(TestModel::FilePathRole).toString());
 
-	m_interpreter->run(index.data(TestModel::FilePathRole).toString(), m_xmlDump);
-
-	m_xmlDump->close();
-	m_xmlDump->open();
-
-	m_hooqPlayer = new Hooq::RemotePlayback();
-	m_hooqPlayer->start(QDir::fromNativeSeparators(m_applicationEdit->text()), m_xmlDump, m_hooqInjector);
+	m_hooqPlayer = new Hooq::RemoteConnection(this);
+	connect(
+		m_hooqPlayer,
+		SIGNAL(connected(QLocalSocket*)),
+		m_interpreter,
+		SLOT(run(QLocalSocket*))
+	);
+	m_hooqPlayer->start(QDir::fromNativeSeparators(m_applicationEdit->text()), m_hooqPlayInjector);
 	
 }
 
@@ -170,7 +170,7 @@ void MainWindow::startRecording()
 	m_xmlDump->open();
 
 	m_hooqLogger = new Hooq::RemoteLogger();
-	m_hooqLogger->start(QDir::fromNativeSeparators(m_applicationEdit->text()), m_xmlDump, m_hooqInjector);
+	m_hooqLogger->start(QDir::fromNativeSeparators(m_applicationEdit->text()), m_xmlDump, m_hooqRecordInjector);
 }
 
 void MainWindow::finishRecording()

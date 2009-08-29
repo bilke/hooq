@@ -7,7 +7,7 @@ unix:LIBS += -L../hooqInjector -lhooqInjector
 win32:LIBS += "..\hooqInjector\debug\hooqInjector.lib"
 QMAKE_RPATHDIR += $$(PWD)/../hooqInjector/
 
-QT += script scripttools
+QT += script scripttools network
 
 CONFIG += debug
 
