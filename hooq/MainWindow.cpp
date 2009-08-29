@@ -22,6 +22,7 @@
 // Hooq
 #include "Interpreter.h"
 #include "Locations.h"
+#include "ScriptEditor.h"
 #include "TestModel.h"
 #include "TestModelDelegate.h"
 #include "XmlToQtScript.h"
@@ -155,7 +156,9 @@ void MainWindow::handleTestAction(const QModelIndex& index)
 
 void MainWindow::editTestScript(const QModelIndex& index)
 {
-	QDesktopServices::openUrl(QUrl::fromLocalFile(index.data(TestModel::FilePathRole).toString()));
+	ScriptEditor* editor = new ScriptEditor(this);
+	editor->open(index.data(TestModel::FilePathRole).toString());
+	editor->show();
 }
 
 void MainWindow::runTestScript(const QModelIndex& index)

@@ -3,6 +3,8 @@ TARGET =
 DEPENDPATH += .
 INCLUDEPATH += . ../hooqInjector/
 
+LIBS += -lqscintilla2
+
 unix:LIBS += -L../hooqInjector -lhooqInjector
 win32:LIBS += "..\hooqInjector\debug\hooqInjector.lib"
 QMAKE_RPATHDIR += $$(PWD)/../hooqInjector/
@@ -17,6 +19,7 @@ HEADERS += \
 	Locations.h \
 	MainWindow.h \
 	RemoteObjectPrototype.h \
+	ScriptEditor.h \
 	ScriptInterface.h \
 	TestModel.h \
 	TestModelDelegate.h \
@@ -31,6 +34,7 @@ SOURCES += \
 	Locations.cpp \
 	MainWindow.cpp \
 	RemoteObjectPrototype.cpp \
+	ScriptEditor.cpp \
 	ScriptInterface.cpp \
 	TestModel.cpp \
 	TestModelDelegate.cpp \
