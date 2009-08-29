@@ -17,7 +17,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-#pragma  once
+#pragma once
 
 #include <QObject>
 #include <QString>
@@ -34,6 +34,7 @@ class Player: public QObject, private QXmlStreamReader
 	signals:
 		void finished();
 	private slots:
+		void waitFinished();
 		void readNext();
 	private:
 		void handleElement();
@@ -44,6 +45,8 @@ class Player: public QObject, private QXmlStreamReader
 		void postShortcutEvent();
 		void postWheelEvent();
 		void sleep(int msec);
+
+		void ack();
 };
 
 } // namespace

@@ -18,8 +18,8 @@
 	51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 #include "Player.h"
-#include "../common/ObjectHookName.h"
 
+#include "../common/ObjectHookName.h"
 
 #include <QApplication>
 #include <QDebug>
@@ -36,10 +36,22 @@ namespace Hooq
 
 void Player::sleep(int msec)
 {
-	QTimer::singleShot(msec, this, SLOT(readNext()));
+	QTimer::singleShot(msec, this, SLOT(waitFinished()));
+}
+
+void Player::waitFinished()
+{
+	ack();
+	readNext();
+}
+
+void Player::ack()
+{
+	device()->write("ACK\n");
 }
 
 Player::Player(QIODevice* device)
+: QObject()
 {
 	setDevice(device);
 	readNext();
@@ -60,6 +72,11 @@ void Player::readNext()
 			emit finished();
 			return;
 		}
+	}
+	device()->waitForReadyRead(100);
+	if(device()->bytesAvailable())
+	{
+		readNext();
 	}
 }
 
@@ -102,6 +119,7 @@ void Player::handleElement()
 	{
 		postShortcutEvent();
 	}
+
 	readNext();
 }
 
@@ -120,6 +138,7 @@ void Player::postShortcutEvent()
 	);
 
 	QCoreApplication::postEvent(object, event);
+	ack();
 }
 
 void Player::postKeyEvent(int type)
@@ -140,6 +159,7 @@ void Player::postKeyEvent(int type)
 	);
 
 	QCoreApplication::postEvent(object, event);
+	ack();
 }
 
 void Player::postMouseEvent(int type)
@@ -161,6 +181,7 @@ void Player::postMouseEvent(int type)
 		static_cast<Qt::KeyboardModifiers>(attributes().value("modifiers").toString().toInt())
 	);
 	QCoreApplication::postEvent(object, event);
+	ack();
 }
 
 void Player::postWheelEvent()
@@ -182,6 +203,7 @@ void Player::postWheelEvent()
 		attributes().value("orientation") == "vertical" ? Qt::Vertical : Qt::Horizontal
 	);
 	QCoreApplication::postEvent(object, event);
+	ack();
 }
 
 QObject* Player::findObject(const QString& path)

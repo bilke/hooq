@@ -38,6 +38,7 @@ class Interpreter : public QObject, private QXmlStreamWriter
 		void setScriptPath(const QString& scriptPath);
 	public slots:
 		void run(QLocalSocket* socket);
+		void processSocketData();
 	private slots:
 		void connectRemoteObject(RemoteObjectPrototype*);
 		void writeKeyPressEvent(const QString& path, int key, Qt::KeyboardModifiers modifiers, const QString& text, bool autorepeat, ushort count);
@@ -49,8 +50,13 @@ class Interpreter : public QObject, private QXmlStreamWriter
 		void writeSleep(int msec);
 		void writeWheelEvent(const QString& path, const QPoint& position, int delta, Qt::MouseButtons buttons, Qt::KeyboardModifiers modifiers, Qt::Orientation orientation);
 	private:
+		bool ack() const;
+		void waitForAck();
+		void setAck(bool ack = true);
 		void writeKeyAttributes(const QString& path, int key, Qt::KeyboardModifiers modifiers, const QString& text, bool autorepeat, ushort count);
 		void writeMouseAttributes(const QString& path, const QPoint& position, Qt::MouseButton button, Qt::MouseButtons buttons, Qt::KeyboardModifiers modifiers);
+
+		int m_pendingAcks;
 
 		QScriptEngineDebugger* m_debugger;
 		QScriptEngine* m_engine;

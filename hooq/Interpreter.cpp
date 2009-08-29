@@ -22,6 +22,7 @@
 #include "RemoteObjectPrototype.h"
 #include "ScriptInterface.h"
 
+#include <QApplication>
 #include <QDebug>
 #include <QFile>
 #include <QKeySequence>
@@ -33,16 +34,17 @@
 
 Interpreter::Interpreter(QObject* parent)
 : QObject(parent)
+, m_pendingAcks(0)
 , m_debugger(new QScriptEngineDebugger(this))
 , m_engine(new QScriptEngine(this))
 {
 	if(m_engine->importExtension("qt.core").isError())
 	{
-		qDebug() << Q_FUNC_INFO << "Failed to load qt.core QScript plugin";
+		qDebug() << Q_FUNC_INFO << "Failed to load qt.core QtScript plugin";
 	}
 	else
 	{
-		qDebug() << "Loaded qt.core plugin";
+		qDebug() << Q_FUNC_INFO << "Loaded qt.core QtScript plugin";
 	}
 
 	m_debugger->attachTo(m_engine);
@@ -107,11 +109,39 @@ void Interpreter::connectRemoteObject(RemoteObjectPrototype* object)
 	);
 }
 
+bool Interpreter::ack() const
+{
+	return m_pendingAcks == 0;
+}
+
+void Interpreter::setAck(bool ack)
+{
+	if(ack)
+	{
+		--m_pendingAcks;
+	}
+	else
+	{
+		++m_pendingAcks;
+	}
+	Q_ASSERT(m_pendingAcks >= 0);
+}
+
+void Interpreter::waitForAck()
+{
+	setAck(false);
+	while(!ack())
+	{
+		QApplication::processEvents();
+	}
+}
+
 void Interpreter::writeKeyPressEvent(const QString& path, int key, Qt::KeyboardModifiers modifiers, const QString& text, bool autorepeat, ushort count)
 {
 	writeStartElement("keyPress");
 	writeKeyAttributes(path, key, modifiers, text, autorepeat, count);
 	writeEndElement();
+	waitForAck();
 }
 
 void Interpreter::writeKeyReleaseEvent(const QString& path, int key, Qt::KeyboardModifiers modifiers, const QString& text, bool autorepeat, ushort count)
@@ -119,6 +149,7 @@ void Interpreter::writeKeyReleaseEvent(const QString& path, int key, Qt::Keyboar
 	writeStartElement("keyRelease");
 	writeKeyAttributes(path, key, modifiers, text, autorepeat, count);
 	writeEndElement();
+	waitForAck();
 }
 
 void Interpreter::writeMouseMoveEvent(const QString& path, const QPoint& position, Qt::MouseButton button, Qt::MouseButtons buttons, Qt::KeyboardModifiers modifiers)
@@ -126,6 +157,7 @@ void Interpreter::writeMouseMoveEvent(const QString& path, const QPoint& positio
 	writeStartElement("mouseMove");
 	writeMouseAttributes(path, position, button, buttons, modifiers);
 	writeEndElement();
+	waitForAck();
 }
 
 void Interpreter::writeMousePressEvent(const QString& path, const QPoint& position, Qt::MouseButton button, Qt::MouseButtons buttons, Qt::KeyboardModifiers modifiers)
@@ -133,6 +165,7 @@ void Interpreter::writeMousePressEvent(const QString& path, const QPoint& positi
 	writeStartElement("mouseButtonPress");
 	writeMouseAttributes(path, position, button, buttons, modifiers);
 	writeEndElement();
+	waitForAck();
 }
 
 void Interpreter::writeMouseReleaseEvent(const QString& path, const QPoint& position, Qt::MouseButton button, Qt::MouseButtons buttons, Qt::KeyboardModifiers modifiers)
@@ -140,6 +173,7 @@ void Interpreter::writeMouseReleaseEvent(const QString& path, const QPoint& posi
 	writeStartElement("mouseButtonRelease");
 	writeMouseAttributes(path, position, button, buttons, modifiers);
 	writeEndElement();
+	waitForAck();
 }
 
 void Interpreter::writeMouseAttributes(const QString& path, const QPoint& position, Qt::MouseButton button, Qt::MouseButtons buttons, Qt::KeyboardModifiers modifiers)
@@ -170,6 +204,7 @@ void Interpreter::writeShortcutEvent(const QString& path, const QKeySequence& se
 	writeAttribute("ambiguous", ambiguous ? "true" : "false");
 	writeAttribute("target", path);
 	writeEndElement();
+	waitForAck();
 }
 
 void Interpreter::writeWheelEvent(const QString& path, const QPoint& position, int delta, Qt::MouseButtons buttons, Qt::KeyboardModifiers modifiers, Qt::Orientation orientation)
@@ -183,6 +218,7 @@ void Interpreter::writeWheelEvent(const QString& path, const QPoint& position, i
 	writeAttribute("orientation", QString::number(orientation));
 	writeAttribute("target", path);
 	writeEndElement();
+	waitForAck();
 }
 
 void Interpreter::setScriptPath(const QString& scriptPath)
@@ -195,8 +231,27 @@ void Interpreter::setScriptPath(const QString& scriptPath)
 	file.close();
 }
 
+void Interpreter::processSocketData()
+{
+	while(device()->canReadLine())
+	{
+		const QString line = QString::fromUtf8(device()->readLine()).trimmed();
+		if(line == "ACK")
+		{
+			setAck();
+			continue;
+		}
+		qDebug() << Q_FUNC_INFO << "Unknown response:" << line;
+	}
+}
+
 void Interpreter::run(QLocalSocket* socket)
 {
+	connect(
+		socket,
+		SIGNAL(readyRead()),
+		SLOT(processSocketData())
+	);
 	socket->write("PLAY\n");
 	setDevice(socket);
 
@@ -212,4 +267,5 @@ void Interpreter::run(QLocalSocket* socket)
 void Interpreter::writeSleep(int msec)
 {
 	writeTextElement("msec", QString::number(msec));
+	waitForAck();
 }
