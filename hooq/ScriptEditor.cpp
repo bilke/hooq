@@ -2,9 +2,12 @@
 #include <Qsci/qscilexerjavascript.h>
 #include <Qsci/qsciscintilla.h>
 
+#include <QAction>
 #include <QDebug>
 #include <QFile>
 #include <QFont>
+#include <QStyle>
+#include <QToolBar>
 
 ScriptEditor::ScriptEditor(QWidget* parent)
 : QMainWindow(parent)
@@ -33,6 +36,34 @@ ScriptEditor::ScriptEditor(QWidget* parent)
 		SIGNAL(marginClicked(int, int, Qt::KeyboardModifiers)),
 		SLOT(handleMarginAction(int, int, Qt::KeyboardModifiers))
 	);
+
+	QToolBar* toolBar = addToolBar(tr("Toolbar"));
+	toolBar->setMovable(false);
+
+	toolBar->addAction(style()->standardIcon(QStyle::SP_DialogSaveButton), tr("Save"), this, SLOT(save()));
+	toolBar->addAction(style()->standardIcon(QStyle::SP_DialogDiscardButton), tr("Discard Changes"), this, SLOT(revert()));
+
+	toolBar->addSeparator();
+
+	toolBar->addAction(style()->standardIcon(QStyle::SP_MediaPlay), tr("Run"));
+	toolBar->addAction(style()->standardIcon(QStyle::SP_MediaStop), tr("Stop"));
+
+	toolBar->addSeparator();
+
+	toolBar->addAction(style()->standardIcon(QStyle::SP_FileLinkIcon), tr("Pick Property"));
+}
+
+void ScriptEditor::save()
+{
+	QFile file(m_filePath);
+	file.open(QIODevice::WriteOnly | QFile::Truncate);
+	m_editor->write(&file);
+	file.close();
+}
+
+void ScriptEditor::revert()
+{
+	open(m_filePath);
 }
 
 void ScriptEditor::handleMarginAction(int margin, int line, Qt::KeyboardModifiers state)
@@ -44,8 +75,16 @@ void ScriptEditor::handleMarginAction(int margin, int line, Qt::KeyboardModifier
 
 void ScriptEditor::toggleBreakPoint(int line)
 {
-	qDebug() << "Setting marker on" << line << m_breakPointMarker;
-	m_editor->markerAdd(line, m_breakPointMarker);
+	if(m_breakPoints.contains(line))
+	{
+		m_editor->markerDelete(line, m_breakPointMarker);
+		m_breakPoints.remove(line);
+	}
+	else
+	{
+		m_editor->markerAdd(line, m_breakPointMarker);
+		m_breakPoints.insert(line);
+	}
 }
 
 void ScriptEditor::open(const QString& filePath)
