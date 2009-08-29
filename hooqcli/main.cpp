@@ -70,7 +70,7 @@ int main(int argc, char** argv)
 		return 1;
 	}
 
-	QFile log("eventLog.txt");
+	QFile log("eventLog.xml");
 	if(mode == Replay)
 	{
 		log.open(QIODevice::ReadOnly);
