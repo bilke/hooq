@@ -71,11 +71,15 @@ void TestModel::setTestSet(const QString& testSet)
 	}
 
 	QDir testSetDir(Locations::testSetLocation(testSet));
-	m_watcher->addPath(testSetDir.path());
 
 	if(!testSetDir.exists())
 	{
 		testSetDir.mkpath("."); // relative to the dir
+	}
+
+	if(!m_watcher->directories().contains(testSetDir.path()))
+	{
+		m_watcher->addPath(testSetDir.path());
 	}
 
 	m_items = testSetDir.entryList(QStringList("*.qs"), QDir::Files, QDir::Name);
