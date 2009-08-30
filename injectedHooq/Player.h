@@ -20,6 +20,7 @@
 #pragma once
 
 #include <QObject>
+#include <QPointer>
 #include <QQueue>
 #include <QString>
 #include <QXmlStreamReader>
@@ -32,13 +33,25 @@ class Player: public QObject, private QXmlStreamReader
 {
 	Q_OBJECT;
 	public:
-		Player(QIODevice* device);
+		static Player* instance(QIODevice*);
 	signals:
 		void finished();
 	private slots:
 		void waitFinished();
 		void readNext();
+		void processEvents();
 	private:
+		static Player* instance();
+		Player(QIODevice* device);
+		static QPointer<Player> m_instance;
+
+		void startPick();
+		void endPick();
+
+		/// The main hook.
+		static bool hook(void** data);
+		bool hook(QObject* receiver, QEvent* event);
+
 		void handleElement();
 		QObject* findObject(const QString& path);
 
@@ -49,8 +62,6 @@ class Player: public QObject, private QXmlStreamReader
 		void sleep(int msec);
 
 		void ack();
-
-		void processEvents();
 
 		bool m_processingEvents;
 

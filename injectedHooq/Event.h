@@ -30,21 +30,11 @@ namespace Hooq
 		public:
 			enum Type
 			{
-				Sleep,
-				Object
+				Object,
+				Pick,
+				Sleep
 			};
 			virtual Type type() const = 0;
-	};
-
-	class SleepEvent : public Event
-	{
-		public:
-			SleepEvent(int msec);
-			Type type() const;
-
-			int msec() const;
-		private:
-			int m_msec;
 	};
 
 	class ObjectEvent : public Event
@@ -58,5 +48,23 @@ namespace Hooq
 		private:
 			QString m_objectPath;
 			QEvent* m_qtEvent;
+	};
+
+	class PickEvent : public Event
+	{
+		public:
+			PickEvent();
+			Type type() const;
+	};
+
+	class SleepEvent : public Event
+	{
+		public:
+			SleepEvent(int msec);
+			Type type() const;
+
+			int msec() const;
+		private:
+			int m_msec;
 	};
 };

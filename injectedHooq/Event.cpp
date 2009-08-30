@@ -58,4 +58,13 @@ Event::Type ObjectEvent::type() const
 	return Object;
 }
 
+PickEvent::PickEvent()
+{
+}
+
+Event::Type PickEvent::type() const
+{
+	return Pick;
+}
+
 };

@@ -20,10 +20,12 @@
 #include "Player.h"
 
 #include "Event.h"
+#include "XmlPropertyDumper.h"
 
 #include "../common/ObjectHookName.h"
 
 #include <QApplication>
+#include <QCursor>
 #include <QDebug>
 #include <QKeyEvent>
 #include <QMouseEvent>
@@ -35,6 +37,63 @@
 
 namespace Hooq
 {
+
+bool Player::hook(void** data)
+{
+	QObject* receiver = reinterpret_cast<QObject*>(data[0]);
+	QEvent* event = reinterpret_cast<QEvent*>(data[1]);
+	// returnType* returnValue = reinterpret_cast<returnType*>(data[2])
+	return instance()->hook(receiver, event);
+}
+
+bool Player::hook(QObject* receiver, QEvent* event)
+{
+	if(event->type() == QEvent::MouseButtonPress)
+	{
+		return true;
+	}
+	if(event->type() == QEvent::MouseButtonRelease)
+	{
+		Q_ASSERT(device()->isWritable());
+		device()->write("OBJECT\n");
+		XmlPropertyDumper::dump(receiver, device());
+		endPick();
+		return true;
+	}
+	return false;
+}
+
+void Player::startPick()
+{
+	// Crosshair
+	QApplication::setOverrideCursor(QCursor(Qt::CrossCursor));
+	// Start listening for events
+	QInternal::registerCallback(QInternal::EventNotifyCallback, &hook);
+}
+
+void Player::endPick()
+{
+	// Remove our crosshair
+	QApplication::restoreOverrideCursor();
+	// Remove our hook
+	QInternal::unregisterCallback(QInternal::EventNotifyCallback, &hook);
+	// Continue with our queue
+	m_processingEvents = false;
+	processEvents();
+}
+
+QPointer<Player> Player::m_instance;
+
+Player* Player::instance(QIODevice* device)
+{
+	m_instance = QPointer<Player>(new Player(device));
+	return m_instance.data();
+}
+
+Player* Player::instance()
+{
+	return m_instance.data();
+}
 
 void Player::sleep(int msec)
 {
@@ -96,10 +155,6 @@ void Player::processEvents()
 		Event* event = m_eventQueue.dequeue();
 		switch(event->type())
 		{
-			case Event::Sleep:
-				sleep(static_cast<SleepEvent*>(event)->msec());
-				delete event;
-				return;
 			case Event::Object:
 			{
 				ObjectEvent* o = static_cast<ObjectEvent*>(event);
@@ -111,7 +166,15 @@ void Player::processEvents()
 				}
 				QCoreApplication::postEvent(receiver, o->qtEvent());
 				ack();
+				break;
 			}
+			case Event::Pick:
+				startPick();
+				return;
+			case Event::Sleep:
+				sleep(static_cast<SleepEvent*>(event)->msec());
+				delete event;
+				return;
 		}
 	}
 	m_processingEvents = false;
@@ -119,11 +182,18 @@ void Player::processEvents()
 
 void Player::handleElement()
 {
+	// "Magic" events
 	if(name() == "msec")
 	{
 		m_eventQueue.enqueue(new SleepEvent(readElementText().toInt()));
-		return;
 	}
+	if(name() == "pick")
+	{
+		m_eventQueue.enqueue(new PickEvent());
+		readElementText(); // skip to end
+	}
+
+	// QEvents
 	if(name() == "keyPress")
 	{
 		postKeyEvent(QEvent::KeyPress);

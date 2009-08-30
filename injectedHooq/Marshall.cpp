@@ -86,7 +86,7 @@ void Marshall::readCommand()
 	}
 	else if(command == "PLAY\n")
 	{
-		new Player(m_socket);
+		Player::instance(m_socket);
 	}
 	else
 	{

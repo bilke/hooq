@@ -18,6 +18,7 @@ HEADERS += \
 	Logger.h \
 	Marshall.h \
 	Player.h \
+	XmlPropertyDumper.h \
 
 SOURCES += \
 	../common/ObjectHookName.cpp \
@@ -26,6 +27,7 @@ SOURCES += \
 	Logger.cpp \
 	Marshall.cpp \
 	Player.cpp \
+	XmlPropertyDumper.cpp \
 
 win32 {
 	SOURCES += WinDll.cpp
