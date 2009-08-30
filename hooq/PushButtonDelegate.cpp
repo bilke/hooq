@@ -28,8 +28,6 @@
 PushButtonDelegate::PushButtonDelegate(QAbstractItemView* view, QObject* parent)
 : QStyledItemDelegate(parent)
 {
-	addButton(1, QApplication::style()->standardIcon(QStyle::SP_MediaPlay));
-	addButton(2, QApplication::style()->standardIcon(QStyle::SP_FileIcon));
 	// All of these connections are required to get the fake push buttons redrawn every time they need to be, and drawn in the proper state
 	connect(
 		view,

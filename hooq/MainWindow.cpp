@@ -33,6 +33,7 @@
 #include "PlatformInjector.h"
 
 // Qt
+#include <QApplication>
 #include <QDebug>
 #include <QDesktopServices>
 #include <QDir>
@@ -42,6 +43,7 @@
 #include <QMessageBox>
 #include <QString>
 #include <QStringList>
+#include <QStyle>
 #include <QTemporaryFile>
 #include <QUrl>
 
@@ -64,6 +66,8 @@ MainWindow::MainWindow(QWidget* parent)
 
 	m_testList->setModel(m_testModel);
 	PushButtonDelegate* delegate = new PushButtonDelegate(m_testList, this);
+	delegate->addButton(1, QApplication::style()->standardIcon(QStyle::SP_MediaPlay));
+	delegate->addButton(2, QApplication::style()->standardIcon(QStyle::SP_FileIcon));
 	m_testList->setItemDelegate(delegate);
 
 	m_testList->setMouseTracking(true);
