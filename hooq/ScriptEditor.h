@@ -24,6 +24,7 @@ class ScriptEditor : public QMainWindow, public QScriptEngineAgent
 		void toggleBreakPoint(int line);
 	private:
 		int m_breakPointMarker;
+		int m_currentLineMarker;
 		QsciScintilla* m_editor;
 		QString m_filePath;
 

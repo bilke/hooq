@@ -3,6 +3,7 @@
 #include <Qsci/qsciscintilla.h>
 
 #include <QAction>
+#include <QColor>
 #include <QDebug>
 #include <QFile>
 #include <QFont>
@@ -27,12 +28,18 @@ ScriptEditor::ScriptEditor(QScriptEngine* engine)
 
 	m_editor->setUtf8(true);
 	m_editor->setLexer(lexer);
+	m_editor->setMarginMarkerMask(0, 1); // bitfield - 1 == first user-assigned marker (breakpoint)
 	m_editor->setMarginLineNumbers(0, true);
-	m_editor->setMarginMarkerMask(0, ~0);
 	m_editor->setMarginWidth(1, 2);
 	m_editor->setMarginWidth(0, "00000");
 	m_editor->setMarginSensitivity(0, true);
+
 	m_breakPointMarker = m_editor->markerDefine(QsciScintilla::Circle);
+	m_editor->setMarkerForegroundColor(Qt::black, m_breakPointMarker);
+	m_editor->setMarkerBackgroundColor(Qt::red, m_breakPointMarker);
+
+	m_currentLineMarker = m_editor->markerDefine(QsciScintilla::Background);
+	m_editor->setMarkerBackgroundColor(QColor::fromRgb(255,140,0), m_currentLineMarker); // orange
 
 	connect(
 		m_editor,
@@ -62,7 +69,9 @@ void ScriptEditor::positionChange(qint64 scriptId, int lineNumber, int columnNum
 	Q_UNUSED(scriptId);
 	if(m_breakPoints.contains(lineNumber))
 	{
-		qDebug() << "HIT BREAKPOINT" << lineNumber << columnNumber;
+		m_editor->markerAdd(lineNumber - 1, m_currentLineMarker);
+		//break();
+		m_editor->markerDeleteAll(m_currentLineMarker);
 	}
 }
 
@@ -102,6 +111,8 @@ void ScriptEditor::toggleBreakPoint(int line)
 
 void ScriptEditor::open(const QString& filePath)
 {
+	m_editor->markerDeleteAll();
+	m_breakPoints.clear();
 	m_filePath = filePath;
 	QFile file(filePath);
 	file.open(QIODevice::ReadOnly);
