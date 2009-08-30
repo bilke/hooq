@@ -21,16 +21,22 @@
 
 #include <QStyledItemDelegate>
 
+#include <QHash>
 #include <QIcon>
+#include <QSet>
+#include <QString>
 
 class QStyleOptionButton;
 
-class TestModelDelegate: public QStyledItemDelegate
+class PushButtonDelegate: public QStyledItemDelegate
 {
 	Q_OBJECT;
 	public:
-		TestModelDelegate(QAbstractItemView* view, QObject* parent = 0);
-		~TestModelDelegate();
+		PushButtonDelegate(QAbstractItemView* view, QObject* parent = 0);
+		~PushButtonDelegate();
+
+		void addButton(int column, const QIcon& icon, const QString& text = QString());
+		void addButton(int column, const QString& text);
 
 		virtual void paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const;
 	public slots:
@@ -38,9 +44,12 @@ class TestModelDelegate: public QStyledItemDelegate
 		void depressIndex(const QModelIndex& index);
 		void release();
 	private:
-		void initStyleOption(QStyleOptionButton* out, const QStyleOptionViewItem& in, const QIcon& icon, const QModelIndex& index) const;
-		const QIcon m_runIcon;
-		const QIcon m_editIcon;
+		void initStyleOption(QStyleOptionButton* out, const QStyleOptionViewItem& in, const QModelIndex& index) const;
+
+		QSet<int> m_buttonColumns;
+		QHash<int, QIcon> m_buttonIcons;
+		QHash<int, QString> m_buttonText;
+
 		QPersistentModelIndex m_hoverIndex;
 		QPersistentModelIndex m_pressedIndex;
 };

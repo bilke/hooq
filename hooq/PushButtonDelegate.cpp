@@ -17,7 +17,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-#include "TestModelDelegate.h"
+#include "PushButtonDelegate.h"
 
 #include <QAbstractItemView>
 #include <QApplication>
@@ -25,11 +25,11 @@
 #include <QStyle>
 #include <QPainter>
 
-TestModelDelegate::TestModelDelegate(QAbstractItemView* view, QObject* parent)
+PushButtonDelegate::PushButtonDelegate(QAbstractItemView* view, QObject* parent)
 : QStyledItemDelegate(parent)
-, m_runIcon(QApplication::style()->standardIcon(QStyle::SP_MediaPlay))
-, m_editIcon(QApplication::style()->standardIcon(QStyle::SP_FileIcon))
 {
+	addButton(1, QApplication::style()->standardIcon(QStyle::SP_MediaPlay));
+	addButton(2, QApplication::style()->standardIcon(QStyle::SP_FileIcon));
 	// All of these connections are required to get the fake push buttons redrawn every time they need to be, and drawn in the proper state
 	connect(
 		view,
@@ -62,45 +62,52 @@ TestModelDelegate::TestModelDelegate(QAbstractItemView* view, QObject* parent)
 	);
 }
 
-void TestModelDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const
+void PushButtonDelegate::addButton(int column, const QIcon& icon, const QString& text)
+{
+	m_buttonColumns.insert(column);
+	m_buttonIcons[column] = icon;
+	m_buttonText[column] = text;
+}
+
+void PushButtonDelegate::addButton(int column, const QString& text)
+{
+	addButton(column, QIcon(), text);
+}
+
+void PushButtonDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const
 {
 	QStyledItemDelegate::paint(painter, option, index);
 	if(index.isValid())
 	{
-		if(index.column() == 1)
+		if(m_buttonColumns.contains(index.column()))
 		{
 			QStyleOptionButton opt;
-			initStyleOption(&opt, option, m_runIcon, index);
-			QApplication::style()->drawControl(QStyle::CE_PushButton, &opt, painter);
-		}
-		else if(index.column() == 2)
-		{
-			QStyleOptionButton opt;
-			initStyleOption(&opt, option, m_editIcon, index);
+			initStyleOption(&opt, option, index);
 			QApplication::style()->drawControl(QStyle::CE_PushButton, &opt, painter);
 		}
 	}
 }
 
-void TestModelDelegate::release()
+void PushButtonDelegate::release()
 {
 	m_pressedIndex = QModelIndex();
 }
 
-void TestModelDelegate::depressIndex(const QModelIndex& index)
+void PushButtonDelegate::depressIndex(const QModelIndex& index)
 {
 	m_pressedIndex = index;
 }
 
-void TestModelDelegate::hoverIndex(const QModelIndex& index)
+void PushButtonDelegate::hoverIndex(const QModelIndex& index)
 {
 	release();
 	m_hoverIndex = index;
 }
 
-void TestModelDelegate::initStyleOption(QStyleOptionButton* out, const QStyleOptionViewItem& in, const QIcon& icon, const QModelIndex& index) const
+void PushButtonDelegate::initStyleOption(QStyleOptionButton* out, const QStyleOptionViewItem& in, const QModelIndex& index) const
 {
-	out->icon = icon;
+	out->icon = m_buttonIcons.value(index.column());
+	out->text= m_buttonText.value(index.column());
 	out->iconSize = QSize(16, 16);
 	out->rect = in.rect;
 	out->state |= in.state & QStyle::State_Enabled;
@@ -115,6 +122,6 @@ void TestModelDelegate::initStyleOption(QStyleOptionButton* out, const QStyleOpt
 	}
 }
 
-TestModelDelegate::~TestModelDelegate()
+PushButtonDelegate::~PushButtonDelegate()
 {
 }
