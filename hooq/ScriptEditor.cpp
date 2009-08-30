@@ -63,7 +63,7 @@ ScriptEditor::ScriptEditor(QScriptEngine* engine)
 
 	toolBar->addSeparator();
 
-	toolBar->addAction(style()->standardIcon(QStyle::SP_FileLinkIcon), tr("Pick Property"));
+	toolBar->addAction(style()->standardIcon(QStyle::SP_FileLinkIcon), tr("Pick Property"), this, SIGNAL(pickRequested()));
 }
 
 void ScriptEditor::positionChange(qint64 scriptId, int lineNumber, int columnNumber)

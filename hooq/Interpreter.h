@@ -39,6 +39,7 @@ class Interpreter : public QObject, private QXmlStreamWriter
 	public slots:
 		void run(QLocalSocket* socket);
 		void processSocketData();
+		void pickObject();
 	private slots:
 		void connectRemoteObject(RemoteObjectPrototype*);
 		void writeKeyPressEvent(const QString& path, int key, Qt::KeyboardModifiers modifiers, const QString& text, bool autorepeat, ushort count);

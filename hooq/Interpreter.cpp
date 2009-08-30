@@ -132,6 +132,12 @@ void Interpreter::waitForAck()
 	}
 }
 
+void Interpreter::pickObject()
+{
+	writeStartElement("pick");
+	writeEndElement();
+}
+
 void Interpreter::writeKeyPressEvent(const QString& path, int key, Qt::KeyboardModifiers modifiers, const QString& text, bool autorepeat, ushort count)
 {
 	writeStartElement("keyPress");

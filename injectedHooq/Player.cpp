@@ -28,6 +28,7 @@
 #include <QCursor>
 #include <QDebug>
 #include <QKeyEvent>
+#include <QLabel>
 #include <QMouseEvent>
 #include <QShortcutEvent>
 #include <QStringList>
@@ -65,6 +66,8 @@ bool Player::hook(QObject* receiver, QEvent* event)
 
 void Player::startPick()
 {
+	m_pickWidget->show();
+	m_pickWidget->raise();
 	// Crosshair
 	QApplication::setOverrideCursor(QCursor(Qt::CrossCursor));
 	// Start listening for events
@@ -73,6 +76,7 @@ void Player::startPick()
 
 void Player::endPick()
 {
+	m_pickWidget->hide();
 	// Remove our crosshair
 	QApplication::restoreOverrideCursor();
 	// Remove our hook
@@ -116,6 +120,8 @@ Player::Player(QIODevice* device)
 : QObject()
 , m_processingEvents(false)
 {
+	m_pickWidget = new QLabel(tr("Click on a widget to retrieve its properties."));
+
 	setDevice(device);
 	connect(
 		device,
@@ -182,6 +188,7 @@ void Player::processEvents()
 
 void Player::handleElement()
 {
+	qDebug() << Q_FUNC_INFO << name();
 	// "Magic" events
 	if(name() == "msec")
 	{

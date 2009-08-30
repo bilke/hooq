@@ -19,6 +19,8 @@ class ScriptEditor : public QMainWindow, public QScriptEngineAgent
 		virtual void positionChange(qint64 scriptId, int lineNumber, int columnNumber);
 	public slots:
 		void open(const QString& filePath);
+	signals:
+		void pickRequested();
 	private slots:
 		void save();
 		void revert();

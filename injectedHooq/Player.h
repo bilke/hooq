@@ -25,6 +25,8 @@
 #include <QString>
 #include <QXmlStreamReader>
 
+class QWidget;
+
 namespace Hooq
 {
 class Event;
@@ -66,6 +68,8 @@ class Player: public QObject, private QXmlStreamReader
 		bool m_processingEvents;
 
 		QQueue<Event*> m_eventQueue;
+
+		QWidget* m_pickWidget;
 };
 
 } // namespace
