@@ -17,9 +17,9 @@ void XmlPropertyDumper::dump(QObject* object, QIODevice* out)
 	QXmlStreamWriter xml(out);
 	xml.writeStartDocument();
 	xml.writeStartElement("object");
+	xml.writeAttribute("name", ObjectHookName::objectName(object));
 	xml.writeAttribute("path", ObjectHookName::objectPath(object));
 	xml.writeAttribute("class", metaObject->className());
-
 
 	for(int i = 0; i < metaObject->propertyCount(); ++i)
 	{

@@ -19,6 +19,7 @@
 */
 #include "Interpreter.h"
 
+#include "ObjectInformation.h"
 #include "RemoteObjectPrototype.h"
 #include "ScriptInterface.h"
 
@@ -241,6 +242,11 @@ void Interpreter::processSocketData()
 		if(line == "ACK")
 		{
 			setAck();
+			continue;
+		}
+		if(line == "PICKED")
+		{
+			emit objectPicked(ObjectInformation::fromXml(device()));
 			continue;
 		}
 		qDebug() << Q_FUNC_INFO << "Unknown response:" << line;

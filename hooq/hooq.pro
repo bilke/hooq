@@ -18,6 +18,7 @@ HEADERS += \
 	Interpreter.h \
 	Locations.h \
 	MainWindow.h \
+	ObjectInformation.h \
 	RemoteObjectPrototype.h \
 	ScriptEditor.h \
 	ScriptInterface.h \
@@ -33,6 +34,7 @@ SOURCES += \
 	Interpreter.cpp \
 	Locations.cpp \
 	MainWindow.cpp \
+	ObjectInformation.cpp \
 	RemoteObjectPrototype.cpp \
 	ScriptEditor.cpp \
 	ScriptInterface.cpp \

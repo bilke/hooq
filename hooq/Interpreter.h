@@ -19,6 +19,7 @@
 */
 #pragma once
 
+class ObjectInformation;
 class RemoteObjectPrototype;
 
 #include <QObject>
@@ -36,6 +37,8 @@ class Interpreter : public QObject, private QXmlStreamWriter
 		Interpreter(QObject* parent);
 		QScriptEngine* engine() const;
 		void setScriptPath(const QString& scriptPath);
+	signals:
+		void objectPicked(const ObjectInformation&);
 	public slots:
 		void run(QLocalSocket* socket);
 		void processSocketData();

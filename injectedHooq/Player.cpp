@@ -56,7 +56,7 @@ bool Player::hook(QObject* receiver, QEvent* event)
 	if(event->type() == QEvent::MouseButtonRelease)
 	{
 		Q_ASSERT(device()->isWritable());
-		device()->write("OBJECT\n");
+		device()->write("PICKED\n");
 		XmlPropertyDumper::dump(receiver, device());
 		endPick();
 		return true;

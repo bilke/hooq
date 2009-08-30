@@ -5,6 +5,8 @@
 #include <QSet>
 #include <QWidget>
 
+class ObjectInformation;
+
 class QsciScintilla;
 
 class ScriptEditor : public QMainWindow, public QScriptEngineAgent
@@ -19,6 +21,7 @@ class ScriptEditor : public QMainWindow, public QScriptEngineAgent
 		virtual void positionChange(qint64 scriptId, int lineNumber, int columnNumber);
 	public slots:
 		void open(const QString& filePath);
+		void objectPicked(const ObjectInformation&);
 	signals:
 		void pickRequested();
 	private slots:

@@ -1,4 +1,7 @@
 #include "ScriptEditor.h"
+
+#include "ObjectInformation.h"
+
 #include <Qsci/qscilexerjavascript.h>
 #include <Qsci/qsciscintilla.h>
 
@@ -64,6 +67,11 @@ ScriptEditor::ScriptEditor(QScriptEngine* engine)
 	toolBar->addSeparator();
 
 	toolBar->addAction(style()->standardIcon(QStyle::SP_FileLinkIcon), tr("Pick Property"), this, SIGNAL(pickRequested()));
+}
+
+void ScriptEditor::objectPicked(const ObjectInformation& object)
+{
+	Q_UNUSED(object);
 }
 
 void ScriptEditor::positionChange(qint64 scriptId, int lineNumber, int columnNumber)

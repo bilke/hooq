@@ -143,6 +143,13 @@ MainWindow::MainWindow(QWidget* parent)
 		SLOT(pickObject())
 	);
 
+	connect(
+		m_interpreter,
+		SIGNAL(objectPicked(ObjectInformation)),
+		m_editor,
+		SLOT(objectPicked(ObjectInformation))
+	);
+
 }
 
 void MainWindow::handleTestAction(const QModelIndex& index)
