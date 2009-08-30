@@ -2,6 +2,7 @@
 #include <Qsci/qscilexerjavascript.h>
 #include <Qsci/qsciscintilla.h>
 
+#include <QCoreApplication>
 #include <QAction>
 #include <QColor>
 #include <QDebug>
@@ -14,7 +15,9 @@
 ScriptEditor::ScriptEditor(QScriptEngine* engine)
 : QMainWindow()
 , QScriptEngineAgent(engine)
+, m_currentLine(-1)
 , m_editor(new QsciScintilla(this))
+, m_paused(false)
 {
 	engine->setAgent(this);
 	setCentralWidget(m_editor);
@@ -55,7 +58,7 @@ ScriptEditor::ScriptEditor(QScriptEngine* engine)
 
 	toolBar->addSeparator();
 
-	toolBar->addAction(style()->standardIcon(QStyle::SP_MediaPlay), tr("Run"));
+	toolBar->addAction(style()->standardIcon(QStyle::SP_MediaPlay), tr("Run"), this, SLOT(run()));
 	toolBar->addAction(style()->standardIcon(QStyle::SP_MediaStop), tr("Stop"));
 
 	toolBar->addSeparator();
@@ -67,12 +70,38 @@ void ScriptEditor::positionChange(qint64 scriptId, int lineNumber, int columnNum
 {
 	Q_UNUSED(columnNumber);
 	Q_UNUSED(scriptId);
-	if(m_breakPoints.contains(lineNumber))
+
+	if(m_currentLine != lineNumber && m_breakPoints.contains(lineNumber))
 	{
 		m_editor->markerAdd(lineNumber - 1, m_currentLineMarker);
-		//break();
+		pause();
 		m_editor->markerDeleteAll(m_currentLineMarker);
 	}
+	m_currentLine = lineNumber;
+}
+
+void ScriptEditor::pause()
+{
+	m_paused = true;
+	while(m_paused)
+	{
+		QCoreApplication::processEvents();
+	}
+}
+
+bool ScriptEditor::paused() const
+{
+	return m_paused;
+}
+
+void ScriptEditor::run()
+{
+	if(paused())
+	{
+		m_paused = false;
+		return;
+	}
+	// TODO
 }
 
 void ScriptEditor::save()

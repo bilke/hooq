@@ -13,6 +13,8 @@ class ScriptEditor : public QMainWindow, public QScriptEngineAgent
 	public:
 		ScriptEditor(QScriptEngine* engine);
 
+		bool paused() const;
+
 		// QScriptEngineAgent
 		virtual void positionChange(qint64 scriptId, int lineNumber, int columnNumber);
 	public slots:
@@ -22,11 +24,17 @@ class ScriptEditor : public QMainWindow, public QScriptEngineAgent
 		void revert();
 		void handleMarginAction(int margin, int line, Qt::KeyboardModifiers state);
 		void toggleBreakPoint(int line);
+		void run();
 	private:
+		void pause();
+
 		int m_breakPointMarker;
+		QSet<int> m_breakPoints;
+
 		int m_currentLineMarker;
+		int m_currentLine;
 		QsciScintilla* m_editor;
 		QString m_filePath;
 
-		QSet<int> m_breakPoints;
+		bool m_paused;
 };
