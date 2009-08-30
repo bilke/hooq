@@ -23,7 +23,7 @@ HEADERS += \
 	ScriptEditor.h \
 	ScriptInterface.h \
 	TestModel.h \
-	TestModelDelegate.h \
+	PushButtonDelegate.h \
 	XmlToQtScript.h \
 
 FORMS += \
@@ -39,7 +39,7 @@ SOURCES += \
 	ScriptEditor.cpp \
 	ScriptInterface.cpp \
 	TestModel.cpp \
-	TestModelDelegate.cpp \
+	PushButtonDelegate.cpp \
 	XmlToQtScript.cpp \
 	main.cpp \
 

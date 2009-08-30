@@ -24,7 +24,7 @@
 #include "Locations.h"
 #include "ScriptEditor.h"
 #include "TestModel.h"
-#include "TestModelDelegate.h"
+#include "PushButtonDelegate.h"
 #include "XmlToQtScript.h"
 
 // hooqInjector
@@ -63,7 +63,7 @@ MainWindow::MainWindow(QWidget* parent)
 	populateTestSets();
 
 	m_testList->setModel(m_testModel);
-	TestModelDelegate* delegate = new TestModelDelegate(m_testList, this);
+	PushButtonDelegate* delegate = new PushButtonDelegate(m_testList, this);
 	m_testList->setItemDelegate(delegate);
 
 	m_testList->setMouseTracking(true);
