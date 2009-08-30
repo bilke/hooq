@@ -1,16 +1,20 @@
 #pragma once
 
 #include <QMainWindow>
+#include <QScriptEngineAgent>
 #include <QSet>
 #include <QWidget>
 
 class QsciScintilla;
 
-class ScriptEditor : public QMainWindow
+class ScriptEditor : public QMainWindow, public QScriptEngineAgent
 {
 	Q_OBJECT;
 	public:
-		ScriptEditor(QWidget* parent);
+		ScriptEditor(QScriptEngine* engine);
+
+		// QScriptEngineAgent
+		virtual void positionChange(qint64 scriptId, int lineNumber, int columnNumber);
 	public slots:
 		void open(const QString& filePath);
 	private slots:

@@ -28,13 +28,13 @@ class QKeySequence;
 class QPoint;
 class QLocalSocket;
 class QScriptEngine;
-class QScriptEngineDebugger;
  
 class Interpreter : public QObject, private QXmlStreamWriter
 {
 	Q_OBJECT;
 	public:
 		Interpreter(QObject* parent);
+		QScriptEngine* engine() const;
 		void setScriptPath(const QString& scriptPath);
 	public slots:
 		void run(QLocalSocket* socket);
@@ -60,7 +60,6 @@ class Interpreter : public QObject, private QXmlStreamWriter
 
 		int m_pendingAcks;
 
-		QScriptEngineDebugger* m_debugger;
 		QScriptEngine* m_engine;
 		QString m_script;
 		QString m_scriptPath;

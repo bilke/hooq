@@ -24,6 +24,7 @@
 #include <QMainWindow>
 
 class Interpreter;
+class ScriptEditor;
 class TestModel;
 
 class QMenu;
@@ -62,6 +63,8 @@ class MainWindow : public QMainWindow, private Ui::MainWindow
 		void populateTestSets();
 
 		QMenu* m_contextMenu;
+
+		ScriptEditor* m_editor;
 
 		Hooq::Injector* m_hooqPlayInjector;
 		Hooq::Injector* m_hooqRecordInjector;

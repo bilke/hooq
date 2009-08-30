@@ -6,13 +6,16 @@
 #include <QDebug>
 #include <QFile>
 #include <QFont>
+#include <QScriptEngine>
 #include <QStyle>
 #include <QToolBar>
 
-ScriptEditor::ScriptEditor(QWidget* parent)
-: QMainWindow(parent)
+ScriptEditor::ScriptEditor(QScriptEngine* engine)
+: QMainWindow()
+, QScriptEngineAgent(engine)
 , m_editor(new QsciScintilla(this))
 {
+	engine->setAgent(this);
 	setCentralWidget(m_editor);
 
 	QFont codeFont(font());
@@ -53,6 +56,16 @@ ScriptEditor::ScriptEditor(QWidget* parent)
 	toolBar->addAction(style()->standardIcon(QStyle::SP_FileLinkIcon), tr("Pick Property"));
 }
 
+void ScriptEditor::positionChange(qint64 scriptId, int lineNumber, int columnNumber)
+{
+	Q_UNUSED(columnNumber);
+	Q_UNUSED(scriptId);
+	if(m_breakPoints.contains(lineNumber))
+	{
+		qDebug() << "HIT BREAKPOINT" << lineNumber << columnNumber;
+	}
+}
+
 void ScriptEditor::save()
 {
 	QFile file(m_filePath);
@@ -70,19 +83,19 @@ void ScriptEditor::handleMarginAction(int margin, int line, Qt::KeyboardModifier
 {
 	Q_UNUSED(margin);
 	Q_UNUSED(state);
-	toggleBreakPoint(line);
+	toggleBreakPoint(line + 1);
 }
 
 void ScriptEditor::toggleBreakPoint(int line)
 {
 	if(m_breakPoints.contains(line))
 	{
-		m_editor->markerDelete(line, m_breakPointMarker);
+		m_editor->markerDelete(line - 1, m_breakPointMarker);
 		m_breakPoints.remove(line);
 	}
 	else
 	{
-		m_editor->markerAdd(line, m_breakPointMarker);
+		m_editor->markerAdd(line - 1, m_breakPointMarker);
 		m_breakPoints.insert(line);
 	}
 }

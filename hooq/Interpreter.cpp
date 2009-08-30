@@ -29,19 +29,16 @@
 #include <QLocalSocket>
 #include <QPoint>
 #include <QScriptEngine>
-#include <QScriptEngineDebugger>
 #include <QStringList>
 
 Interpreter::Interpreter(QObject* parent)
 : QObject(parent)
 , m_pendingAcks(0)
-, m_debugger(new QScriptEngineDebugger(this))
 , m_engine(new QScriptEngine(this))
 {
 	importExtension("qt.core");
 	importExtension("qt.gui");
 
-	m_debugger->attachTo(m_engine);
 	m_engine->globalObject().setProperty(
 		"usleep",
 		m_engine->newFunction(ScriptInterface::usleep, 1)
@@ -62,6 +59,11 @@ Interpreter::Interpreter(QObject* parent)
 		SIGNAL(newRemoteObject(RemoteObjectPrototype*)),
 		SLOT(connectRemoteObject(RemoteObjectPrototype*))
 	);
+}
+
+QScriptEngine* Interpreter::engine() const
+{
+	return m_engine;
 }
 
 void Interpreter::connectRemoteObject(RemoteObjectPrototype* object)

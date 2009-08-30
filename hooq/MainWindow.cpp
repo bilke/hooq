@@ -47,6 +47,7 @@
 
 MainWindow::MainWindow(QWidget* parent)
 : QMainWindow(parent)
+, m_editor(0)
 , m_hooqPlayInjector(new PlatformInjector(this))
 , m_hooqRecordInjector(new PlatformInjector(this))
 , m_hooqLogger(0)
@@ -55,6 +56,7 @@ MainWindow::MainWindow(QWidget* parent)
 , m_testModel(new TestModel(this))
 , m_xmlDump(0)
 {
+	m_editor = new ScriptEditor(m_interpreter->engine());
 	setupUi(this);
 	setStatusBar(0);
 
@@ -156,8 +158,7 @@ void MainWindow::handleTestAction(const QModelIndex& index)
 
 void MainWindow::editTestScript(const QModelIndex& index)
 {
-	ScriptEditor* editor = new ScriptEditor(this);
-	editor->setWindowTitle(
+	m_editor->setWindowTitle(
 		QString(
 			"%3 - %2 - %1"
 		).arg(
@@ -168,8 +169,8 @@ void MainWindow::editTestScript(const QModelIndex& index)
 			index.data(TestModel::ScriptNameRole).toString()
 		)
 	);
-	editor->open(index.data(TestModel::FilePathRole).toString());
-	editor->show();
+	m_editor->open(index.data(TestModel::FilePathRole).toString());
+	m_editor->show();
 }
 
 void MainWindow::runTestScript(const QModelIndex& index)
