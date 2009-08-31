@@ -15,7 +15,7 @@ class ScriptEditor : public QMainWindow, public QScriptEngineAgent
 	public:
 		ScriptEditor(QScriptEngine* engine);
 
-		bool paused() const;
+		bool isPaused() const;
 
 		// QScriptEngineAgent
 		virtual void exceptionThrow(qint64 scriptId, const QScriptValue& exception, bool hasHandler);
@@ -39,6 +39,7 @@ class ScriptEditor : public QMainWindow, public QScriptEngineAgent
 		void insertLine(const QString& text);
 		QString escapeValue(const QVariant& value);
 		void pause();
+		void setPaused(bool paused = true);
 
 		int m_breakPointMarker;
 		QSet<int> m_breakPoints;

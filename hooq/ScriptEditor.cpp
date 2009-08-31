@@ -71,6 +71,16 @@ ScriptEditor::ScriptEditor(QScriptEngine* engine)
 	toolBar->addAction(style()->standardIcon(QStyle::SP_FileLinkIcon), tr("Pick Property"), this, SIGNAL(pickRequested()));
 }
 
+void ScriptEditor::setPaused(bool paused)
+{
+	m_paused = paused;
+}
+
+bool ScriptEditor::isPaused() const
+{
+	return m_paused;
+}
+
 void ScriptEditor::insertPropertyFetch(const QString& objectPath, const QString& property)
 {
 	insertLine(
@@ -169,23 +179,18 @@ void ScriptEditor::positionChange(qint64 scriptId, int lineNumber, int columnNum
 
 void ScriptEditor::pause()
 {
-	m_paused = true;
-	while(m_paused)
+	setPaused();
+	while(isPaused())
 	{
 		QCoreApplication::processEvents();
 	}
 }
 
-bool ScriptEditor::paused() const
-{
-	return m_paused;
-}
-
 void ScriptEditor::run()
 {
-	if(paused())
+	if(isPaused())
 	{
-		m_paused = false;
+		setPaused(false);
 		return;
 	}
 	// TODO
