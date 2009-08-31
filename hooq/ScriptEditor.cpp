@@ -12,6 +12,7 @@
 #include <QDebug>
 #include <QFile>
 #include <QFont>
+#include <QMessageBox>
 #include <QScriptEngine>
 #include <QStyle>
 #include <QToolBar>
@@ -134,6 +135,26 @@ void ScriptEditor::objectPicked(const ObjectInformation& object)
 	dialog->show();
 }
 
+void ScriptEditor::exceptionThrow(qint64 scriptId, const QScriptValue& exception, bool hasHandler)
+{
+	Q_UNUSED(scriptId);
+	if(!hasHandler)
+	{
+		QMessageBox::information(
+			this,
+			tr("Uncaught exception"),
+			tr("Value: %1\nBacktrace:\n%2").arg(exception.toString()).arg(engine()->uncaughtExceptionBacktrace().join("\n"))
+		);
+	}
+}
+
+void ScriptEditor::pauseOnLine(int lineNumber)
+{
+	m_editor->markerAdd(lineNumber - 1, m_currentLineMarker);
+	pause();
+	m_editor->markerDeleteAll(m_currentLineMarker);
+}
+
 void ScriptEditor::positionChange(qint64 scriptId, int lineNumber, int columnNumber)
 {
 	Q_UNUSED(columnNumber);
@@ -141,9 +162,7 @@ void ScriptEditor::positionChange(qint64 scriptId, int lineNumber, int columnNum
 
 	if(m_currentLine != lineNumber && m_breakPoints.contains(lineNumber))
 	{
-		m_editor->markerAdd(lineNumber - 1, m_currentLineMarker);
-		pause();
-		m_editor->markerDeleteAll(m_currentLineMarker);
+		pauseOnLine(lineNumber);
 	}
 	m_currentLine = lineNumber;
 }

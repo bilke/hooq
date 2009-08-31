@@ -18,6 +18,7 @@ class ScriptEditor : public QMainWindow, public QScriptEngineAgent
 		bool paused() const;
 
 		// QScriptEngineAgent
+		virtual void exceptionThrow(qint64 scriptId, const QScriptValue& exception, bool hasHandler);
 		virtual void positionChange(qint64 scriptId, int lineNumber, int columnNumber);
 	public slots:
 		void open(const QString& filePath);
@@ -34,6 +35,7 @@ class ScriptEditor : public QMainWindow, public QScriptEngineAgent
 		void insertPropertyFetch(const QString& objectPath, const QString& property);
 		void insertPropertyAssert(const QString& objectPath, const QString& property, const QVariant& value);
 	private:
+		void pauseOnLine(int lineNumber);
 		void insertLine(const QString& text);
 		QString escapeValue(const QVariant& value);
 		void pause();
