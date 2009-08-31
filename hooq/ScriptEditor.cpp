@@ -1,6 +1,7 @@
 #include "ScriptEditor.h"
 
 #include "ObjectInformation.h"
+#include "PropertyDialog.h"
 
 #include <Qsci/qscilexerjavascript.h>
 #include <Qsci/qsciscintilla.h>
@@ -71,7 +72,8 @@ ScriptEditor::ScriptEditor(QScriptEngine* engine)
 
 void ScriptEditor::objectPicked(const ObjectInformation& object)
 {
-	Q_UNUSED(object);
+	PropertyDialog* dialog = new PropertyDialog(this);
+	dialog->show(object);
 }
 
 void ScriptEditor::positionChange(qint64 scriptId, int lineNumber, int columnNumber)

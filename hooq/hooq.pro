@@ -19,11 +19,13 @@ HEADERS += \
 	Locations.h \
 	MainWindow.h \
 	ObjectInformation.h \
+	PropertyDialog.h \
 	RemoteObjectPrototype.h \
 	ScriptEditor.h \
 	ScriptInterface.h \
 	TestModel.h \
 	PushButtonDelegate.h \
+	VariantMapModel.h \
 	XmlToQtScript.h \
 
 FORMS += \
@@ -35,11 +37,13 @@ SOURCES += \
 	Locations.cpp \
 	MainWindow.cpp \
 	ObjectInformation.cpp \
+	PropertyDialog.cpp \
 	RemoteObjectPrototype.cpp \
 	ScriptEditor.cpp \
 	ScriptInterface.cpp \
 	TestModel.cpp \
 	PushButtonDelegate.cpp \
+	VariantMapModel.cpp \
 	XmlToQtScript.cpp \
 	main.cpp \
 
