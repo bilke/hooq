@@ -1,5 +1,8 @@
 #include "VariantMapModel.h"
 
+#include <QApplication>
+#include <QFontMetrics>
+#include <QSize>
 #include <QStringList>
 
 VariantMapModel::VariantMapModel(const QVariantMap& map, QObject* parent)
@@ -41,22 +44,46 @@ QVariant VariantMapModel::headerData(int section, Qt::Orientation orientation, i
 		case 3:
 			return tr("Compare");
 	}
+	return QVariant();
 }
 
 QVariant VariantMapModel::data(const QModelIndex& index, int role) const
 {
-	if(role != Qt::DisplayRole || !index.isValid())
+	if(!index.isValid())
 	{
 		return QVariant();
 	}
 	const QString key = m_map.keys().at(index.row());
-	switch(index.column())
+	switch(role)
 	{
-		case 0:
+		case Qt::DisplayRole:
+			switch(index.column())
+			{
+				case 0:
+					return key;
+				case 1:
+					return m_map.value(key).toString();
+				default:
+					return QVariant();
+			}
+			break;
+		case Qt::SizeHintRole:
+		{
+			QFontMetrics metrics(QApplication::fontMetrics());
+			switch(index.column())
+			{
+				case 0:
+					return metrics.size(0, key);
+				case 1:
+					return metrics.size(0, m_map.value(key).toString());
+				default:
+					return QSize(32, 32);
+			}
+		}
+		case PropertyNameRole:
 			return key;
-		case 1:
-			return m_map.value(key).toString();
-		default:
-			return QVariant();
+		case PropertyValueRole:
+			return m_map.value(key);
 	}
+	return QVariant();
 }

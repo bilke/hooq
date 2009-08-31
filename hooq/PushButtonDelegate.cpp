@@ -28,6 +28,7 @@
 PushButtonDelegate::PushButtonDelegate(QAbstractItemView* view, QObject* parent)
 : QStyledItemDelegate(parent)
 {
+	view->setMouseTracking(true);
 	// All of these connections are required to get the fake push buttons redrawn every time they need to be, and drawn in the proper state
 	connect(
 		view,

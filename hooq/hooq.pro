@@ -30,6 +30,7 @@ HEADERS += \
 
 FORMS += \
 	MainWindow.ui \
+	PropertyDialog.ui \
 
 SOURCES += \
 	EnumConverter.cpp \

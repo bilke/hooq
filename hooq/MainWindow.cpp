@@ -70,8 +70,6 @@ MainWindow::MainWindow(QWidget* parent)
 	delegate->addButton(2, QApplication::style()->standardIcon(QStyle::SP_FileIcon));
 	m_testList->setItemDelegate(delegate);
 
-	m_testList->setMouseTracking(true);
-
 	m_testList->header()->setResizeMode(0, QHeaderView::Stretch);
 	m_testList->header()->setResizeMode(1, QHeaderView::Fixed);
 	m_testList->header()->setResizeMode(2, QHeaderView::Fixed);

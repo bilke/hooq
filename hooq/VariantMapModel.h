@@ -7,6 +7,11 @@ class VariantMapModel : public QAbstractTableModel
 {
 	Q_OBJECT;
 	public:
+		enum DataRole
+		{
+			PropertyNameRole = Qt::UserRole,
+			PropertyValueRole
+		};
 		VariantMapModel(const QVariantMap& map, QObject* parent);
 
 		int columnCount(const QModelIndex& index = QModelIndex()) const;

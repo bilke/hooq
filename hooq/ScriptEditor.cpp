@@ -72,8 +72,8 @@ ScriptEditor::ScriptEditor(QScriptEngine* engine)
 
 void ScriptEditor::objectPicked(const ObjectInformation& object)
 {
-	PropertyDialog* dialog = new PropertyDialog(this);
-	dialog->show(object);
+	PropertyDialog* dialog = new PropertyDialog(object, this);
+	dialog->show();
 }
 
 void ScriptEditor::positionChange(qint64 scriptId, int lineNumber, int columnNumber)

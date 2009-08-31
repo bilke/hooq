@@ -1,26 +1,26 @@
 #pragma once
 
+#include "ui_PropertyDialog.h"
+
 #include <QDialog>
 
 class ObjectInformation;
 class VariantMapModel;
 
-class QAbstractItemView;
+class QTreeView;
 class QModelIndex;
 class QVariant;
 
-class PropertyDialog : public QDialog
+class PropertyDialog : public QDialog, private Ui::PropertyDialog
 {
 	Q_OBJECT
 	public:
-		PropertyDialog(QWidget* parent);
-		void show(const ObjectInformation&);
+		PropertyDialog(const ObjectInformation&, QWidget* parent);
 	signals:
 		void fetchRequested(const QString& path, const QString& property);
 		void compareRequested(const QString& path, const QString& property, const QVariant& value);
 	private:
 		void handleClick(const QModelIndex& index);
 
-		VariantMapModel* m_model;
-		QAbstractItemView* m_view;
+		QString m_path;
 };
