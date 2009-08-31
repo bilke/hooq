@@ -207,6 +207,7 @@ void ScriptEditor::exceptionThrow(qint64 scriptId, const QScriptValue& exception
 		m_backtraceWidget->setWidget(widget);
 		addDockWidget(Qt::BottomDockWidgetArea, m_backtraceWidget);
 		markLine(QScriptContextInfo(engine()->currentContext()->parentContext()).lineNumber());
+		updateActionStates();
 	}
 }
 
