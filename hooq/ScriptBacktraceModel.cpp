@@ -21,7 +21,7 @@ ScriptBacktraceModel::ScriptBacktraceModel(QScriptContext* context, QObject* par
 int ScriptBacktraceModel::columnCount(const QModelIndex& index) const
 {
 	Q_UNUSED(index);
-	return 3;
+	return 4;
 }
 
 int ScriptBacktraceModel::rowCount(const QModelIndex& index) const

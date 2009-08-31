@@ -22,7 +22,6 @@ class ScriptBacktraceModel : public QAbstractTableModel
 			FunctionColumn,
 			LineNumberColumn,
 			ColumnNumberColumn,
-			// DISABLED:
 			FileNameColumn
 		};
 		QStringList m_functions;

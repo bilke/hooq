@@ -10,6 +10,7 @@ class ObjectInformation;
 class QsciScintilla;
 
 class QDockWidget;
+class QLabel;
 
 class ScriptEditor : public QMainWindow, public QScriptEngineAgent
 {
@@ -42,6 +43,8 @@ class ScriptEditor : public QMainWindow, public QScriptEngineAgent
 		void setupActionShortcuts();
 		void setupMenuBar();
 		void updateActionStates();
+		void markLine(int lineNumber);
+		void clearMark();
 		void pauseOnLine(int lineNumber);
 		void insertLine(const QString& text);
 		QString escapeValue(const QVariant& value);
@@ -49,6 +52,8 @@ class ScriptEditor : public QMainWindow, public QScriptEngineAgent
 		void setPaused(bool paused = true);
 
 		QDockWidget* m_backtraceWidget;
+		QDockWidget* m_errorWidget;
+		QLabel* m_errorLabel;
 
 		int m_breakPointMarker;
 		QSet<int> m_breakPoints;

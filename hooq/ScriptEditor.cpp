@@ -7,17 +7,20 @@
 #include <Qsci/qscilexerjavascript.h>
 #include <Qsci/qsciscintilla.h>
 
-#include <QCoreApplication>
 #include <QAction>
 #include <QColor>
+#include <QCoreApplication>
 #include <QDebug>
 #include <QDockWidget>
 #include <QFile>
 #include <QFont>
 #include <QKeySequence>
+#include <QLabel>
 #include <QMenu>
 #include <QMenuBar>
 #include <QMessageBox>
+#include <QScriptContext>
+#include <QScriptContextInfo>
 #include <QScriptEngine>
 #include <QStyle>
 #include <QToolBar>
@@ -26,10 +29,18 @@ ScriptEditor::ScriptEditor(QScriptEngine* engine)
 : QMainWindow()
 , QScriptEngineAgent(engine)
 , m_backtraceWidget(0)
+, m_errorWidget(new QDockWidget(tr("Error"), this))
+, m_errorLabel(new QLabel(this))
 , m_currentLine(-1)
 , m_editor(new QsciScintilla(this))
 , m_paused(false)
 {
+	m_errorWidget->setWidget(m_errorLabel);
+	m_errorLabel->setFrameShape(QFrame::StyledPanel);
+	m_errorLabel->setFrameShadow(QFrame::Raised);
+	m_errorLabel->setStyleSheet("background-color: red");
+	addDockWidget(Qt::TopDockWidgetArea, m_errorWidget);
+	m_errorWidget->hide();
 	engine->setAgent(this);
 	setCentralWidget(m_editor);
 
@@ -186,21 +197,35 @@ void ScriptEditor::exceptionThrow(qint64 scriptId, const QScriptValue& exception
 	Q_UNUSED(scriptId);
 	if(!hasHandler)
 	{
-		Q_UNUSED(exception); // FIXME
+		m_errorLabel->setText(
+			tr("Uncaught exception: %1").arg(exception.toString())
+		);
+		m_errorWidget->show();
 		delete m_backtraceWidget;
-		QWidget* widget = new BacktraceWidget(engine()->currentContext(), this);
+		QWidget* widget = new BacktraceWidget(engine()->currentContext()->parentContext(), this);
 		m_backtraceWidget = new QDockWidget(tr("Backtrace"), this);
 		m_backtraceWidget->setWidget(widget);
 		addDockWidget(Qt::BottomDockWidgetArea, m_backtraceWidget);
+		markLine(QScriptContextInfo(engine()->currentContext()->parentContext()).lineNumber());
 	}
+}
+
+void ScriptEditor::markLine(int lineNumber)
+{
+	m_editor->markerAdd(lineNumber - 1, m_currentLineMarker);
+}
+
+void ScriptEditor::clearMark()
+{
+	m_editor->markerDeleteAll(m_currentLineMarker);
 }
 
 void ScriptEditor::pauseOnLine(int lineNumber)
 {
 	updateActionStates();
-	m_editor->markerAdd(lineNumber - 1, m_currentLineMarker);
+	markLine(lineNumber);
 	pause();
-	m_editor->markerDeleteAll(m_currentLineMarker);
+	clearMark();
 }
 
 void ScriptEditor::positionChange(qint64 scriptId, int lineNumber, int columnNumber)
