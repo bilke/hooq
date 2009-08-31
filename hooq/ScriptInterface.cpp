@@ -30,6 +30,17 @@ ScriptInterface::ScriptInterface()
 {
 }
 
+QScriptValue ScriptInterface::assert(QScriptContext* context, QScriptEngine* engine)
+{
+	Q_UNUSED(engine);
+	const bool success = context->argument(0).toBool();
+	if(!success)
+	{
+		return context->throwError(tr("Assertion failed."));
+	}
+	return QScriptValue();
+}
+
 ScriptInterface* ScriptInterface::instance()
 {
 	if(!m_instance)

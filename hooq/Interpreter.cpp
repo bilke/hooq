@@ -48,6 +48,10 @@ Interpreter::Interpreter(QObject* parent)
 		"objectFromPath",
 		m_engine->newFunction(ScriptInterface::objectFromPath, 1)
 	);
+	m_engine->globalObject().setProperty(
+		"assert",
+		m_engine->newFunction(ScriptInterface::assert, 1)
+	);
 
 	connect(
 		ScriptInterface::instance(),

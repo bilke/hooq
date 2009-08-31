@@ -33,6 +33,7 @@ class ScriptInterface : public QObject
 
 		static QScriptValue usleep(QScriptContext*, QScriptEngine*);
 		static QScriptValue objectFromPath(QScriptContext*, QScriptEngine*);
+		static QScriptValue assert(QScriptContext*, QScriptEngine*);
 	signals:
 		void usleep(int msec);
 		void newRemoteObject(RemoteObjectPrototype*);
