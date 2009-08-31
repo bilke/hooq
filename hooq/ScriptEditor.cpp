@@ -58,17 +58,18 @@ ScriptEditor::ScriptEditor(QScriptEngine* engine)
 	QToolBar* toolBar = addToolBar(tr("Toolbar"));
 	toolBar->setMovable(false);
 
-	toolBar->addAction(style()->standardIcon(QStyle::SP_DialogSaveButton), tr("Save"), this, SLOT(save()));
-	toolBar->addAction(style()->standardIcon(QStyle::SP_DialogDiscardButton), tr("Discard Changes"), this, SLOT(revert()));
+	m_saveAction = toolBar->addAction(style()->standardIcon(QStyle::SP_DialogSaveButton), tr("Save"), this, SLOT(save()));
+	m_discardAction = toolBar->addAction(style()->standardIcon(QStyle::SP_DialogDiscardButton), tr("Discard Changes"), this, SLOT(revert()));
 
 	toolBar->addSeparator();
 
-	toolBar->addAction(style()->standardIcon(QStyle::SP_MediaPlay), tr("Run"), this, SLOT(run()));
-	toolBar->addAction(style()->standardIcon(QStyle::SP_MediaStop), tr("Stop"));
+	m_runAction = toolBar->addAction(style()->standardIcon(QStyle::SP_MediaPlay), tr("Run"), this, SLOT(run()));
+	m_stopAction = toolBar->addAction(style()->standardIcon(QStyle::SP_MediaStop), tr("Stop"), this, SLOT(stop()));
 
 	toolBar->addSeparator();
 
-	toolBar->addAction(style()->standardIcon(QStyle::SP_FileLinkIcon), tr("Pick Property"), this, SIGNAL(pickRequested()));
+	m_pickAction = toolBar->addAction(style()->standardIcon(QStyle::SP_FileLinkIcon), tr("Pick Property"), this, SIGNAL(pickRequested()));
+	updateActionStates();
 }
 
 void ScriptEditor::setPaused(bool paused)
@@ -92,6 +93,12 @@ void ScriptEditor::insertPropertyFetch(const QString& objectPath, const QString&
 			property
 		)
 	);
+}
+
+void ScriptEditor::scriptUnload(qint64 scriptId)
+{
+	Q_UNUSED(scriptId);
+	updateActionStates();
 }
 
 void ScriptEditor::insertPropertyAssert(const QString& objectPath, const QString& property, const QVariant& value)
@@ -160,6 +167,7 @@ void ScriptEditor::exceptionThrow(qint64 scriptId, const QScriptValue& exception
 
 void ScriptEditor::pauseOnLine(int lineNumber)
 {
+	updateActionStates();
 	m_editor->markerAdd(lineNumber - 1, m_currentLineMarker);
 	pause();
 	m_editor->markerDeleteAll(m_currentLineMarker);
@@ -194,6 +202,19 @@ void ScriptEditor::run()
 		return;
 	}
 	// TODO
+}
+
+void ScriptEditor::stop()
+{
+	engine()->abortEvaluation();
+	setPaused(false);
+	updateActionStates();
+}
+
+void ScriptEditor::updateActionStates()
+{
+	m_stopAction->setEnabled(engine()->isEvaluating());
+	m_pickAction->setEnabled(engine()->isEvaluating());
 }
 
 void ScriptEditor::save()

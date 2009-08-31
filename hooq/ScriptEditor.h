@@ -20,6 +20,7 @@ class ScriptEditor : public QMainWindow, public QScriptEngineAgent
 		// QScriptEngineAgent
 		virtual void exceptionThrow(qint64 scriptId, const QScriptValue& exception, bool hasHandler);
 		virtual void positionChange(qint64 scriptId, int lineNumber, int columnNumber);
+		virtual void scriptUnload(qint64 scriptId);
 	public slots:
 		void open(const QString& filePath);
 		void objectPicked(const ObjectInformation&);
@@ -28,6 +29,7 @@ class ScriptEditor : public QMainWindow, public QScriptEngineAgent
 	private slots:
 		void save();
 		void revert();
+		void stop();
 		void handleMarginAction(int margin, int line, Qt::KeyboardModifiers state);
 		void toggleBreakPoint(int line);
 		void run();
@@ -35,6 +37,7 @@ class ScriptEditor : public QMainWindow, public QScriptEngineAgent
 		void insertPropertyFetch(const QString& objectPath, const QString& property);
 		void insertPropertyAssert(const QString& objectPath, const QString& property, const QVariant& value);
 	private:
+		void updateActionStates();
 		void pauseOnLine(int lineNumber);
 		void insertLine(const QString& text);
 		QString escapeValue(const QVariant& value);
@@ -48,6 +51,13 @@ class ScriptEditor : public QMainWindow, public QScriptEngineAgent
 		int m_currentLine;
 		QsciScintilla* m_editor;
 		QString m_filePath;
+		
+		QAction* m_saveAction;
+		QAction* m_discardAction;
+
+		QAction* m_runAction;
+		QAction* m_stopAction;
+		QAction* m_pickAction;
 
 		bool m_paused;
 };
