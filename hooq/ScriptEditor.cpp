@@ -70,9 +70,67 @@ ScriptEditor::ScriptEditor(QScriptEngine* engine)
 	toolBar->addAction(style()->standardIcon(QStyle::SP_FileLinkIcon), tr("Pick Property"), this, SIGNAL(pickRequested()));
 }
 
+void ScriptEditor::insertPropertyFetch(const QString& objectPath, const QString& property)
+{
+	insertLine(
+		QString(
+			"objectFromPath(\"%1\")->property(\"%2\")\n"
+		).arg(
+			objectPath
+		).arg(
+			property
+		)
+	);
+}
+
+void ScriptEditor::insertPropertyAssert(const QString& objectPath, const QString& property, const QVariant& value)
+{
+	insertLine(
+		QString(
+			"assert(objectFromPath(\"%1\")->property(\"%2\") == %3);\n"
+		).arg(
+			objectPath
+		).arg(
+			property
+		).arg(
+			escapeValue(value)
+		)
+	);
+}
+
+void ScriptEditor::insertLine(const QString& text)
+{
+	m_editor->insertAt(text, m_currentLine, 0);
+}
+
+QString ScriptEditor::escapeValue(const QVariant& value)
+{
+	switch(value.type())
+	{
+		case QVariant::Bool:
+			return value.toBool() ? "true" : "false";
+		case QVariant::Int:
+			return QString::number(value.toInt());
+		case QVariant::String:
+			return QString("\"%1\"").arg(value.toString().replace("\\", "\\\\").replace("\"", "\\\""));
+		default:
+			return QString();
+	}
+}
+
 void ScriptEditor::objectPicked(const ObjectInformation& object)
 {
 	PropertyDialog* dialog = new PropertyDialog(object, this);
+	connect(
+		dialog,
+		SIGNAL(fetchRequested(QString, QString)),
+		SLOT(insertPropertyFetch(QString, QString))
+	);
+	connect(
+		dialog,
+		SIGNAL(compareRequested(QString, QString, QVariant)),
+		SLOT(insertPropertyAssert(QString, QString, QVariant))
+	);
 	dialog->show();
 }
 

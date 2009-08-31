@@ -30,7 +30,12 @@ class ScriptEditor : public QMainWindow, public QScriptEngineAgent
 		void handleMarginAction(int margin, int line, Qt::KeyboardModifiers state);
 		void toggleBreakPoint(int line);
 		void run();
+
+		void insertPropertyFetch(const QString& objectPath, const QString& property);
+		void insertPropertyAssert(const QString& objectPath, const QString& property, const QVariant& value);
 	private:
+		void insertLine(const QString& text);
+		QString escapeValue(const QVariant& value);
 		void pause();
 
 		int m_breakPointMarker;
