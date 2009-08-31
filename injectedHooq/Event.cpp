@@ -22,6 +22,21 @@
 namespace Hooq
 {
 
+DumpEvent::DumpEvent(const QString& objectPath)
+: m_objectPath(objectPath)
+{
+}
+
+Event::Type DumpEvent::type() const
+{
+	return Dump;
+}
+
+QString DumpEvent::objectPath() const
+{
+	return m_objectPath;
+}
+
 SleepEvent::SleepEvent(int msec)
 : m_msec(msec)
 {

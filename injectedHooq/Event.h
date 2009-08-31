@@ -30,12 +30,25 @@ namespace Hooq
 		public:
 			enum Type
 			{
+				Dump,
 				Object,
 				Pick,
 				Sleep
 			};
 			virtual Type type() const = 0;
 	};
+
+	class DumpEvent : public Event
+	{
+		public:
+			DumpEvent(const QString& objectPath);
+			Type type() const;
+
+			QString objectPath() const;
+		private:
+			QString m_objectPath;
+	};
+
 
 	class ObjectEvent : public Event
 	{

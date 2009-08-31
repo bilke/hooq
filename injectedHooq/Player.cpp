@@ -161,6 +161,15 @@ void Player::processEvents()
 		Event* event = m_eventQueue.dequeue();
 		switch(event->type())
 		{
+			case Event::Dump:
+			{
+				DumpEvent* e = static_cast<DumpEvent*>(event);
+				QObject* o = findObject(e->objectPath());
+				Q_ASSERT(o);
+				device()->write("DUMPED\n");
+				XmlPropertyDumper::dump(o, device());
+				break;
+			};
 			case Event::Object:
 			{
 				ObjectEvent* o = static_cast<ObjectEvent*>(event);
@@ -186,18 +195,31 @@ void Player::processEvents()
 	m_processingEvents = false;
 }
 
+void Player::postPickEvent()
+{
+	m_eventQueue.enqueue(new PickEvent());
+}
+
+void Player::postSleepEvent()
+{
+	m_eventQueue.enqueue(new SleepEvent(readElementText().toInt()));
+}
+
 void Player::handleElement()
 {
 	qDebug() << Q_FUNC_INFO << name();
 	// "Magic" events
 	if(name() == "msec")
 	{
-		m_eventQueue.enqueue(new SleepEvent(readElementText().toInt()));
+		postSleepEvent();
+	}
+	if(name() == "dump")
+	{
+		postDumpEvent();
 	}
 	if(name() == "pick")
 	{
-		m_eventQueue.enqueue(new PickEvent());
-		readElementText(); // skip to end
+		postPickEvent();
 	}
 
 	// QEvents
@@ -273,6 +295,11 @@ void Player::postMouseEvent(int type)
 		static_cast<Qt::KeyboardModifiers>(attributes().value("modifiers").toString().toInt())
 	);
 	m_eventQueue.enqueue(new ObjectEvent(attributes().value("target").toString(), event));
+}
+
+void Player::postDumpEvent()
+{
+	m_eventQueue.enqueue(new DumpEvent(attributes().value("target").toString()));
 }
 
 void Player::postWheelEvent()

@@ -57,6 +57,10 @@ class Player: public QObject, private QXmlStreamReader
 		void handleElement();
 		QObject* findObject(const QString& path);
 
+		void postDumpEvent();
+		void postPickEvent();
+		void postSleepEvent();
+
 		void postKeyEvent(int type);
 		void postMouseEvent(int type);
 		void postShortcutEvent();
