@@ -48,7 +48,11 @@ void PropertyDialog::handleClick(const QModelIndex& index)
 	{
 		case 2:
 			emit fetchRequested(m_path, key);
+			deleteLater();
+			break;
 		case 3:
 			emit compareRequested(m_path, key, value);
+			deleteLater();
+			break;
 	}
 }
