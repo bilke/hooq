@@ -9,6 +9,8 @@ class ObjectInformation;
 
 class QsciScintilla;
 
+class QDockWidget;
+
 class ScriptEditor : public QMainWindow, public QScriptEngineAgent
 {
 	Q_OBJECT;
@@ -37,12 +39,16 @@ class ScriptEditor : public QMainWindow, public QScriptEngineAgent
 		void insertPropertyFetch(const QString& objectPath, const QString& property);
 		void insertPropertyAssert(const QString& objectPath, const QString& property, const QVariant& value);
 	private:
+		void setupActionShortcuts();
+		void setupMenuBar();
 		void updateActionStates();
 		void pauseOnLine(int lineNumber);
 		void insertLine(const QString& text);
 		QString escapeValue(const QVariant& value);
 		void pause();
 		void setPaused(bool paused = true);
+
+		QDockWidget* m_backtraceWidget;
 
 		int m_breakPointMarker;
 		QSet<int> m_breakPoints;
@@ -51,6 +57,8 @@ class ScriptEditor : public QMainWindow, public QScriptEngineAgent
 		int m_currentLine;
 		QsciScintilla* m_editor;
 		QString m_filePath;
+
+		QAction* m_closeAction;
 		
 		QAction* m_saveAction;
 		QAction* m_discardAction;

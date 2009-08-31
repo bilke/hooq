@@ -1,5 +1,6 @@
 #include "ScriptEditor.h"
 
+#include "BacktraceWidget.h"
 #include "ObjectInformation.h"
 #include "PropertyDialog.h"
 
@@ -10,8 +11,12 @@
 #include <QAction>
 #include <QColor>
 #include <QDebug>
+#include <QDockWidget>
 #include <QFile>
 #include <QFont>
+#include <QKeySequence>
+#include <QMenu>
+#include <QMenuBar>
 #include <QMessageBox>
 #include <QScriptEngine>
 #include <QStyle>
@@ -20,6 +25,7 @@
 ScriptEditor::ScriptEditor(QScriptEngine* engine)
 : QMainWindow()
 , QScriptEngineAgent(engine)
+, m_backtraceWidget(0)
 , m_currentLine(-1)
 , m_editor(new QsciScintilla(this))
 , m_paused(false)
@@ -69,7 +75,30 @@ ScriptEditor::ScriptEditor(QScriptEngine* engine)
 	toolBar->addSeparator();
 
 	m_pickAction = toolBar->addAction(style()->standardIcon(QStyle::SP_FileLinkIcon), tr("Pick Property"), this, SIGNAL(pickRequested()));
+	setupMenuBar();
+	setupActionShortcuts();
 	updateActionStates();
+}
+
+void ScriptEditor::setupActionShortcuts()
+{
+	m_saveAction->setShortcut(QKeySequence::Save);
+	m_closeAction->setShortcut(QKeySequence::Close);
+}
+
+void ScriptEditor::setupMenuBar()
+{
+	QMenu* fileMenu = menuBar()->addMenu(tr("&File"));
+	fileMenu->addAction(m_saveAction);
+	fileMenu->addAction(m_discardAction);
+	fileMenu->addSeparator();
+	m_closeAction = fileMenu->addAction(tr("Close"), this, SLOT(hide()));
+
+	QMenu* toolsMenu = menuBar()->addMenu(tr("&Tools"));
+	toolsMenu->addAction(m_runAction);
+	toolsMenu->addAction(m_stopAction);
+	toolsMenu->addSeparator();
+	toolsMenu->addAction(m_pickAction);
 }
 
 void ScriptEditor::setPaused(bool paused)
@@ -157,11 +186,12 @@ void ScriptEditor::exceptionThrow(qint64 scriptId, const QScriptValue& exception
 	Q_UNUSED(scriptId);
 	if(!hasHandler)
 	{
-		QMessageBox::information(
-			this,
-			tr("Uncaught exception"),
-			tr("Value: %1\nBacktrace:\n%2").arg(exception.toString()).arg(engine()->uncaughtExceptionBacktrace().join("\n"))
-		);
+		Q_UNUSED(exception); // FIXME
+		delete m_backtraceWidget;
+		QWidget* widget = new BacktraceWidget(engine()->currentContext(), this);
+		m_backtraceWidget = new QDockWidget(tr("Backtrace"), this);
+		m_backtraceWidget->setWidget(widget);
+		addDockWidget(Qt::BottomDockWidgetArea, m_backtraceWidget);
 	}
 }
 

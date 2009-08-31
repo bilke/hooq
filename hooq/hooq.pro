@@ -14,6 +14,7 @@ QT += script network
 CONFIG += debug
 
 HEADERS += \
+	BacktraceWidget.h \
 	EnumConverter.h \
 	Interpreter.h \
 	Locations.h \
@@ -21,6 +22,7 @@ HEADERS += \
 	ObjectInformation.h \
 	PropertyDialog.h \
 	RemoteObjectPrototype.h \
+	ScriptBacktraceModel.h \
 	ScriptEditor.h \
 	ScriptInterface.h \
 	TestModel.h \
@@ -33,6 +35,7 @@ FORMS += \
 	PropertyDialog.ui \
 
 SOURCES += \
+	BacktraceWidget.cpp \
 	EnumConverter.cpp \
 	Interpreter.cpp \
 	Locations.cpp \
@@ -40,6 +43,7 @@ SOURCES += \
 	ObjectInformation.cpp \
 	PropertyDialog.cpp \
 	RemoteObjectPrototype.cpp \
+	ScriptBacktraceModel.cpp \
 	ScriptEditor.cpp \
 	ScriptInterface.cpp \
 	TestModel.cpp \
