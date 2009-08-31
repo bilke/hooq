@@ -34,6 +34,7 @@
 
 Interpreter::Interpreter(QObject* parent)
 : QObject(parent)
+, m_dumpedObject(0)
 , m_pendingAcks(0)
 , m_engine(new QScriptEngine(this))
 {
@@ -69,6 +70,20 @@ Interpreter::Interpreter(QObject* parent)
 QScriptEngine* Interpreter::engine() const
 {
 	return m_engine;
+}
+
+Interpreter::~Interpreter()
+{
+	delete m_dumpedObject;
+}
+
+void Interpreter::fetchProperty(const QString& path, const QString& name, QVariant* value)
+{
+	writeStartElement("dump");
+	writeAttribute("target", path);
+	writeEndElement();
+	waitForDumpedObject();
+	*value = m_dumpedObject->properties().value(name);
 }
 
 void Interpreter::connectRemoteObject(RemoteObjectPrototype* object)
@@ -136,6 +151,17 @@ void Interpreter::waitForAck()
 		QApplication::processEvents();
 	}
 }
+
+void Interpreter::waitForDumpedObject()
+{
+	delete m_dumpedObject;
+	m_dumpedObject = 0;
+	while(!m_dumpedObject)
+	{
+		QApplication::processEvents();
+	}
+}
+
 
 void Interpreter::pickObject()
 {
@@ -251,6 +277,11 @@ void Interpreter::processSocketData()
 		if(line == "PICKED")
 		{
 			emit objectPicked(ObjectInformation::fromXml(device()));
+			continue;
+		}
+		if(line == "DUMPED")
+		{
+			m_dumpedObject = new ObjectInformation(ObjectInformation::fromXml(device()));
 			continue;
 		}
 		qDebug() << Q_FUNC_INFO << "Unknown response:" << line;

@@ -35,6 +35,7 @@ class Interpreter : public QObject, private QXmlStreamWriter
 	Q_OBJECT;
 	public:
 		Interpreter(QObject* parent);
+		~Interpreter();
 		QScriptEngine* engine() const;
 		void setScriptPath(const QString& scriptPath);
 	signals:
@@ -53,15 +54,19 @@ class Interpreter : public QObject, private QXmlStreamWriter
 		void writeShortcutEvent(const QString& path, const QKeySequence& sequence, int id, bool ambiguous);
 		void writeSleep(int msec);
 		void writeWheelEvent(const QString& path, const QPoint& position, int delta, Qt::MouseButtons buttons, Qt::KeyboardModifiers modifiers, Qt::Orientation orientation);
+		void fetchProperty(const QString& path, const QString& name, QVariant* value);
 	private:
 		bool importExtension(const QString& extension);
 
 		bool ack() const;
 		void waitForAck();
+		void waitForDumpedObject();
+
 		void setAck(bool ack = true);
 		void writeKeyAttributes(const QString& path, int key, Qt::KeyboardModifiers modifiers, const QString& text, bool autorepeat, ushort count);
 		void writeMouseAttributes(const QString& path, const QPoint& position, Qt::MouseButton button, Qt::MouseButtons buttons, Qt::KeyboardModifiers modifiers);
 
+		ObjectInformation* m_dumpedObject;
 		int m_pendingAcks;
 
 		QScriptEngine* m_engine;
