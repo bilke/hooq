@@ -74,7 +74,7 @@ void ScriptEditor::insertPropertyFetch(const QString& objectPath, const QString&
 {
 	insertLine(
 		QString(
-			"objectFromPath(\"%1\")->property(\"%2\")\n"
+			"objectFromPath(\"%1\").property(\"%2\")\n"
 		).arg(
 			objectPath
 		).arg(
@@ -87,7 +87,7 @@ void ScriptEditor::insertPropertyAssert(const QString& objectPath, const QString
 {
 	insertLine(
 		QString(
-			"assert(objectFromPath(\"%1\")->property(\"%2\") == %3);\n"
+			"assert(objectFromPath(\"%1\").property(\"%2\") == %3);\n"
 		).arg(
 			objectPath
 		).arg(
