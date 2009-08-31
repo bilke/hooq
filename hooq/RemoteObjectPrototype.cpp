@@ -39,6 +39,13 @@ RemoteObjectPrototype::~RemoteObjectPrototype()
 {
 }
 
+QVariant RemoteObjectPrototype::property(const QString& name)
+{
+	QVariant value;
+	emit propertyRequested(path(), name, &value);
+	return value;
+}
+
 QString RemoteObjectPrototype::path() const
 {
 	return m_path;
