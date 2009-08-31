@@ -19,8 +19,8 @@ class PropertyDialog : public QDialog, private Ui::PropertyDialog
 	signals:
 		void fetchRequested(const QString& path, const QString& property);
 		void compareRequested(const QString& path, const QString& property, const QVariant& value);
-	private:
+	private slots:
 		void handleClick(const QModelIndex& index);
-
+	private:
 		QString m_path;
 };

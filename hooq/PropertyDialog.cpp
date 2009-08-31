@@ -28,4 +28,27 @@ PropertyDialog::PropertyDialog(const ObjectInformation& info, QWidget* parent)
 	m_objectLabel->setText(info.name());
 	m_typeLabel->setText(info.className());
 	m_path = info.path();
+
+	connect(
+		m_view,
+		SIGNAL(clicked(QModelIndex)),
+		SLOT(handleClick(QModelIndex))
+	);
+}
+
+void PropertyDialog::handleClick(const QModelIndex& index)
+{
+	if(!index.isValid())
+	{
+		return;
+	}
+	const QString key = index.data(VariantMapModel::PropertyNameRole).toString();
+	const QVariant value = index.data(VariantMapModel::PropertyValueRole);
+	switch(index.column())
+	{
+		case 2:
+			emit fetchRequested(m_path, key);
+		case 3:
+			emit compareRequested(m_path, key, value);
+	}
 }
