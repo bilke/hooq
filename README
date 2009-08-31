@@ -4,6 +4,11 @@ Overview:
  - Useful for macros
  - Useful for pseudo-screencasts (in a significantly bandwidth-reduced form)
 
+Requirements:
+ - Qt 4.5
+ - QScintilla
+ - The qtscriptgenerator-generated QtScript bindings
+
 Directories:
  - common: classes used in multiple places
  - hooq: GUI application for day to day use - uses hooqInjector, and generates QtScript
