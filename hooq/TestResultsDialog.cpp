@@ -55,7 +55,10 @@ TestResultsDialog::TestResultsDialog(QWidget* parent)
 	view->header()->setResizeMode(TestResultsModel::columnNumber(TestResultsModel::TestNameColumn), QHeaderView::Stretch);
 	view->header()->setResizeMode(TestResultsModel::columnNumber(TestResultsModel::TestResultColumn), QHeaderView::Fixed);
 	view->header()->setResizeMode(TestResultsModel::columnNumber(TestResultsModel::InformationColumn), QHeaderView::Fixed);
+	view->setExpandsOnDoubleClick(false);
+	view->setItemsExpandable(false);
 	view->setRootIsDecorated(false);
+	view->setUniformRowHeights(true);
 
 	connect(
 		view,
