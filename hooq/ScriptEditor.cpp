@@ -234,24 +234,24 @@ void ScriptEditor::exceptionThrow(qint64 scriptId, const QScriptValue& exception
 		}
 		Q_ASSERT(context);
 
-		m_errorLabel->setText(
-			tr("Uncaught exception: %1").arg(exception.toString())
-		);
-
-		m_errorWidget->show();
-		delete m_backtraceWidget;
-		QWidget* widget = new BacktraceWidget(context, this);
-		m_backtraceWidget = new QDockWidget(tr("Backtrace"), this);
-		m_backtraceWidget->setWidget(widget);
-		addDockWidget(Qt::BottomDockWidgetArea, m_backtraceWidget);
-		markLine(QScriptContextInfo(context).lineNumber());
-		updateActionStates();
-		emit exceptionThrown(engine()->uncaughtException().toString(), engine()->uncaughtExceptionBacktrace());
 		if(mode() == Interactive)
 		{
+			m_errorLabel->setText(
+				tr("Uncaught exception: %1").arg(exception.toString())
+			);
+
+			m_errorWidget->show();
+			delete m_backtraceWidget;
+			QWidget* widget = new BacktraceWidget(context, this);
+			m_backtraceWidget = new QDockWidget(tr("Backtrace"), this);
+			m_backtraceWidget->setWidget(widget);
+			addDockWidget(Qt::BottomDockWidgetArea, m_backtraceWidget);
+			markLine(QScriptContextInfo(context).lineNumber());
 			show();
 			raise();
 		}
+		updateActionStates();
+		emit exceptionThrown(engine()->uncaughtException().toString(), engine()->uncaughtExceptionBacktrace());
 	}
 }
 
