@@ -70,6 +70,8 @@ class Logger : public QObject
 		 */
 		static QString objectName(QObject* object);
 
+		static QString safeText(const QString&);
+
 		/** Get a dotted (DNS-style) object path.
 		 * @see objectName
 		 */

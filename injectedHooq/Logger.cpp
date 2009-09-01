@@ -162,12 +162,25 @@ void Logger::outputEvent(QObject* receiver, const char* event, const QXmlStreamA
 	m_writer.writeEndElement(); //event;
 }
 
+QString Logger::safeText(const QString& string)
+{
+	QString out;
+	Q_FOREACH(const QChar& character, string)
+	{
+		if(character.isPrint())
+		{
+			out.append(character);
+		}
+	}
+	return out;
+}
+
 QXmlStreamAttributes Logger::keyEventAttributes(QKeyEvent* event)
 {
 	QXmlStreamAttributes data;
 	data.append("key", QString::number(event->key())); // Qt::Key
 	data.append("modifiers", QString::number(event->modifiers())); // Qt::Modifiers
-	data.append("text", event->text());
+	data.append("text", safeText(event->text()));
 	data.append("isAutoRepeat", event->isAutoRepeat() ? "true" : "false");
 	data.append("count", QString::number(event->count()));
 	return data;
