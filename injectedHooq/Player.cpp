@@ -57,7 +57,15 @@ bool Player::hook(QObject* receiver, QEvent* event)
 	{
 		Q_ASSERT(device()->isWritable());
 		device()->write("PICKED\n");
-		XmlPropertyDumper::dump(receiver, device());
+		QWidget* widget = qobject_cast<QWidget*>(receiver);
+		if(widget && widget->focusProxy())
+		{
+			XmlPropertyDumper::dump(widget->focusProxy(), device());
+		}
+		else
+		{
+			XmlPropertyDumper::dump(receiver, device());
+		}
 		endPick();
 		return true;
 	}
