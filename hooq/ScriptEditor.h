@@ -16,6 +16,14 @@ class ScriptEditor : public QMainWindow, public QScriptEngineAgent
 {
 	Q_OBJECT;
 	public:
+		enum Features
+		{
+			BacktraceUi,
+			Breakpoints,
+			CurrentLineUi,
+			ErrorUi,
+			AllFeatures = ~0
+		};
 		ScriptEditor(QScriptEngine* engine);
 
 		bool isPaused() const;
@@ -27,6 +35,7 @@ class ScriptEditor : public QMainWindow, public QScriptEngineAgent
 	public slots:
 		void open(const QString& filePath);
 		void objectPicked(const ObjectInformation&);
+		void reset(int features = AllFeatures);
 	signals:
 		void pickRequested();
 	private slots:

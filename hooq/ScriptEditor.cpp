@@ -252,6 +252,8 @@ void ScriptEditor::pause()
 
 void ScriptEditor::run()
 {
+	reset(AllFeatures & ~Breakpoints);
+
 	if(isPaused())
 	{
 		setPaused(false);
@@ -265,6 +267,7 @@ void ScriptEditor::stop()
 	engine()->abortEvaluation();
 	setPaused(false);
 	updateActionStates();
+	reset(AllFeatures & ~Breakpoints);
 }
 
 void ScriptEditor::updateActionStates()
@@ -307,10 +310,30 @@ void ScriptEditor::toggleBreakPoint(int line)
 	}
 }
 
+void ScriptEditor::reset(int features)
+{
+	if(features & BacktraceUi)
+	{
+		m_backtraceWidget->hide();
+	}
+	if(features & Breakpoints)
+	{
+		m_editor->markerDeleteAll(m_breakPointMarker);
+		m_breakPoints.clear();
+	}
+	if(features & CurrentLineUi)
+	{
+		m_editor->markerDeleteAll(m_currentLineMarker);
+	}
+	if(features & ErrorUi)
+	{
+		m_errorWidget->hide();
+	}
+}
+
 void ScriptEditor::open(const QString& filePath)
 {
-	m_editor->markerDeleteAll();
-	m_breakPoints.clear();
+	reset();
 	m_filePath = filePath;
 	QFile file(filePath);
 	file.open(QIODevice::ReadOnly);
