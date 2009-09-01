@@ -39,6 +39,9 @@ class PushButtonDelegate: public QStyledItemDelegate
 		void addButton(int column, const QString& text);
 
 		virtual void paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const;
+
+		int enabledRole() const;
+		void setEnabledRole(int);
 	public slots:
 		void hoverIndex(const QModelIndex& index);
 		void depressIndex(const QModelIndex& index);
@@ -49,6 +52,8 @@ class PushButtonDelegate: public QStyledItemDelegate
 		QSet<int> m_buttonColumns;
 		QHash<int, QIcon> m_buttonIcons;
 		QHash<int, QString> m_buttonText;
+
+		int m_enabledRole;
 
 		QPersistentModelIndex m_hoverIndex;
 		QPersistentModelIndex m_pressedIndex;

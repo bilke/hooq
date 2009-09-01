@@ -27,6 +27,7 @@
 
 PushButtonDelegate::PushButtonDelegate(QAbstractItemView* view, QObject* parent)
 : QStyledItemDelegate(parent)
+, m_enabledRole(-1)
 {
 	view->setMouseTracking(true);
 	// All of these connections are required to get the fake push buttons redrawn every time they need to be, and drawn in the proper state
@@ -59,6 +60,16 @@ PushButtonDelegate::PushButtonDelegate(QAbstractItemView* view, QObject* parent)
 		view,
 		SLOT(update(QModelIndex))
 	);
+}
+
+int PushButtonDelegate::enabledRole() const
+{
+	return m_enabledRole;
+}
+
+void PushButtonDelegate::setEnabledRole(int enabledRole)
+{
+	m_enabledRole = enabledRole;
 }
 
 void PushButtonDelegate::addButton(int column, const QIcon& icon, const QString& text)
@@ -109,9 +120,23 @@ void PushButtonDelegate::initStyleOption(QStyleOptionButton* out, const QStyleOp
 	out->text= m_buttonText.value(index.column());
 	out->iconSize = QSize(16, 16);
 	out->rect = in.rect;
-	out->state |= in.state & QStyle::State_Enabled;
 
-	if(index == m_pressedIndex && in.state & QStyle::State_MouseOver)
+	bool enabled;
+	if(enabledRole() == -1)
+	{
+		enabled = true;
+	}
+	else
+	{
+		enabled = index.data(enabledRole()).toBool();
+	}
+
+	if(enabled)
+	{
+		out->state |= in.state & QStyle::State_Enabled;
+	}
+
+	if(enabled && index == m_pressedIndex && in.state & QStyle::State_MouseOver)
 	{
 		out->state |= QStyle::State_Sunken;
 	}
