@@ -25,6 +25,7 @@
 #include <Qt>
 
 #include <QCoreApplication>
+#include <QContextMenuEvent>
 #include <QDebug>
 #include <QEvent>
 #include <QKeyEvent>
@@ -119,6 +120,9 @@ void Logger::hook(QObject* receiver, QEvent* event)
 {
 	switch(event->type())
 	{
+		case QEvent::ContextMenu:
+			outputEvent(receiver, "contextMenu", contextMenuEventAttributes(static_cast<QContextMenuEvent*>(event)));
+			break;
 		case QEvent::KeyPress:
 			outputEvent(receiver, "keyPress", keyEventAttributes(static_cast<QKeyEvent*>(event)));
 			break;
@@ -175,6 +179,18 @@ QString Logger::safeText(const QString& string)
 	return out;
 }
 
+QXmlStreamAttributes Logger::contextMenuEventAttributes(QContextMenuEvent* event)
+{
+	QXmlStreamAttributes data;
+	data.append("x", QString::number(event->x()));
+	data.append("y", QString::number(event->y()));
+	data.append("globalX", QString::number(event->globalX()));
+	data.append("globalY", QString::number(event->globalY()));
+	data.append("reason", QString::number(event->reason()));
+	data.append("modifiers", QString::number(event->modifiers())); // Qt::Modifiers
+	return data;
+}
+
 QXmlStreamAttributes Logger::keyEventAttributes(QKeyEvent* event)
 {
 	QXmlStreamAttributes data;
@@ -196,6 +212,7 @@ QXmlStreamAttributes Logger::mouseEventAttributes(QMouseEvent* event)
 	data.append("modifiers", QString::number(event->modifiers())); // Qt::Modifiers
 	return data;
 }
+
 QXmlStreamAttributes Logger::wheelEventAttributes(QWheelEvent* event)
 {
 	QXmlStreamAttributes data;

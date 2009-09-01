@@ -63,6 +63,7 @@ class Player: public QObject, private QXmlStreamReader
 
 		void postKeyEvent(int type);
 		void postMouseEvent(int type);
+		void postContextMenuEvent();
 		void postShortcutEvent();
 		void postWheelEvent();
 		void sleep(int msec);

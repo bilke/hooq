@@ -25,6 +25,7 @@
 #include <QTime>
 #include <QXmlStreamWriter>
 
+class QContextMenuEvent;
 class QKeyEvent;
 class QMouseEvent;
 class QShortcutEvent;
@@ -82,9 +83,10 @@ class Logger : public QObject
 		static QXmlStreamAttributes keyEventAttributes(QKeyEvent* event);
 		/// Return a list of parameters for a mouse press/release/move event.
 		static QXmlStreamAttributes mouseEventAttributes(QMouseEvent* event);
-		/// Return a list of parameters for a moue wheel event
+		/// Return a list of parameters for a mouse wheel event
 		static QXmlStreamAttributes wheelEventAttributes(QWheelEvent* event);
-
+		/// Return a list of parameters for a context menu event
+		static QXmlStreamAttributes contextMenuEventAttributes(QContextMenuEvent* event);
 };
 
 } // namespace

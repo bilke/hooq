@@ -25,6 +25,7 @@
 #include "../common/ObjectHookName.h"
 
 #include <QApplication>
+#include <QContextMenuEvent>
 #include <QCursor>
 #include <QDebug>
 #include <QKeyEvent>
@@ -236,6 +237,10 @@ void Player::handleElement()
 	}
 
 	// QEvents
+	if(name() == "contextMenu")
+	{
+		postContextMenuEvent();
+	}
 	if(name() == "keyPress")
 	{
 		postKeyEvent(QEvent::KeyPress);
@@ -278,6 +283,24 @@ void Player::postShortcutEvent()
 		attributes().value("ambiguous").toString() == "true"
 	);
 
+	m_eventQueue.enqueue(new ObjectEvent(attributes().value("target").toString(), event));
+}
+
+void Player::postContextMenuEvent()
+{
+	QContextMenuEvent* event = new QContextMenuEvent(
+		static_cast<QContextMenuEvent::Reason>(attributes().value("reason").toString().toInt()),
+		QPoint(
+			attributes().value("x").toString().toInt(),
+			attributes().value("y").toString().toInt()
+		),
+		QPoint(
+			attributes().value("globalX").toString().toInt(),
+			attributes().value("globalY").toString().toInt()
+		),
+		static_cast<Qt::KeyboardModifiers>(attributes().value("modifiers").toString().toInt())
+	);
+	
 	m_eventQueue.enqueue(new ObjectEvent(attributes().value("target").toString(), event));
 }
 
