@@ -93,6 +93,7 @@ void GdbInjector::startProcess()
 	m_gdbStream << "sharedlibrary hooq" << endl; // load the hooq injector library so that we can call startHooq()
 	m_gdbStream << "call startHooq()" << endl; // install our plugin (which required QCoreApplication setup)
 	m_gdbStream << "continue" << endl; // run the app
+	m_gdbStream << "backtrace" << endl; // just in case (use with --spam)
 	m_gdbStream << "quit" << endl; // after the application has exited, quit gdb
 }
 

@@ -34,6 +34,7 @@ class Marshall : public QObject
 		~Marshall();
 	private slots:
 		void readCommand();
+		void reconnect();
 	private:
 		Marshall();
 

@@ -76,25 +76,46 @@ Marshall::~Marshall()
 {
 }
 
+void Marshall::reconnect()
+{
+	disconnect(m_socket, 0, 0, 0);
+	connect(
+		m_socket,
+		SIGNAL(readyRead()),
+		SLOT(readCommand())
+	);
+	readCommand();
+}
+
 void Marshall::readCommand()
 {
-	disconnect(m_socket, 0, this, 0);
 	while(m_socket->canReadLine())
 	{
 		const QByteArray command = m_socket->readLine();
 		if(command == "RECORD\n")
 		{
+			disconnect(m_socket, 0, this, 0);
 			Logger::instance(m_socket);
 			break;
 		}
 		else if(command == "PLAY\n")
 		{
-			Player::instance(m_socket);
+			connect(
+				Player::instance(m_socket),
+				SIGNAL(finished()),
+				SLOT(reconnect())
+			);
 			break;
 		}
 		else if(command == "NO MOUSE MOVES\n")
 		{
 			Logger::disableMouseMoveLogging();
+		}
+		else if(command == "DIE\n")
+		{
+			m_socket->write("ACK\n");
+			QCoreApplication::quit();
+			break;
 		}
 		else
 		{

@@ -120,6 +120,7 @@ Player::Player(QIODevice* device)
 : QObject()
 , m_processingEvents(false)
 {
+	disconnect(device, 0, 0, 0);
 	m_pickWidget = new QLabel(tr("Click on a widget to retrieve its properties."));
 
 	setDevice(device);
@@ -143,7 +144,12 @@ void Player::readNext()
 		}
 		if(tokenType() == EndDocument)
 		{
+			disconnect(device(), 0, this, 0);
+			ack();
+			setDevice(0);
+			deleteLater();
 			emit finished();
+			return;
 		}
 	}
 	processEvents();

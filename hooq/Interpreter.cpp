@@ -314,6 +314,10 @@ void Interpreter::run(QLocalSocket* socket)
 	writeEndElement(); // hooq
 	writeEndDocument();
 
+	waitForAck();
+	socket->write("DIE\n");
+	waitForAck();
+
 	emit finished();
 }
 
