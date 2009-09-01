@@ -57,7 +57,10 @@ class MainWindow : public QMainWindow, private Ui::MainWindow
 		void updateAddState();
 		void addTestSet();
 		void showTestContextMenu(const QPoint& position);
+		void runAllTests();
+		void testFinished();
 	private:
+		void waitForEndOfTest();
 		void editTestScript(const QModelIndex& index);
 		void runTestScript(const QModelIndex& index);
 		void populateTestSets();
@@ -73,5 +76,7 @@ class MainWindow : public QMainWindow, private Ui::MainWindow
 
 		Interpreter* m_interpreter;
 		TestModel* m_testModel;
+		bool m_testRunning;
+
 		QTemporaryFile* m_xmlDump;
 };

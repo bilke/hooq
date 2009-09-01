@@ -313,6 +313,8 @@ void Interpreter::run(QLocalSocket* socket)
 
 	writeEndElement(); // hooq
 	writeEndDocument();
+
+	emit finished();
 }
 
 bool Interpreter::importExtension(const QString& extension)

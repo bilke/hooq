@@ -105,7 +105,7 @@
         </layout>
        </item>
        <item>
-        <widget class="QPushButton" name="m_runAllTests">
+        <widget class="QPushButton" name="m_runAllButton">
          <property name="text">
           <string>Run All</string>
          </property>

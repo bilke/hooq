@@ -40,6 +40,7 @@ class Interpreter : public QObject, private QXmlStreamWriter
 		void setScriptPath(const QString& scriptPath);
 	signals:
 		void objectPicked(const ObjectInformation&);
+		void finished();
 	public slots:
 		void run(QLocalSocket* socket);
 		void processSocketData();

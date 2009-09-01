@@ -56,6 +56,7 @@ MainWindow::MainWindow(QWidget* parent)
 , m_hooqPlayer(0)
 , m_interpreter(new Interpreter(this))
 , m_testModel(new TestModel(this))
+, m_testRunning(false)
 , m_xmlDump(0)
 {
 	m_editor = new ScriptEditor(m_interpreter->engine());
@@ -84,6 +85,8 @@ MainWindow::MainWindow(QWidget* parent)
 	setTestSet(m_testSetEdit->currentText());
 
 	m_testList->setContextMenuPolicy(Qt::CustomContextMenu);
+
+
 	connect(
 		m_testList,
 		SIGNAL(customContextMenuRequested(QPoint)),
@@ -100,6 +103,12 @@ MainWindow::MainWindow(QWidget* parent)
 		m_applicationEdit,
 		SIGNAL(editingFinished()),
 		SLOT(saveApplicationPath())
+	);
+
+	connect(
+		m_runAllButton,
+		SIGNAL(clicked()),
+		SLOT(runAllTests())
 	);
 
 	connect(
@@ -152,6 +161,11 @@ MainWindow::MainWindow(QWidget* parent)
 		SLOT(objectPicked(ObjectInformation))
 	);
 
+	connect(
+		m_interpreter,
+		SIGNAL(finished()),
+		SLOT(testFinished())
+	);
 }
 
 void MainWindow::handleTestAction(const QModelIndex& index)
@@ -193,6 +207,10 @@ void MainWindow::editTestScript(const QModelIndex& index)
 void MainWindow::runTestScript(const QModelIndex& index)
 {
 	delete m_hooqPlayer;
+	m_testRunning = true;
+	m_testList->setEnabled(false);
+
+	statusBar()->showMessage(tr("Running test '%1'...").arg(index.data(TestModel::ScriptNameRole).toString()));
 
 	m_interpreter->setScriptPath(index.data(TestModel::FilePathRole).toString());
 
@@ -204,7 +222,20 @@ void MainWindow::runTestScript(const QModelIndex& index)
 		SLOT(run(QLocalSocket*))
 	);
 	m_hooqPlayer->start(QDir::fromNativeSeparators(m_applicationEdit->text()), m_hooqPlayInjector);
-	
+}
+
+void MainWindow::waitForEndOfTest()
+{
+	while(m_testRunning)
+	{
+		QApplication::processEvents();
+	}
+}
+
+void MainWindow::testFinished()
+{
+	m_testRunning = false;
+	m_testList->setEnabled(true);
 }
 
 void MainWindow::startRecording()
@@ -288,6 +319,23 @@ void MainWindow::populateTestSets()
 void MainWindow::runCurrentTest()
 {
 	runTestScript(m_testList->currentIndex());
+}
+
+void MainWindow::runAllTests()
+{
+	m_editor->setMode(ScriptEditor::Headless);
+	m_testList->setEnabled(false);
+
+	for(int i = 0; i < m_testModel->rowCount(); ++i)
+	{
+		QModelIndex index = m_testModel->index(i, 0);
+		m_testList->setCurrentIndex(index);
+		runCurrentTest();
+		waitForEndOfTest();
+	}
+
+	m_testList->setEnabled(true);
+	m_editor->setMode(ScriptEditor::Interactive);
 }
 
 void MainWindow::editCurrentTest()
