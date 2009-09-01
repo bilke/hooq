@@ -79,6 +79,15 @@ QVariant TestResultsModel::data(const QModelIndex& index, int role) const
 	const TestResult result = m_testResults.at(index.row());
 	switch(role)
 	{
+		case Qt::BackgroundRole:
+			if(result.passed())
+			{
+				return Qt::green;
+			}
+			else
+			{
+				return Qt::red;
+			}
 		case Qt::DisplayRole:
 			switch(index.column())
 			{
