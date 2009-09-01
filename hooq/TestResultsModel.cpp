@@ -63,8 +63,8 @@ QVariant TestResultsModel::headerData(int section, Qt::Orientation orientation, 
 			return tr("Test");
 		case TestResultColumn:
 			return tr("Result");
-		case BacktraceColumn:
-			return tr("Backtrace");
+		case InformationColumn:
+			return tr("Information");
 	}
 	return QVariant();
 }
@@ -131,6 +131,10 @@ QVariant TestResultsModel::data(const QModelIndex& index, int role) const
 			return !result.passed();
 		case BacktraceRole:
 			return result.backtrace();
+		case ErrorRole:
+			return result.error();
+		case TestNameRole:
+			return result.name();
 	}
 	return QVariant();
 }

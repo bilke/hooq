@@ -25,6 +25,7 @@ HEADERS += \
 	ScriptBacktraceModel.h \
 	ScriptEditor.h \
 	ScriptInterface.h \
+	TestFailureDialog.h \
 	TestModel.h \
 	TestResult.h \
 	TestResultsModel.h \
@@ -49,6 +50,7 @@ SOURCES += \
 	ScriptBacktraceModel.cpp \
 	ScriptEditor.cpp \
 	ScriptInterface.cpp \
+	TestFailureDialog.cpp \
 	TestModel.cpp \
 	TestResult.cpp \
 	TestResultsModel.cpp \

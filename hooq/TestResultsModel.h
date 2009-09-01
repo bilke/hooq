@@ -31,13 +31,15 @@ class TestResultsModel : public QAbstractTableModel
 		enum DataRole
 		{
 			BacktraceRole = Qt::UserRole,
-			ButtonEnabledRole
+			ButtonEnabledRole,
+			ErrorRole,
+			TestNameRole
 		};
 		enum ColumnRole
 		{
 			TestNameColumn,
 			TestResultColumn,
-			BacktraceColumn
+			InformationColumn
 		};
 
 		TestResultsModel(const QList<TestResult>& results, QObject* parent);

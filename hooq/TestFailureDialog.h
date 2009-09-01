@@ -19,25 +19,19 @@
 */
 #pragma once
 
-#include "TestResult.h"
-
 #include <QDialog>
-#include <QList>
 
-class TestFailureDialog;
+class QLabel;
+class QStringListModel;
 
-class QAbstractItemView;
-class QModelIndex;
-
-class TestResultsWindow : public QDialog
+class TestFailureDialog : public QDialog
 {
 	Q_OBJECT;
 	public:
-		TestResultsWindow(QWidget* parent);
-		void setResults(const QList<TestResult>&);
-	private slots:
-		void showInformation(const QModelIndex& index);
+		TestFailureDialog(QWidget* parent);
+		void show(const QString& testName, const QString& error, const QStringList& backtrace);
 	private:
-		TestFailureDialog* m_informationDialog;
-		QAbstractItemView* m_view;
+		QLabel* m_nameLabel;
+		QLabel* m_errorLabel;
+		QStringListModel* m_backtraceModel;
 };
