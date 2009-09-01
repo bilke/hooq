@@ -41,6 +41,21 @@ QScriptValue ScriptInterface::assert(QScriptContext* context, QScriptEngine* eng
 	return QScriptValue();
 }
 
+QScriptValue ScriptInterface::compare(QScriptContext* context, QScriptEngine* engine)
+{
+	Q_UNUSED(engine);
+	const QVariant firstValue = context->argument(0).toVariant();
+	const QVariant secondValue = context->argument(1).toVariant();
+
+	qDebug() << Q_FUNC_INFO << firstValue << secondValue << context->argument(0).toString();
+
+	if(firstValue != secondValue)
+	{
+		return context->throwError(tr("Comparison failed. Got: '%1'. Expected: '%2'").arg(firstValue.toString()).arg(secondValue.toString()));
+	}
+	return QScriptValue();
+}
+
 ScriptInterface* ScriptInterface::instance()
 {
 	if(!m_instance)

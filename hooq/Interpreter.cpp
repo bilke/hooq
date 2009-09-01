@@ -53,6 +53,10 @@ Interpreter::Interpreter(QObject* parent)
 		"assert",
 		m_engine->newFunction(ScriptInterface::assert, 1)
 	);
+	m_engine->globalObject().setProperty(
+		"compare",
+		m_engine->newFunction(ScriptInterface::compare, 2)
+	);
 
 	connect(
 		ScriptInterface::instance(),

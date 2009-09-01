@@ -145,7 +145,7 @@ void ScriptEditor::insertPropertyAssert(const QString& objectPath, const QString
 {
 	insertLine(
 		QString(
-			"assert(objectFromPath(\"%1\").property(\"%2\") == %3);\n"
+			"compare(objectFromPath(\"%1\").property(\"%2\"), %3);\n"
 		).arg(
 			objectPath
 		).arg(
