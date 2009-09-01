@@ -24,7 +24,7 @@
 #include "Locations.h"
 #include "ScriptEditor.h"
 #include "TestModel.h"
-#include "TestResultsWindow.h"
+#include "TestResultsDialog.h"
 #include "PushButtonDelegate.h"
 #include "XmlToQtScript.h"
 
@@ -58,7 +58,7 @@ MainWindow::MainWindow(QWidget* parent)
 , m_interpreter(new Interpreter(this))
 , m_testModel(new TestModel(this))
 , m_testRunning(false)
-, m_testResultsWindow(new TestResultsWindow(this))
+, m_testResultsWindow(new TestResultsDialog(this))
 , m_xmlDump(0)
 {
 	m_editor = new ScriptEditor(m_interpreter->engine());

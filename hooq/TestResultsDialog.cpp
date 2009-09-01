@@ -17,7 +17,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-#include "TestResultsWindow.h"
+#include "TestResultsDialog.h"
 
 #include "PushButtonDelegate.h"
 #include "TestFailureDialog.h"
@@ -28,7 +28,7 @@
 #include <QTreeView>
 #include <QVBoxLayout>
 
-TestResultsWindow::TestResultsWindow(QWidget* parent)
+TestResultsDialog::TestResultsDialog(QWidget* parent)
 : QDialog(parent)
 , m_informationDialog(new TestFailureDialog(this))
 {
@@ -67,7 +67,7 @@ TestResultsWindow::TestResultsWindow(QWidget* parent)
 	);
 }
 
-void TestResultsWindow::showInformation(const QModelIndex& index)
+void TestResultsDialog::showInformation(const QModelIndex& index)
 {
 	if(!index.isValid())
 	{
@@ -83,7 +83,7 @@ void TestResultsWindow::showInformation(const QModelIndex& index)
 	m_informationDialog->show(name, error, backtrace);
 }
 
-void TestResultsWindow::setResults(const QList<TestResult>& results)
+void TestResultsDialog::setResults(const QList<TestResult>& results)
 {
 	QAbstractItemModel* oldModel = m_view->model();
 	m_view->setModel(new TestResultsModel(results, this));

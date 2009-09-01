@@ -29,7 +29,7 @@ HEADERS += \
 	TestModel.h \
 	TestResult.h \
 	TestResultsModel.h \
-	TestResultsWindow.h \
+	TestResultsDialog.h \
 	PushButtonDelegate.h \
 	VariantMapModel.h \
 	XmlToQtScript.h \
@@ -54,7 +54,7 @@ SOURCES += \
 	TestModel.cpp \
 	TestResult.cpp \
 	TestResultsModel.cpp \
-	TestResultsWindow.cpp \
+	TestResultsDialog.cpp \
 	PushButtonDelegate.cpp \
 	VariantMapModel.cpp \
 	XmlToQtScript.cpp \

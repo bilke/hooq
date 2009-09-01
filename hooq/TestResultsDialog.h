@@ -29,11 +29,11 @@ class TestFailureDialog;
 class QAbstractItemView;
 class QModelIndex;
 
-class TestResultsWindow : public QDialog
+class TestResultsDialog : public QDialog
 {
 	Q_OBJECT;
 	public:
-		TestResultsWindow(QWidget* parent);
+		TestResultsDialog(QWidget* parent);
 		void setResults(const QList<TestResult>&);
 	private slots:
 		void showInformation(const QModelIndex& index);
