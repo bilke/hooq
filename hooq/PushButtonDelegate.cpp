@@ -120,6 +120,7 @@ void PushButtonDelegate::initStyleOption(QStyleOptionButton* out, const QStyleOp
 	out->text= m_buttonText.value(index.column());
 	out->iconSize = QSize(16, 16);
 	out->rect = in.rect;
+	out->state = QStyle::State_None;
 
 	bool enabled;
 	if(enabledRole() == -1)
@@ -134,6 +135,10 @@ void PushButtonDelegate::initStyleOption(QStyleOptionButton* out, const QStyleOp
 	if(enabled)
 	{
 		out->state |= in.state & QStyle::State_Enabled;
+	}
+	else
+	{
+		out->palette.setCurrentColorGroup(QPalette::Disabled);
 	}
 
 	if(enabled && index == m_pressedIndex && in.state & QStyle::State_MouseOver)
