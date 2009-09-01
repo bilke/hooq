@@ -114,7 +114,7 @@ QString XmlToQtScript::parseHooq()
 
 QString XmlToQtScript::parseMsec()
 {
-	return QString("usleep(%1);").arg(readElementText());
+	return QString("msleep(%1);").arg(readElementText());
 }
 
 QString XmlToQtScript::escapeString(const QString& _string)

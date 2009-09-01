@@ -31,11 +31,11 @@ class ScriptInterface : public QObject
 	public:
 		static ScriptInterface* instance();
 
-		static QScriptValue usleep(QScriptContext*, QScriptEngine*);
+		static QScriptValue msleep(QScriptContext*, QScriptEngine*);
 		static QScriptValue objectFromPath(QScriptContext*, QScriptEngine*);
 		static QScriptValue assert(QScriptContext*, QScriptEngine*);
 	signals:
-		void usleep(int msec);
+		void msleep(int msec);
 		void newRemoteObject(RemoteObjectPrototype*);
 	private:
 		ScriptInterface();

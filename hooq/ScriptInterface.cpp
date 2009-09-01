@@ -50,11 +50,11 @@ ScriptInterface* ScriptInterface::instance()
 	return m_instance;
 }
 
-QScriptValue ScriptInterface::usleep(QScriptContext* context, QScriptEngine* engine)
+QScriptValue ScriptInterface::msleep(QScriptContext* context, QScriptEngine* engine)
 {
 	Q_UNUSED(engine);
 	const int msec = context->argument(0).toInteger();
-	emit instance()->usleep(msec);
+	emit instance()->msleep(msec);
 	return QScriptValue();
 }
 

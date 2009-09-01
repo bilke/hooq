@@ -42,8 +42,8 @@ Interpreter::Interpreter(QObject* parent)
 	importExtension("qt.gui");
 
 	m_engine->globalObject().setProperty(
-		"usleep",
-		m_engine->newFunction(ScriptInterface::usleep, 1)
+		"msleep",
+		m_engine->newFunction(ScriptInterface::msleep, 1)
 	);
 	m_engine->globalObject().setProperty(
 		"objectFromPath",
@@ -56,7 +56,7 @@ Interpreter::Interpreter(QObject* parent)
 
 	connect(
 		ScriptInterface::instance(),
-		SIGNAL(usleep(int)),
+		SIGNAL(msleep(int)),
 		SLOT(writeSleep(int))
 	);
 
