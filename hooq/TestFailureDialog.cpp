@@ -19,6 +19,7 @@
 */
 #include "TestFailureDialog.h"
 
+#include <QDialogButtonBox>
 #include <QLabel>
 #include <QListView>
 #include <QStringListModel>
@@ -43,6 +44,15 @@ TestFailureDialog::TestFailureDialog(QWidget* parent)
 	QListView* view = new QListView(this);
 	layout->addWidget(view);
 	view->setModel(m_backtraceModel);
+
+	QDialogButtonBox* buttons = new QDialogButtonBox(QDialogButtonBox::Ok, Qt::Horizontal, this);
+	buttons->setCenterButtons(true);
+	layout->addWidget(buttons);
+	connect(
+		buttons,
+		SIGNAL(accepted()),
+		SLOT(accept())
+	);
 }
 
 void TestFailureDialog::show(const QString& name, const QString& error, const QStringList& backtrace)

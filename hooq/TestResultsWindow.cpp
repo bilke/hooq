@@ -23,6 +23,7 @@
 #include "TestFailureDialog.h"
 #include "TestResultsModel.h"
 
+#include <QDialogButtonBox>
 #include <QHeaderView>
 #include <QTreeView>
 #include <QVBoxLayout>
@@ -54,6 +55,15 @@ TestResultsWindow::TestResultsWindow(QWidget* parent)
 		view,
 		SIGNAL(clicked(QModelIndex)),
 		SLOT(showInformation(QModelIndex))
+	);
+
+	QDialogButtonBox* buttons = new QDialogButtonBox(QDialogButtonBox::Ok, Qt::Horizontal, this);
+	buttons->setCenterButtons(true);
+	layout->addWidget(buttons);
+	connect(
+		buttons,
+		SIGNAL(accepted()),
+		SLOT(accept())
 	);
 }
 
