@@ -24,6 +24,11 @@ class ScriptEditor : public QMainWindow, public QScriptEngineAgent
 			ErrorUi,
 			AllFeatures = ~0
 		};
+		enum Mode
+		{
+			Headless,
+			Interactive
+		};
 		ScriptEditor(QScriptEngine* engine);
 
 		bool isPaused() const;
@@ -32,6 +37,9 @@ class ScriptEditor : public QMainWindow, public QScriptEngineAgent
 		virtual void exceptionThrow(qint64 scriptId, const QScriptValue& exception, bool hasHandler);
 		virtual void positionChange(qint64 scriptId, int lineNumber, int columnNumber);
 		virtual void scriptUnload(qint64 scriptId);
+
+		Mode mode() const;
+		void setMode(Mode mode);
 	public slots:
 		void open(const QString& filePath);
 		void objectPicked(const ObjectInformation&);
@@ -72,6 +80,8 @@ class ScriptEditor : public QMainWindow, public QScriptEngineAgent
 		int m_currentLine;
 		QsciScintilla* m_editor;
 		QString m_filePath;
+		Mode m_mode;
+		bool m_paused;
 
 		QAction* m_closeAction;
 		
@@ -81,6 +91,4 @@ class ScriptEditor : public QMainWindow, public QScriptEngineAgent
 		QAction* m_runAction;
 		QAction* m_stopAction;
 		QAction* m_pickAction;
-
-		bool m_paused;
 };

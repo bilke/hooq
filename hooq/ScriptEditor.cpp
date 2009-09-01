@@ -33,6 +33,7 @@ ScriptEditor::ScriptEditor(QScriptEngine* engine)
 , m_errorLabel(new QLabel(this))
 , m_currentLine(-1)
 , m_editor(new QsciScintilla(this))
+, m_mode(Interactive)
 , m_paused(false)
 {
 	m_errorWidget->setWidget(m_errorLabel);
@@ -89,6 +90,16 @@ ScriptEditor::ScriptEditor(QScriptEngine* engine)
 	setupMenuBar();
 	setupActionShortcuts();
 	updateActionStates();
+}
+
+ScriptEditor::Mode ScriptEditor::mode() const
+{
+	return m_mode;
+}
+
+void ScriptEditor::setMode(Mode mode)
+{
+	m_mode = mode;
 }
 
 void ScriptEditor::setupActionShortcuts()
@@ -217,6 +228,11 @@ void ScriptEditor::exceptionThrow(qint64 scriptId, const QScriptValue& exception
 		markLine(QScriptContextInfo(context).lineNumber());
 		updateActionStates();
 		emit exceptionThrown(engine()->uncaughtException().toString(), engine()->uncaughtExceptionBacktrace());
+		if(mode() == Interactive)
+		{
+			show();
+			raise();
+		}
 	}
 }
 
@@ -243,7 +259,7 @@ void ScriptEditor::positionChange(qint64 scriptId, int lineNumber, int columnNum
 	Q_UNUSED(columnNumber);
 	Q_UNUSED(scriptId);
 
-	if(m_currentLine != lineNumber && m_breakPoints.contains(lineNumber))
+	if(m_currentLine != lineNumber && m_breakPoints.contains(lineNumber) && mode() == Interactive)
 	{
 		pauseOnLine(lineNumber);
 	}
