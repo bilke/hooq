@@ -27,6 +27,8 @@ HEADERS += \
 	ScriptInterface.h \
 	TestModel.h \
 	TestResult.h \
+	TestResultsModel.h \
+	TestResultsWindow.h \
 	PushButtonDelegate.h \
 	VariantMapModel.h \
 	XmlToQtScript.h \
@@ -49,6 +51,8 @@ SOURCES += \
 	ScriptInterface.cpp \
 	TestModel.cpp \
 	TestResult.cpp \
+	TestResultsModel.cpp \
+	TestResultsWindow.cpp \
 	PushButtonDelegate.cpp \
 	VariantMapModel.cpp \
 	XmlToQtScript.cpp \

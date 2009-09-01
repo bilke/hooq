@@ -29,6 +29,7 @@
 class Interpreter;
 class ScriptEditor;
 class TestModel;
+class TestResultsWindow;
 
 class QMenu;
 class QModelIndex;
@@ -84,6 +85,7 @@ class MainWindow : public QMainWindow, private Ui::MainWindow
 
 		TestResult m_testResult;
 		QList<TestResult> m_testResults;
+		TestResultsWindow* m_testResultsWindow;
 
 		QTemporaryFile* m_xmlDump;
 };

@@ -24,6 +24,7 @@
 #include "Locations.h"
 #include "ScriptEditor.h"
 #include "TestModel.h"
+#include "TestResultsWindow.h"
 #include "PushButtonDelegate.h"
 #include "XmlToQtScript.h"
 
@@ -57,6 +58,7 @@ MainWindow::MainWindow(QWidget* parent)
 , m_interpreter(new Interpreter(this))
 , m_testModel(new TestModel(this))
 , m_testRunning(false)
+, m_testResultsWindow(new TestResultsWindow(this))
 , m_xmlDump(0)
 {
 	m_editor = new ScriptEditor(m_interpreter->engine());
@@ -354,25 +356,8 @@ void MainWindow::runAllTests()
 	m_testList->setEnabled(true);
 	m_editor->setMode(ScriptEditor::Interactive);
 
-	qDebug() << "RESULTS:";
-	Q_FOREACH(const TestResult& testResult, m_testResults)
-	{
-		qDebug() << "----------";
-		if(testResult.passed())
-		{
-			qDebug() << qPrintable(QString("%1: PASSED").arg(testResult.name()));
-		}
-		else
-		{
-			qDebug() << qPrintable(QString("%1: FAILED").arg(testResult.name()));
-			qDebug() << "Exception:" << qPrintable(testResult.error());
-			qDebug() << "Backtrace:";
-			Q_FOREACH(const QString& line, testResult.backtrace())
-			{
-				qDebug() << "\t" << qPrintable(line);
-			}
-		}
-	}
+	m_testResultsWindow->setResults(m_testResults);
+	m_testResultsWindow->show();
 }
 
 void MainWindow::editCurrentTest()
