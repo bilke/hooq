@@ -138,6 +138,10 @@ Player::Player(QIODevice* device)
 		SIGNAL(readyRead()),
 		SLOT(readNext())
 	);
+}
+
+void Player::run()
+{
 	readNext();
 }
 
@@ -153,11 +157,8 @@ void Player::readNext()
 		}
 		if(tokenType() == EndDocument)
 		{
-			ack();
-			setDevice(0);
-			deleteLater();
-			emit finished();
-			return;
+			disconnect(device(), 0, this, 0);
+			break;
 		}
 	}
 	processEvents();
@@ -206,6 +207,16 @@ void Player::processEvents()
 				delete event;
 				return;
 		}
+	}
+
+	if(tokenType() == EndDocument)
+	{
+		if(device())
+		{
+			ack();
+		}
+		setDevice(0);
+		emit finished();
 	}
 	m_processingEvents = false;
 }

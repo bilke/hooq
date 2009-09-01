@@ -98,11 +98,13 @@ void Marshall::readCommand()
 		}
 		else if(command == "PLAY\n")
 		{
+			Player* player = Player::instance(m_socket);
 			connect(
-				Player::instance(m_socket),
+				player,
 				SIGNAL(finished()),
 				SLOT(reconnect())
 			);
+			player->run();
 			break;
 		}
 		else if(command == "NO MOUSE MOVES\n")

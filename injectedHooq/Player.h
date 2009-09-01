@@ -36,6 +36,7 @@ class Player: public QObject, private QXmlStreamReader
 	Q_OBJECT;
 	public:
 		static Player* instance(QIODevice*);
+		void run();
 	signals:
 		void finished();
 	private slots:
