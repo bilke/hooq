@@ -28,6 +28,7 @@ class TestFailureDialog;
 
 class QAbstractItemView;
 class QModelIndex;
+class QProgressBar;
 
 class TestResultsDialog : public QDialog
 {
@@ -40,4 +41,5 @@ class TestResultsDialog : public QDialog
 	private:
 		TestFailureDialog* m_informationDialog;
 		QAbstractItemView* m_view;
+		QProgressBar* m_progress;
 };

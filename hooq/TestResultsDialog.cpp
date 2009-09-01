@@ -25,6 +25,7 @@
 
 #include <QDialogButtonBox>
 #include <QHeaderView>
+#include <QProgressBar>
 #include <QTreeView>
 #include <QVBoxLayout>
 
@@ -36,6 +37,11 @@ TestResultsDialog::TestResultsDialog(QWidget* parent)
 
 	setWindowTitle(tr("Test Results"));
 	QVBoxLayout* layout = new QVBoxLayout(this);
+
+	m_progress = new QProgressBar(this);
+	layout->addWidget(m_progress);
+	m_progress->setFormat("%v of %m passed (%p%)");
+
 	QTreeView* view = new QTreeView(this);
 	m_view = view;
 	layout->addWidget(view);
@@ -85,6 +91,17 @@ void TestResultsDialog::showInformation(const QModelIndex& index)
 
 void TestResultsDialog::setResults(const QList<TestResult>& results)
 {
+	m_progress->setMaximum(results.count());
+	int passing = 0;
+	Q_FOREACH(const TestResult& result, results)
+	{
+		if(result.passed())
+		{
+			++passing;
+		}
+	}
+	m_progress->setValue(passing);
+
 	QAbstractItemModel* oldModel = m_view->model();
 	m_view->setModel(new TestResultsModel(results, this));
 	delete oldModel;
