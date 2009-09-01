@@ -128,7 +128,7 @@ QVariant TestResultsModel::data(const QModelIndex& index, int role) const
 			}
 		}
 		case ButtonEnabledRole:
-			return result.passed();
+			return !result.passed();
 		case BacktraceRole:
 			return result.backtrace();
 	}
