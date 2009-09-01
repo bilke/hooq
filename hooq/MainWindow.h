@@ -53,7 +53,6 @@ class MainWindow : public QMainWindow, private Ui::MainWindow
 		void editCurrentTest();
 		void deleteCurrentTest();
 
-		void handleTestAction(const QModelIndex& index);
 		void setTestSet(const QString&);
 		void saveApplicationPath();
 		void browseForApplication();
@@ -64,10 +63,11 @@ class MainWindow : public QMainWindow, private Ui::MainWindow
 		void showTestContextMenu(const QPoint& position);
 		void runAllTests();
 		void testFinished();
-	private:
-		void waitForEndOfTest();
+
 		void editTestScript(const QModelIndex& index);
 		void runTestScript(const QModelIndex& index);
+	private:
+		void waitForEndOfTest();
 		void populateTestSets();
 
 		QMenu* m_contextMenu;

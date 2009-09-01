@@ -15,6 +15,7 @@ CONFIG += debug
 
 HEADERS += \
 	BacktraceWidget.h \
+	ColumnClickMapper.h \
 	EnumConverter.h \
 	Interpreter.h \
 	Locations.h \
@@ -41,6 +42,7 @@ FORMS += \
 
 SOURCES += \
 	BacktraceWidget.cpp \
+	ColumnClickMapper.cpp \
 	EnumConverter.cpp \
 	Interpreter.cpp \
 	Locations.cpp \

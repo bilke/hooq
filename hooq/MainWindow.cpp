@@ -20,6 +20,7 @@
 #include "MainWindow.h"
 
 // Hooq
+#include "ColumnClickMapper.h"
 #include "Interpreter.h"
 #include "Locations.h"
 #include "ModelIndexKeyEventObserver.h"
@@ -90,6 +91,7 @@ MainWindow::MainWindow(QWidget* parent)
 	m_testList->setContextMenuPolicy(Qt::CustomContextMenu);
 
 	QObject* deleteObserver = new ModelIndexKeyEventObserver(QKeySequence::Delete, m_testList);
+
 	connect(
 		deleteObserver,
 		SIGNAL(released(QModelIndex)),
@@ -151,12 +153,6 @@ MainWindow::MainWindow(QWidget* parent)
 	);
 
 	connect(
-		m_testList,
-		SIGNAL(clicked(QModelIndex)),
-		SLOT(handleTestAction(QModelIndex))
-	);
-
-	connect(
 		m_editor,
 		SIGNAL(pickRequested()),
 		m_interpreter,
@@ -181,25 +177,10 @@ MainWindow::MainWindow(QWidget* parent)
 		SIGNAL(finished()),
 		SLOT(testFinished())
 	);
-}
 
-void MainWindow::handleTestAction(const QModelIndex& index)
-{
-	if(!index.isValid())
-	{
-		return;
-	}
-	switch(index.column())
-	{
-		case 0:
-			return;
-		case 1:
-			runTestScript(index);
-			return;
-		case 2:
-			editTestScript(index);
-			return;
-	}
+	ColumnClickMapper* mapper = new ColumnClickMapper(m_testList);
+	mapper->addMapping(1, this, SLOT(runTestScript(QModelIndex)));
+	mapper->addMapping(2, this, SLOT(editTestScript(QModelIndex)));
 }
 
 void MainWindow::editTestScript(const QModelIndex& index)
