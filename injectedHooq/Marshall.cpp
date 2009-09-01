@@ -67,7 +67,6 @@ void Marshall::flushSocket()
 	m_socket->flush();
 	m_socket->waitForBytesWritten(1000);
 	m_socket->close();
-	m_socket->waitForDisconnected(1000);
 	delete instance();
 	delete m_socket;
 }

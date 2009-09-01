@@ -155,7 +155,8 @@ void Interpreter::setAck(bool ack)
 void Interpreter::waitForAck()
 {
 	setAck(false);
-	while(!ack())
+	QLocalSocket* socket = static_cast<QLocalSocket*>(device());
+	while(socket->state() == QLocalSocket::ConnectedState && !ack())
 	{
 		QApplication::processEvents();
 	}
