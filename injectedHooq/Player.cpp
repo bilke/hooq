@@ -144,7 +144,6 @@ void Player::readNext()
 		}
 		if(tokenType() == EndDocument)
 		{
-			disconnect(device(), 0, this, 0);
 			ack();
 			setDevice(0);
 			deleteLater();

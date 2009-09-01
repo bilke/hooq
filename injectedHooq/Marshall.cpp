@@ -94,7 +94,6 @@ void Marshall::readCommand()
 		const QByteArray command = m_socket->readLine();
 		if(command == "RECORD\n")
 		{
-			disconnect(m_socket, 0, this, 0);
 			Logger::instance(m_socket);
 			break;
 		}

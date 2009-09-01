@@ -59,6 +59,8 @@ Logger* Logger::instance()
 
 Logger::Logger(QIODevice* device)
 {
+	disconnect(device, 0, 0, 0);
+
 	m_writer.setDevice(device);
 	m_writer.setAutoFormatting(true);
 	m_writer.writeStartDocument();
