@@ -25,6 +25,7 @@
 class TestResult
 {
 	public:
+		TestResult();
 		TestResult(const QString& name);
 		TestResult(const QString& name, const QString& error, const QStringList& backtrace);
 		QString name() const;

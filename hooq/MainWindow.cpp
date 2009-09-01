@@ -155,6 +155,12 @@ MainWindow::MainWindow(QWidget* parent)
 	);
 
 	connect(
+		m_editor,
+		SIGNAL(exceptionThrown(QString, QStringList)),
+		SLOT(logException(QString, QStringList))
+	);
+
+	connect(
 		m_interpreter,
 		SIGNAL(objectPicked(ObjectInformation)),
 		m_editor,
@@ -210,7 +216,10 @@ void MainWindow::runTestScript(const QModelIndex& index)
 	m_testRunning = true;
 	m_testList->setEnabled(false);
 
-	statusBar()->showMessage(tr("Running test '%1'...").arg(index.data(TestModel::ScriptNameRole).toString()));
+	const QString testName = index.data(TestModel::ScriptNameRole).toString();
+	m_testResult = TestResult(testName);
+
+	statusBar()->showMessage(tr("Running test '%1'...").arg(testName));
 
 	m_interpreter->setScriptPath(index.data(TestModel::FilePathRole).toString());
 
@@ -222,6 +231,11 @@ void MainWindow::runTestScript(const QModelIndex& index)
 		SLOT(run(QLocalSocket*))
 	);
 	m_hooqPlayer->start(QDir::fromNativeSeparators(m_applicationEdit->text()), m_hooqPlayInjector);
+}
+
+void MainWindow::logException(const QString& exception, const QStringList& backtrace)
+{
+	m_testResult = TestResult(m_testResult.name(), exception, backtrace);
 }
 
 void MainWindow::waitForEndOfTest()
@@ -236,6 +250,7 @@ void MainWindow::testFinished()
 {
 	m_testRunning = false;
 	m_testList->setEnabled(true);
+	m_testResults.append(m_testResult);
 }
 
 void MainWindow::startRecording()
@@ -323,6 +338,8 @@ void MainWindow::runCurrentTest()
 
 void MainWindow::runAllTests()
 {
+	m_testResults.clear();
+
 	m_editor->setMode(ScriptEditor::Headless);
 	m_testList->setEnabled(false);
 
@@ -336,6 +353,26 @@ void MainWindow::runAllTests()
 
 	m_testList->setEnabled(true);
 	m_editor->setMode(ScriptEditor::Interactive);
+
+	qDebug() << "RESULTS:";
+	Q_FOREACH(const TestResult& testResult, m_testResults)
+	{
+		qDebug() << "----------";
+		if(testResult.passed())
+		{
+			qDebug() << qPrintable(QString("%1: PASSED").arg(testResult.name()));
+		}
+		else
+		{
+			qDebug() << qPrintable(QString("%1: FAILED").arg(testResult.name()));
+			qDebug() << "Exception:" << qPrintable(testResult.error());
+			qDebug() << "Backtrace:";
+			Q_FOREACH(const QString& line, testResult.backtrace())
+			{
+				qDebug() << "\t" << qPrintable(line);
+			}
+		}
+	}
 }
 
 void MainWindow::editCurrentTest()

@@ -21,6 +21,9 @@
 
 #include "ui_MainWindow.h"
 
+#include "TestResult.h"
+
+#include <QList>
 #include <QMainWindow>
 
 class Interpreter;
@@ -44,6 +47,7 @@ class MainWindow : public QMainWindow, private Ui::MainWindow
 	public:
 		MainWindow(QWidget* parent = 0);
 	private slots:
+		void logException(const QString& exception, const QStringList& backtrace);
 		void runCurrentTest();
 		void editCurrentTest();
 		void deleteCurrentTest();
@@ -77,6 +81,9 @@ class MainWindow : public QMainWindow, private Ui::MainWindow
 		Interpreter* m_interpreter;
 		TestModel* m_testModel;
 		bool m_testRunning;
+
+		TestResult m_testResult;
+		QList<TestResult> m_testResults;
 
 		QTemporaryFile* m_xmlDump;
 };

@@ -25,6 +25,11 @@ TestResult::TestResult(const QString& name)
 {
 }
 
+TestResult::TestResult()
+: m_passed(false)
+{
+}
+
 TestResult::TestResult(const QString& name, const QString& error, const QStringList& backtrace)
 : m_backtrace(backtrace)
 , m_error(error)
@@ -46,4 +51,9 @@ QString TestResult::error() const
 QStringList TestResult::backtrace() const
 {
 	return m_backtrace;
+}
+
+bool TestResult::passed() const
+{
+	return m_passed;
 }
