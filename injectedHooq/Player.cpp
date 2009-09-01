@@ -189,7 +189,8 @@ void Player::processEvents()
 				QObject* receiver = findObject(o->objectPath());
 				if(!receiver)
 				{
-					qDebug() << "Couldn't find receiver" << receiver;
+					qDebug() << "Couldn't find receiver" << receiver << "from path" << o->objectPath();
+					ack();
 					continue;
 				}
 				QCoreApplication::postEvent(receiver, o->qtEvent());
