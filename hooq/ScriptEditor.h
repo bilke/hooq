@@ -38,6 +38,7 @@ class ScriptEditor : public QMainWindow, public QScriptEngineAgent
 		void reset(int features = AllFeatures);
 	signals:
 		void pickRequested();
+		void exceptionThrown(const QString& exception, const QStringList& backtrace);
 	private slots:
 		void save();
 		void revert();
