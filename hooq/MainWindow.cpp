@@ -22,6 +22,7 @@
 // Hooq
 #include "Interpreter.h"
 #include "Locations.h"
+#include "ModelIndexKeyEventObserver.h"
 #include "ScriptEditor.h"
 #include "TestModel.h"
 #include "TestResultsDialog.h"
@@ -88,6 +89,12 @@ MainWindow::MainWindow(QWidget* parent)
 
 	m_testList->setContextMenuPolicy(Qt::CustomContextMenu);
 
+	QObject* deleteObserver = new ModelIndexKeyEventObserver(QKeySequence::Delete, m_testList);
+	connect(
+		deleteObserver,
+		SIGNAL(released(QModelIndex)),
+		SLOT(deleteCurrentTest())
+	);
 
 	connect(
 		m_testList,

@@ -19,6 +19,7 @@ HEADERS += \
 	Interpreter.h \
 	Locations.h \
 	MainWindow.h \
+	ModelIndexKeyEventObserver.h \
 	ObjectInformation.h \
 	PropertyDialog.h \
 	RemoteObjectPrototype.h \
@@ -44,6 +45,7 @@ SOURCES += \
 	Interpreter.cpp \
 	Locations.cpp \
 	MainWindow.cpp \
+	ModelIndexKeyEventObserver.cpp \
 	ObjectInformation.cpp \
 	PropertyDialog.cpp \
 	RemoteObjectPrototype.cpp \
