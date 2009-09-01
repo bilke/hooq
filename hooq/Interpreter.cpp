@@ -162,7 +162,6 @@ void Interpreter::waitForDumpedObject()
 	}
 }
 
-
 void Interpreter::pickObject()
 {
 	writeStartElement("pick");
