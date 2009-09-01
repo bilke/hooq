@@ -37,6 +37,8 @@
 #include <QUrl>
 #include <QWidget>
 
+#include <memory> // for std::auto_ptr - XXX FIXME XXX switch to QScopedPointer in 4.6
+
 namespace Hooq
 {
 
@@ -173,12 +175,12 @@ void Player::processEvents()
 	m_processingEvents = true;
 	while(!m_eventQueue.isEmpty())
 	{
-		Event* event = m_eventQueue.dequeue();
+		std::auto_ptr<Event> event(m_eventQueue.dequeue());
 		switch(event->type())
 		{
 			case Event::Dump:
 			{
-				DumpEvent* e = static_cast<DumpEvent*>(event);
+				DumpEvent* e = static_cast<DumpEvent*>(event.get());
 				QObject* o = findObject(e->objectPath());
 				Q_ASSERT(o);
 				device()->write("DUMPED\n");
@@ -187,7 +189,7 @@ void Player::processEvents()
 			};
 			case Event::Object:
 			{
-				ObjectEvent* o = static_cast<ObjectEvent*>(event);
+				ObjectEvent* o = static_cast<ObjectEvent*>(event.get());
 				QObject* receiver = findObject(o->objectPath());
 				if(!receiver)
 				{
@@ -203,8 +205,7 @@ void Player::processEvents()
 				startPick();
 				return;
 			case Event::Sleep:
-				sleep(static_cast<SleepEvent*>(event)->msec());
-				delete event;
+				sleep(static_cast<SleepEvent*>(event.get())->msec());
 				return;
 		}
 	}
