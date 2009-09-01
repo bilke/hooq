@@ -21,6 +21,7 @@
 
 #include "InjectorImport.h"
 
+#include <QFlags>
 #include <QObject>
 #include <QString>
 
@@ -37,16 +38,34 @@ class HOOQ_INJECTOR_EXPORT RemoteLogger : public QObject
 {
 	Q_OBJECT
 	public:
-		RemoteLogger(QObject* parent = 0);
+		enum Event
+		{
+			NoEvents = 0,
+			MouseMoveEvent = 1 << 0,
+			KeyPressEvent = 1 << 1,
+			KeyReleaseEvent = 1 << 2,
+			MouseButtonPressEvent = 1 << 3,
+			MouseButtonReleaseEvent = 1 << 4,
+			MouseWheelEvent = 1 << 5,
+			AllEvents = ~NoEvents
+		};
+		Q_DECLARE_FLAGS(Events, Event);
+		// At the moment, only the MouseMoveEvent flag does any difference
+		RemoteLogger(QObject* parent = 0); // AllEvents
+		RemoteLogger(Events events, QObject* parent = 0);
+
 		void start(const QString& application, QIODevice* logDevice, Injector* injector);
 		// TODO: attach()
 	private slots:
 		void logData();
 		void startLogging(QLocalSocket* socket);
 	private:
+		Events m_events;
 		QIODevice* m_log;
 		RemoteConnection* m_server;
 		QLocalSocket* m_socket;
 };
 
 } // namespace
+
+Q_DECLARE_OPERATORS_FOR_FLAGS(Hooq::RemoteLogger::Events);

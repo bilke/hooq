@@ -263,7 +263,14 @@ void MainWindow::startRecording()
 	m_xmlDump = new QTemporaryFile();
 	m_xmlDump->open();
 
-	m_hooqLogger = new Hooq::RemoteLogger();
+	Hooq::RemoteLogger::Events events = Hooq::RemoteLogger::AllEvents;
+
+	if(! m_recordMouseMovements->isChecked())
+	{
+		events &= ~Hooq::RemoteLogger::MouseMoveEvent;
+	}
+
+	m_hooqLogger = new Hooq::RemoteLogger(events);
 	m_hooqLogger->start(QDir::fromNativeSeparators(m_applicationEdit->text()), m_xmlDump, m_hooqRecordInjector);
 }
 

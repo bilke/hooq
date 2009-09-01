@@ -79,18 +79,27 @@ Marshall::~Marshall()
 void Marshall::readCommand()
 {
 	disconnect(m_socket, 0, this, 0);
-	const QByteArray command = m_socket->readLine();
-	if(command == "RECORD\n")
+	while(m_socket->canReadLine())
 	{
-		Logger::instance(m_socket);
-	}
-	else if(command == "PLAY\n")
-	{
-		Player::instance(m_socket);
-	}
-	else
-	{
-		qFatal("Unknown command: %s", command.constData());
+		const QByteArray command = m_socket->readLine();
+		if(command == "RECORD\n")
+		{
+			Logger::instance(m_socket);
+			break;
+		}
+		else if(command == "PLAY\n")
+		{
+			Player::instance(m_socket);
+			break;
+		}
+		else if(command == "NO MOUSE MOVES\n")
+		{
+			Logger::disableMouseMoveLogging();
+		}
+		else
+		{
+			qFatal("Unknown command: %s", command.constData());
+		}
 	}
 }
 

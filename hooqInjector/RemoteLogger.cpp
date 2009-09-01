@@ -29,6 +29,21 @@ namespace Hooq
 
 RemoteLogger::RemoteLogger(QObject* parent)
 : QObject(parent)
+, m_events(AllEvents)
+, m_log(0)
+, m_server(new RemoteConnection(this))
+, m_socket(0)
+{
+	connect(
+		m_server,
+		SIGNAL(connected(QLocalSocket*)),
+		SLOT(startLogging(QLocalSocket*))
+	);
+}
+
+RemoteLogger::RemoteLogger(Events events, QObject* parent)
+: QObject(parent)
+, m_events(events)
 , m_log(0)
 , m_server(new RemoteConnection(this))
 , m_socket(0)
@@ -61,6 +76,10 @@ void RemoteLogger::startLogging(QLocalSocket* socket)
 		SIGNAL(readyRead()),
 		SLOT(logData())
 	);
+	if(!m_events.testFlag(MouseMoveEvent))
+	{
+		m_socket->write("NO MOUSE MOVES\n");
+	}
 	m_socket->write("RECORD\n");
 }
 
