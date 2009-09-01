@@ -105,6 +105,13 @@
         </layout>
        </item>
        <item>
+        <widget class="QPushButton" name="m_runAllTests">
+         <property name="text">
+          <string>Run All</string>
+         </property>
+        </widget>
+       </item>
+       <item>
         <widget class="QTreeView" name="m_testList">
          <property name="alternatingRowColors">
           <bool>true</bool>
