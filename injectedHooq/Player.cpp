@@ -220,7 +220,6 @@ void Player::postSleepEvent()
 
 void Player::handleElement()
 {
-	qDebug() << Q_FUNC_INFO << name();
 	// "Magic" events
 	if(name() == "msec")
 	{
