@@ -19,8 +19,8 @@
 */
 #include "Locations.h"
 
+#include <QDir>
 #include <QDesktopServices>
-#include <QFileInfo>
 #include <QSettings>
 #include <QString>
 
@@ -45,12 +45,13 @@ void Locations::setApplicationPath(const QString& testSet, const QString& applic
 
 QString Locations::testSetsLocation()
 {
-	return QFileInfo(QDesktopServices::storageLocation(QDesktopServices::DataLocation) + "/tests").canonicalFilePath();
+	return QDir::cleanPath(QDesktopServices::storageLocation(QDesktopServices::DataLocation) + "/tests");
 }
 
 QString Locations::scriptPath(const QString& testSet, const QString& testName)
 {
-	return QFileInfo(QString("%1/%2.qs").arg(testSetLocation(testSet)).arg(testName)).canonicalFilePath();
+
+	return QDir::cleanPath(QString("%1/%2.qs").arg(testSetLocation(testSet)).arg(testName));
 }
 
 QString Locations::testSetLocation(const QString& testSet)
@@ -60,5 +61,5 @@ QString Locations::testSetLocation(const QString& testSet)
 		return QString();
 	}
 
-	return QFileInfo(testSetsLocation() + QString("/%1/").arg(testSet)).canonicalFilePath();
+	return QDir::cleanPath(testSetsLocation() + QString("/%1/").arg(testSet));
 }
