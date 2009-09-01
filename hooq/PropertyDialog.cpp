@@ -19,6 +19,7 @@
 */
 #include "PropertyDialog.h"
 
+#include "ColumnClickMapper.h"
 #include "ObjectInformation.h"
 #include "PushButtonDelegate.h"
 #include "VariantMapModel.h"
@@ -48,30 +49,22 @@ PropertyDialog::PropertyDialog(const ObjectInformation& info, QWidget* parent)
 	m_typeLabel->setText(info.className());
 	m_path = info.path();
 
-	connect(
-		m_view,
-		SIGNAL(clicked(QModelIndex)),
-		SLOT(handleClick(QModelIndex))
-	);
+	ColumnClickMapper* mapper = new ColumnClickMapper(m_view);
+	mapper->addMapping(2, this, SLOT(fetch(QModelIndex)));
+	mapper->addMapping(3, this, SLOT(compare(QModelIndex)));
 }
 
-void PropertyDialog::handleClick(const QModelIndex& index)
+void PropertyDialog::fetch(const QModelIndex& index)
 {
-	if(!index.isValid())
-	{
-		return;
-	}
+	const QString key = index.data(VariantMapModel::PropertyNameRole).toString();
+	emit fetchRequested(m_path, key);
+	deleteLater();
+}
+
+void PropertyDialog::compare(const QModelIndex& index)
+{
 	const QString key = index.data(VariantMapModel::PropertyNameRole).toString();
 	const QVariant value = index.data(VariantMapModel::PropertyValueRole);
-	switch(index.column())
-	{
-		case 2:
-			emit fetchRequested(m_path, key);
-			deleteLater();
-			break;
-		case 3:
-			emit compareRequested(m_path, key, value);
-			deleteLater();
-			break;
-	}
+	emit compareRequested(m_path, key, value);
+	deleteLater();
 }
