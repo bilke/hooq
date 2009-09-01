@@ -75,6 +75,11 @@ ObjectInformation ObjectInformation::fromXml(QIODevice* source)
 					properties.insert(property, value.toInt());
 					continue;
 				}
+				if(typeName == "double")
+				{
+					properties.insert(property, value.toDouble());
+					continue;
+				}
 				qDebug() << "Unknown property typename:" << typeName;
 				continue;
 			}
