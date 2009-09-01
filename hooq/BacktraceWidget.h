@@ -21,11 +21,15 @@
 
 #include <QWidget>
 
+class QAbstractItemView;
 class QScriptContext;
 
 class BacktraceWidget : public QWidget
 {
 	Q_OBJECT;
 	public:
-		BacktraceWidget(QScriptContext* context, QWidget* parent);
+		BacktraceWidget(QWidget* parent);
+		void setContext(QScriptContext* context);
+	private:
+		QAbstractItemView* m_view;
 };

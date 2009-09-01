@@ -47,7 +47,8 @@
 ScriptEditor::ScriptEditor(QScriptEngine* engine)
 : QMainWindow()
 , QScriptEngineAgent(engine)
-, m_backtraceWidget(0)
+, m_backtraceDockWidget(new QDockWidget(tr("Backtrace"), this))
+, m_backtraceWidget(new BacktraceWidget(this))
 , m_errorWidget(new QDockWidget(tr("Error"), this))
 , m_errorLabel(new QLabel(this))
 , m_currentLine(-1)
@@ -55,6 +56,7 @@ ScriptEditor::ScriptEditor(QScriptEngine* engine)
 , m_mode(Interactive)
 , m_paused(false)
 {
+	m_backtraceDockWidget->setWidget(m_backtraceWidget);
 	m_errorWidget->setWidget(m_errorLabel);
 	m_errorLabel->setFrameShape(QFrame::StyledPanel);
 	m_errorLabel->setFrameShadow(QFrame::Raised);
@@ -241,11 +243,8 @@ void ScriptEditor::exceptionThrow(qint64 scriptId, const QScriptValue& exception
 			);
 
 			m_errorWidget->show();
-			delete m_backtraceWidget;
-			QWidget* widget = new BacktraceWidget(context, this);
-			m_backtraceWidget = new QDockWidget(tr("Backtrace"), this);
-			m_backtraceWidget->setWidget(widget);
-			addDockWidget(Qt::BottomDockWidgetArea, m_backtraceWidget);
+			m_backtraceWidget->setContext(context);
+			addDockWidget(Qt::BottomDockWidgetArea, m_backtraceDockWidget);
 			markLine(QScriptContextInfo(context).lineNumber());
 			show();
 			raise();
@@ -358,7 +357,7 @@ void ScriptEditor::reset(int features)
 {
 	if(features & BacktraceUi)
 	{
-		m_backtraceWidget->hide();
+		m_backtraceDockWidget->hide();
 	}
 	if(features & Breakpoints)
 	{

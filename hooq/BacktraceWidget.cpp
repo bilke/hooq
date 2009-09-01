@@ -24,7 +24,7 @@
 #include <QTableView>
 #include <QVBoxLayout>
 
-BacktraceWidget::BacktraceWidget(QScriptContext* context, QWidget* parent)
+BacktraceWidget::BacktraceWidget(QWidget* parent)
 : QWidget(parent)
 {
 	QVBoxLayout* layout = new QVBoxLayout(this);
@@ -32,5 +32,12 @@ BacktraceWidget::BacktraceWidget(QScriptContext* context, QWidget* parent)
 	layout->addWidget(view);
 
 	view->setHorizontalHeader(false);
-	view->setModel(new ScriptBacktraceModel(context, this));
+	
+	m_view = view;
+}
+
+void BacktraceWidget::setContext(QScriptContext* context)
+{
+	delete m_view->model();
+	m_view->setModel(new ScriptBacktraceModel(context, this));
 }

@@ -24,6 +24,7 @@
 #include <QSet>
 #include <QWidget>
 
+class BacktraceWidget;
 class ObjectInformation;
 
 class QsciScintilla;
@@ -37,10 +38,10 @@ class ScriptEditor : public QMainWindow, public QScriptEngineAgent
 	public:
 		enum Features
 		{
-			BacktraceUi,
-			Breakpoints,
-			CurrentLineUi,
-			ErrorUi,
+			BacktraceUi = 1 << 0,
+			Breakpoints = 1 << 1,
+			CurrentLineUi = 1 << 2,
+			ErrorUi = 1 << 3,
 			AllFeatures = ~0
 		};
 		enum Mode
@@ -88,7 +89,8 @@ class ScriptEditor : public QMainWindow, public QScriptEngineAgent
 		void pause();
 		void setPaused(bool paused = true);
 
-		QDockWidget* m_backtraceWidget;
+		QDockWidget* m_backtraceDockWidget;
+		BacktraceWidget* m_backtraceWidget;
 		QDockWidget* m_errorWidget;
 		QLabel* m_errorLabel;
 
