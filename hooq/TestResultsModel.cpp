@@ -88,6 +88,14 @@ QVariant TestResultsModel::data(const QModelIndex& index, int role) const
 			{
 				return Qt::red;
 			}
+		case Qt::FontRole:
+			if(!result.passed())
+			{
+				QFont font(QApplication::font());
+				font.setBold(true);
+				return font;
+			}
+			return QVariant();
 		case Qt::DisplayRole:
 			switch(index.column())
 			{
