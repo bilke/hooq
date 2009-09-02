@@ -101,9 +101,9 @@ void RemoteObjectPrototype::contextMenu(const QVariantMap& parameters)
 	);
 }
 
-void RemoteObjectPrototype::pressKey(const QVariantMap& parameters)
+void RemoteObjectPrototype::raiseKeyEvent(const QVariantMap& parameters, KeySignal signal)
 {
-	emit keyPressEvent(
+	emit (this->*signal)(
 		path(),
 		static_cast<int>(parameters.value("key").value<Qt::Key>()),
 		Qt::KeyboardModifiers(static_cast<int>(parameters.value("modifiers").value<Qt::KeyboardModifier>())),
@@ -112,17 +112,14 @@ void RemoteObjectPrototype::pressKey(const QVariantMap& parameters)
 		parameters.value("count").value<ushort>()
 	);
 }
+void RemoteObjectPrototype::pressKey(const QVariantMap& parameters)
+{
+	raiseKeyEvent(parameters, &RemoteObjectPrototype::keyPressEvent);
+}
 
 void RemoteObjectPrototype::releaseKey(const QVariantMap& parameters)
 {
-	emit keyReleaseEvent(
-		path(),
-		static_cast<int>(parameters.value("key").value<Qt::Key>()),
-		Qt::KeyboardModifiers(static_cast<int>(parameters.value("modifiers").value<Qt::KeyboardModifier>())),
-		parameters.value("text").toString(),
-		parameters.value("autorepeat").toBool(),
-		parameters.value("count").value<ushort>()
-	);
+	raiseKeyEvent(parameters, &RemoteObjectPrototype::keyReleaseEvent);
 }
 
 void RemoteObjectPrototype::shortcut(const QVariantMap& parameters)

@@ -55,7 +55,12 @@ class RemoteObjectPrototype : public QObject, public QScriptable
 		void shortcutEvent(const QString& path, const QKeySequence& sequence, int id, bool ambiguous);
 		void contextMenuEvent(const QString& path, const QPoint& position, const QPoint& globalPosition, Qt::KeyboardModifiers modifiers);
 	private:
+		/// MouseSignal typedef - pointer to any of the mouse signals
 		typedef void(RemoteObjectPrototype::*MouseSignal)(const QString&, const QPoint&, Qt::MouseButton, Qt::MouseButtons, Qt::KeyboardModifiers);
+		/// KeySignal typedef - pointer to either the keyPress or keyRelease signals
+		typedef void(RemoteObjectPrototype::*KeySignal)(const QString&, int, Qt::KeyboardModifiers, const QString&, bool, ushort);
+
 		void raiseMouseEvent(const QVariantMap& parameters, MouseSignal signal);
+		void raiseKeyEvent(const QVariantMap& parameters, KeySignal signal);
 		const QString m_path;
 };
