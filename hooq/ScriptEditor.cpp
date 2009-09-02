@@ -24,6 +24,8 @@
 #include "ObjectInformation.h"
 #include "PropertyDialog.h"
 
+#include "qscripthighlighter.h"
+
 #include <QAction>
 #include <QColor>
 #include <QCoreApplication>
@@ -52,11 +54,11 @@ ScriptEditor::ScriptEditor(QScriptEngine* engine)
 , m_errorWidget(new QDockWidget(tr("Error"), this))
 , m_errorLabel(new QLabel(this))
 , m_currentLine(-1)
-, m_editor(0)
+, m_editor(new CodeEditor(this))
 , m_mode(Interactive)
 , m_paused(false)
 {
-	m_editor = new CodeEditor(this);
+	new SharedTools::QScriptHighlighter(m_editor->document());
 	m_backtraceDockWidget->setWidget(m_backtraceWidget);
 	m_errorWidget->setWidget(m_errorLabel);
 	m_errorLabel->setFrameShape(QFrame::StyledPanel);

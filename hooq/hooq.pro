@@ -3,6 +3,8 @@ TARGET =
 DEPENDPATH += .
 INCLUDEPATH += . ../hooqInjector/ ../uilib/
 
+include(../qscripthighlighter/qscripthighlighter.pri)
+
 QMAKE_RPATHDIR += \
 	$$(PWD)/../hooqInjector/ \
 	$$(PWD)/../uilib/ \
