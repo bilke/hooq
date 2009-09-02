@@ -61,7 +61,6 @@ void CodeEditor::clearLineHighlight()
 
 void CodeEditor::highlightLine(int lineNumber)
 {
-	qDebug() << "Asked to highlight line" << lineNumber;
 	QTextEdit::ExtraSelection selection;
 	selection.format.setBackground(QColor(255, 140, 0)); // orange
 	selection.format.setProperty(QTextFormat::FullWidthSelection, true);
