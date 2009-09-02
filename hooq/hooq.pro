@@ -1,13 +1,19 @@
 TEMPLATE = app
 TARGET = 
 DEPENDPATH += .
-INCLUDEPATH += . ../hooqInjector/
+INCLUDEPATH += . ../hooqInjector/ ../uilib/
 
 LIBS += -lqscintilla2
 
-unix:LIBS += -L../hooqInjector -lhooqInjector
-win32:LIBS += "..\hooqInjector\debug\hooqInjector.lib"
+
 QMAKE_RPATHDIR += $$(PWD)/../hooqInjector/
+unix:LIBS += \
+	-L../hooqInjector -lhooqInjector \
+	-L../uilib -luilib \
+
+win32:LIBS += \
+	"..\hooqInjector\debug\hooqInjector.lib" \
+	"..\uilib\debug\uilib.lib" \
 
 QT += script network
 
@@ -15,12 +21,10 @@ CONFIG += debug
 
 HEADERS += \
 	BacktraceWidget.h \
-	ColumnClickMapper.h \
 	EnumConverter.h \
 	Interpreter.h \
 	Locations.h \
 	MainWindow.h \
-	ModelIndexKeyEventObserver.h \
 	ObjectInformation.h \
 	PropertyDialog.h \
 	RemoteObjectPrototype.h \
@@ -32,7 +36,6 @@ HEADERS += \
 	TestResult.h \
 	TestResultsModel.h \
 	TestResultsDialog.h \
-	PushButtonDelegate.h \
 	VariantMapModel.h \
 	XmlToQtScript.h \
 
@@ -42,12 +45,10 @@ FORMS += \
 
 SOURCES += \
 	BacktraceWidget.cpp \
-	ColumnClickMapper.cpp \
 	EnumConverter.cpp \
 	Interpreter.cpp \
 	Locations.cpp \
 	MainWindow.cpp \
-	ModelIndexKeyEventObserver.cpp \
 	ObjectInformation.cpp \
 	PropertyDialog.cpp \
 	RemoteObjectPrototype.cpp \
@@ -59,7 +60,6 @@ SOURCES += \
 	TestResult.cpp \
 	TestResultsModel.cpp \
 	TestResultsDialog.cpp \
-	PushButtonDelegate.cpp \
 	VariantMapModel.cpp \
 	XmlToQtScript.cpp \
 	main.cpp \

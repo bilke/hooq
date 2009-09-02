@@ -4,7 +4,14 @@ SUBDIRS += \
 	hooqcli \
 	hooqInjector \
 	injectedHooq \
+	uilib \
 
 # State dependencies to fix make -j
-hooq.depends = hooqInjector
-hooqcli.depends = hooqInjector
+
+hooq.depends += \
+	hooqInjector \
+	uilib \
+
+hooqcli.depends += \
+	hooqInjector \
+

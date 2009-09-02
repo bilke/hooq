@@ -33,21 +33,24 @@ ModelIndexKeyEventObserver::ModelIndexKeyEventObserver(QKeySequence::StandardKey
 bool ModelIndexKeyEventObserver::eventFilter(QObject* watched, QEvent* event)
 {
 	Q_ASSERT(watched == m_view);
-	const bool isKeyPress = event->type() == QEvent::KeyPress;
-	const bool isKeyRelease = event->type() == QEvent::KeyRelease;
-	if(isKeyPress || isKeyRelease)
+	if(watched == m_view)
 	{
-		QKeyEvent* k = static_cast<QKeyEvent*>(event);
-		const QModelIndex& index = m_view->currentIndex();
-		if(k->matches(m_key) & index.isValid())
+		const bool isKeyPress = event->type() == QEvent::KeyPress;
+		const bool isKeyRelease = event->type() == QEvent::KeyRelease;
+		if(isKeyPress || isKeyRelease)
 		{
-			if(isKeyPress)
+			QKeyEvent* k = static_cast<QKeyEvent*>(event);
+			const QModelIndex& index = m_view->currentIndex();
+			if(k->matches(m_key) & index.isValid())
 			{
-				emit pressed(index);
-			}
-			else
-			{
-				emit released(index);
+				if(isKeyPress)
+				{
+					emit pressed(index);
+				}
+				else
+				{
+					emit released(index);
+				}
 			}
 		}
 	}

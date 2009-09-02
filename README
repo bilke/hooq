@@ -18,6 +18,7 @@ Directories:
  	XML that goes over the socket between hooqInjector and injectedHooq.
  - hooqInjector: library for injecting injectedHooq into another process
  - injectedHooq: spy/event injection library inserted into the other process
+ - uilib: UI classes that may be directly useful in other applications
 
 Method:
  - The logger/player libraries are injected into any Qt application's process
