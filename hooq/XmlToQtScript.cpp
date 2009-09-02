@@ -85,7 +85,7 @@ QString XmlToQtScript::parseHooq()
 					items.append(parseKeyEvent());
 					continue;
 				}
-				if(name() == "mouseMove" || name() == "mouseButtonPress" || name() == "mouseButtonRelease")
+				if(name() == "mouseMove" || name() == "mouseButtonPress" || name() == "mouseButtonRelease" || name() == "mouseButtonDoubleClick")
 				{
 					items.append(parseMouseEvent());
 					continue;
@@ -178,6 +178,10 @@ QString XmlToQtScript::parseMouseEvent()
 	if(name() == "mouseMove")
 	{
 		call = "moveMouse";
+	}
+	else if(name() == "mouseButtonDoubleClick")
+	{
+		call = "doubleClickMouseButton";
 	}
 	else if(name() == "mouseButtonPress")
 	{
