@@ -109,6 +109,11 @@ void Interpreter::connectRemoteObject(RemoteObjectPrototype* object)
 	);
 	connect(
 		object,
+		SIGNAL(mouseDoubleClickEvent(QString, QPoint, Qt::MouseButton, Qt::MouseButtons, Qt::KeyboardModifiers)),
+		SLOT(writeMouseDoubleClickEvent(QString, QPoint, Qt::MouseButton, Qt::MouseButtons, Qt::KeyboardModifiers))
+	);
+	connect(
+		object,
 		SIGNAL(contextMenuEvent(QString, QPoint, QPoint, Qt::KeyboardModifiers)),
 		SLOT(writeContextMenuEvent(QString, QPoint, QPoint, Qt::KeyboardModifiers))
 	);
@@ -218,6 +223,14 @@ void Interpreter::writeMousePressEvent(const QString& path, const QPoint& positi
 void Interpreter::writeMouseReleaseEvent(const QString& path, const QPoint& position, Qt::MouseButton button, Qt::MouseButtons buttons, Qt::KeyboardModifiers modifiers)
 {
 	writeStartElement("mouseButtonRelease");
+	writeMouseAttributes(path, position, button, buttons, modifiers);
+	writeEndElement();
+	waitForAck();
+}
+
+void Interpreter::writeMouseDoubleClickEvent(const QString& path, const QPoint& position, Qt::MouseButton button, Qt::MouseButtons buttons, Qt::KeyboardModifiers modifiers)
+{
+	writeStartElement("mouseButtonDoubleClick");
 	writeMouseAttributes(path, position, button, buttons, modifiers);
 	writeEndElement();
 	waitForAck();
