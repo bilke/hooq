@@ -6,7 +6,10 @@ INCLUDEPATH += . ../hooqInjector/ ../uilib/
 LIBS += -lqscintilla2
 
 
-QMAKE_RPATHDIR += $$(PWD)/../hooqInjector/
+QMAKE_RPATHDIR += \
+	$$(PWD)/../hooqInjector/ \
+	$$(PWD)/../uilib/ \
+
 unix:LIBS += \
 	-L../hooqInjector -lhooqInjector \
 	-L../uilib -luilib \

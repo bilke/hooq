@@ -3,8 +3,6 @@ TARGET =
 DEPENDPATH += .
 INCLUDEPATH += .
 
-CONFIG += static
-
 HEADERS += \
 	ColumnClickMapper.h \
 	ModelIndexKeyEventObserver.h \
