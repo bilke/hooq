@@ -20,6 +20,7 @@
 #include "TestResultsModel.h"
 
 #include <QApplication>
+#include <QDebug>
 #include <QFontMetrics>
 #include <QSize>
 #include <QStringList>

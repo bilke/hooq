@@ -52,9 +52,6 @@ TestResultsDialog::TestResultsDialog(QWidget* parent)
 	view->setItemDelegate(delegate);
 
 	view->header()->setStretchLastSection(false);
-	view->header()->setResizeMode(TestResultsModel::columnNumber(TestResultsModel::TestNameColumn), QHeaderView::Stretch);
-	view->header()->setResizeMode(TestResultsModel::columnNumber(TestResultsModel::TestResultColumn), QHeaderView::Fixed);
-	view->header()->setResizeMode(TestResultsModel::columnNumber(TestResultsModel::InformationColumn), QHeaderView::Fixed);
 	view->setExpandsOnDoubleClick(false);
 	view->setItemsExpandable(false);
 	view->setRootIsDecorated(false);
@@ -107,5 +104,8 @@ void TestResultsDialog::setResults(const QList<TestResult>& results)
 
 	QAbstractItemModel* oldModel = m_view->model();
 	m_view->setModel(new TestResultsModel(results, this));
+	m_view->header()->setResizeMode(TestResultsModel::columnNumber(TestResultsModel::TestNameColumn), QHeaderView::Stretch);
+	m_view->header()->setResizeMode(TestResultsModel::columnNumber(TestResultsModel::TestResultColumn), QHeaderView::Fixed);
+	m_view->header()->setResizeMode(TestResultsModel::columnNumber(TestResultsModel::InformationColumn), QHeaderView::Fixed);
 	delete oldModel;
 }

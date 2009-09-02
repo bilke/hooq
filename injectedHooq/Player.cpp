@@ -82,7 +82,7 @@ void Player::startPick()
 	// Crosshair
 	QApplication::setOverrideCursor(QCursor(Qt::CrossCursor));
 	// Start listening for events
-	QInternal::registerCallback(QInternal::EventNotifyCallback, &hook);
+	QInternal::registerCallback(QInternal::EventNotifyCallback, hook);
 }
 
 void Player::endPick()
@@ -91,7 +91,7 @@ void Player::endPick()
 	// Remove our crosshair
 	QApplication::restoreOverrideCursor();
 	// Remove our hook
-	QInternal::unregisterCallback(QInternal::EventNotifyCallback, &hook);
+	QInternal::unregisterCallback(QInternal::EventNotifyCallback, hook);
 	// Continue with our queue
 	m_processingEvents = false;
 	processEvents();
