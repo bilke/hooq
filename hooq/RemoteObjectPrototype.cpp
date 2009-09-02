@@ -51,9 +51,9 @@ QString RemoteObjectPrototype::path() const
 	return m_path;
 }
 
-void RemoteObjectPrototype::moveMouse(const QVariantMap& parameters)
+void RemoteObjectPrototype::raiseMouseEvent(const QVariantMap& parameters, MouseSignal signal)
 {
-	emit mouseMoveEvent(
+	emit (this->*signal)(
 		path(),
 		QPoint(
 			parameters.value("x").toInt(),
@@ -63,34 +63,26 @@ void RemoteObjectPrototype::moveMouse(const QVariantMap& parameters)
 		parameters.value("buttons").value<Qt::MouseButtons>(),
 		Qt::KeyboardModifiers(static_cast<int>(parameters.value("modifiers").value<Qt::KeyboardModifier>()))
 	);
+}
+
+void RemoteObjectPrototype::doubleClickMouseButton(const QVariantMap& parameters)
+{
+	raiseMouseEvent(parameters, &RemoteObjectPrototype::mouseDoubleClickEvent);
+}
+
+void RemoteObjectPrototype::moveMouse(const QVariantMap& parameters)
+{
+	raiseMouseEvent(parameters, &RemoteObjectPrototype::mouseMoveEvent);
 }
 
 void RemoteObjectPrototype::pressMouseButton(const QVariantMap& parameters)
 {
-	emit mousePressEvent(
-		path(),
-		QPoint(
-			parameters.value("x").toInt(),
-			parameters.value("y").toInt()
-		),
-		parameters.value("button").value<Qt::MouseButton>(),
-		parameters.value("buttons").value<Qt::MouseButtons>(),
-		Qt::KeyboardModifiers(static_cast<int>(parameters.value("modifiers").value<Qt::KeyboardModifier>()))
-	);
+	raiseMouseEvent(parameters, &RemoteObjectPrototype::mousePressEvent);
 }
 
 void RemoteObjectPrototype::releaseMouseButton(const QVariantMap& parameters)
 {
-	emit mouseReleaseEvent(
-		path(),
-		QPoint(
-			parameters.value("x").toInt(),
-			parameters.value("y").toInt()
-		),
-		parameters.value("button").value<Qt::MouseButton>(),
-		parameters.value("buttons").value<Qt::MouseButtons>(),
-		Qt::KeyboardModifiers(static_cast<int>(parameters.value("modifiers").value<Qt::KeyboardModifier>()))
-	);
+	raiseMouseEvent(parameters, &RemoteObjectPrototype::mouseReleaseEvent);
 }
 
 void RemoteObjectPrototype::contextMenu(const QVariantMap& parameters)
