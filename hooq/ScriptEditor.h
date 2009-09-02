@@ -21,13 +21,11 @@
 
 #include <QMainWindow>
 #include <QScriptEngineAgent>
-#include <QSet>
 #include <QWidget>
 
 class BacktraceWidget;
+class CodeEditor;
 class ObjectInformation;
-
-class QsciScintilla;
 
 class QDockWidget;
 class QLabel;
@@ -71,8 +69,6 @@ class ScriptEditor : public QMainWindow, public QScriptEngineAgent
 		void save();
 		void revert();
 		void stop();
-		void handleMarginAction(int margin, int line, Qt::KeyboardModifiers state);
-		void toggleBreakPoint(int line);
 		void run();
 
 		void insertPropertyFetch(const QString& objectPath, const QString& property);
@@ -81,8 +77,6 @@ class ScriptEditor : public QMainWindow, public QScriptEngineAgent
 		void setupActionShortcuts();
 		void setupMenuBar();
 		void updateActionStates();
-		void markLine(int lineNumber);
-		void clearMark();
 		void pauseOnLine(int lineNumber);
 		void insertLine(const QString& text);
 		QString escapeValue(const QVariant& value);
@@ -94,12 +88,8 @@ class ScriptEditor : public QMainWindow, public QScriptEngineAgent
 		QDockWidget* m_errorWidget;
 		QLabel* m_errorLabel;
 
-		int m_breakPointMarker;
-		QSet<int> m_breakPoints;
-
-		int m_currentLineMarker;
 		int m_currentLine;
-		QsciScintilla* m_editor;
+		CodeEditor* m_editor;
 		QString m_filePath;
 		Mode m_mode;
 		bool m_paused;

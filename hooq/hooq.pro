@@ -3,9 +3,6 @@ TARGET =
 DEPENDPATH += .
 INCLUDEPATH += . ../hooqInjector/ ../uilib/
 
-LIBS += -lqscintilla2
-
-
 QMAKE_RPATHDIR += \
 	$$(PWD)/../hooqInjector/ \
 	$$(PWD)/../uilib/ \

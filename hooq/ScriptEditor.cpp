@@ -20,11 +20,9 @@
 #include "ScriptEditor.h"
 
 #include "BacktraceWidget.h"
+#include "CodeEditor.h"
 #include "ObjectInformation.h"
 #include "PropertyDialog.h"
-
-#include <Qsci/qscilexerjavascript.h>
-#include <Qsci/qsciscintilla.h>
 
 #include <QAction>
 #include <QColor>
@@ -32,7 +30,6 @@
 #include <QDebug>
 #include <QDockWidget>
 #include <QFile>
-#include <QFont>
 #include <QKeySequence>
 #include <QLabel>
 #include <QMenu>
@@ -42,6 +39,9 @@
 #include <QScriptContextInfo>
 #include <QScriptEngine>
 #include <QStyle>
+#include <QTextBlock>
+#include <QTextCursor>
+#include <QTextDocument>
 #include <QToolBar>
 
 ScriptEditor::ScriptEditor(QScriptEngine* engine)
@@ -56,7 +56,7 @@ ScriptEditor::ScriptEditor(QScriptEngine* engine)
 , m_mode(Interactive)
 , m_paused(false)
 {
-	m_editor = new QsciScintilla(this);
+	m_editor = new CodeEditor(this);
 	m_backtraceDockWidget->setWidget(m_backtraceWidget);
 	m_errorWidget->setWidget(m_errorLabel);
 	m_errorLabel->setFrameShape(QFrame::StyledPanel);
@@ -67,33 +67,9 @@ ScriptEditor::ScriptEditor(QScriptEngine* engine)
 	engine->setAgent(this);
 	setCentralWidget(m_editor);
 
-	QFont codeFont(font());
-	codeFont.setFamily("monospace");
-	codeFont.setStyleHint(QFont::TypeWriter);
-
-	QsciLexer* lexer = new QsciLexerJavaScript(m_editor);
-	lexer->setDefaultFont(codeFont);
-
-	m_editor->setUtf8(true);
+	/*
 	m_editor->setLexer(lexer);
-	m_editor->setMarginMarkerMask(0, 1); // bitfield - 1 == first user-assigned marker (breakpoint)
-	m_editor->setMarginLineNumbers(0, true);
-	m_editor->setMarginWidth(1, 2);
-	m_editor->setMarginWidth(0, "00000");
-	m_editor->setMarginSensitivity(0, true);
-
-	m_breakPointMarker = m_editor->markerDefine(QsciScintilla::Circle);
-	m_editor->setMarkerForegroundColor(Qt::black, m_breakPointMarker);
-	m_editor->setMarkerBackgroundColor(Qt::red, m_breakPointMarker);
-
-	m_currentLineMarker = m_editor->markerDefine(QsciScintilla::Background);
-	m_editor->setMarkerBackgroundColor(QColor::fromRgb(255,140,0), m_currentLineMarker); // orange
-
-	connect(
-		m_editor,
-		SIGNAL(marginClicked(int, int, Qt::KeyboardModifiers)),
-		SLOT(handleMarginAction(int, int, Qt::KeyboardModifiers))
-	);
+	*/
 
 	QToolBar* toolBar = addToolBar(tr("Toolbar"));
 	toolBar->setMovable(false);
@@ -191,7 +167,13 @@ void ScriptEditor::insertPropertyAssert(const QString& objectPath, const QString
 
 void ScriptEditor::insertLine(const QString& text)
 {
-	m_editor->insertAt(text, m_currentLine, 0);
+	QTextCursor cursor = m_editor->textCursor();
+	const QTextDocument* const document = m_editor->document();
+	const QTextBlock block = document->findBlockByLineNumber(m_currentLine);
+	cursor.setPosition(block.position());
+	cursor.insertText(text);
+	m_editor->setTextCursor(cursor);
+	m_editor->ensureCursorVisible();
 }
 
 QString ScriptEditor::escapeValue(const QVariant& value)
@@ -246,7 +228,7 @@ void ScriptEditor::exceptionThrow(qint64 scriptId, const QScriptValue& exception
 			m_errorWidget->show();
 			m_backtraceWidget->setContext(context);
 			addDockWidget(Qt::BottomDockWidgetArea, m_backtraceDockWidget);
-			markLine(QScriptContextInfo(context).lineNumber());
+			m_editor->highlightLine(QScriptContextInfo(context).lineNumber());
 			show();
 			raise();
 		}
@@ -255,22 +237,12 @@ void ScriptEditor::exceptionThrow(qint64 scriptId, const QScriptValue& exception
 	}
 }
 
-void ScriptEditor::markLine(int lineNumber)
-{
-	m_editor->markerAdd(lineNumber - 1, m_currentLineMarker);
-}
-
-void ScriptEditor::clearMark()
-{
-	m_editor->markerDeleteAll(m_currentLineMarker);
-}
-
 void ScriptEditor::pauseOnLine(int lineNumber)
 {
 	updateActionStates();
-	markLine(lineNumber);
+	m_editor->highlightLine(lineNumber);
 	pause();
-	clearMark();
+	m_editor->clearLineHighlight();
 }
 
 void ScriptEditor::positionChange(qint64 scriptId, int lineNumber, int columnNumber)
@@ -278,7 +250,7 @@ void ScriptEditor::positionChange(qint64 scriptId, int lineNumber, int columnNum
 	Q_UNUSED(columnNumber);
 	Q_UNUSED(scriptId);
 
-	if(m_currentLine != lineNumber && m_breakPoints.contains(lineNumber) && mode() == Interactive)
+	if(m_currentLine != lineNumber && m_editor->breakpoints().contains(lineNumber) && mode() == Interactive)
 	{
 		pauseOnLine(lineNumber);
 	}
@@ -324,34 +296,13 @@ void ScriptEditor::save()
 {
 	QFile file(m_filePath);
 	file.open(QIODevice::WriteOnly | QFile::Truncate);
-	m_editor->write(&file);
+	file.write(m_editor->toPlainText().toUtf8());
 	file.close();
 }
 
 void ScriptEditor::revert()
 {
 	open(m_filePath);
-}
-
-void ScriptEditor::handleMarginAction(int margin, int line, Qt::KeyboardModifiers state)
-{
-	Q_UNUSED(margin);
-	Q_UNUSED(state);
-	toggleBreakPoint(line + 1);
-}
-
-void ScriptEditor::toggleBreakPoint(int line)
-{
-	if(m_breakPoints.contains(line))
-	{
-		m_editor->markerDelete(line - 1, m_breakPointMarker);
-		m_breakPoints.remove(line);
-	}
-	else
-	{
-		m_editor->markerAdd(line - 1, m_breakPointMarker);
-		m_breakPoints.insert(line);
-	}
 }
 
 void ScriptEditor::reset(int features)
@@ -362,12 +313,11 @@ void ScriptEditor::reset(int features)
 	}
 	if(features & Breakpoints)
 	{
-		m_editor->markerDeleteAll(m_breakPointMarker);
-		m_breakPoints.clear();
+		m_editor->clearBreakpoints();
 	}
 	if(features & CurrentLineUi)
 	{
-		m_editor->markerDeleteAll(m_currentLineMarker);
+		//m_editor->markerDeleteAll(m_currentLineMarker);
 	}
 	if(features & ErrorUi)
 	{
@@ -381,5 +331,5 @@ void ScriptEditor::open(const QString& filePath)
 	m_filePath = filePath;
 	QFile file(filePath);
 	file.open(QIODevice::ReadOnly);
-	m_editor->read(&file);
+	m_editor->setPlainText(QString::fromUtf8(file.readAll()));
 }

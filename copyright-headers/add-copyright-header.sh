@@ -1,5 +1,5 @@
 #!/bin/sh
-NOTICE_HEADER="This program is free software;"
+NOTICE_HEADER="is free software; you can redistribute it"
 TMPFILE=$(mktemp)
 for file in $(find .. -name *.cpp -o -name *.h); do
 	if ! grep -q "$NOTICE_HEADER" "$file"; then
