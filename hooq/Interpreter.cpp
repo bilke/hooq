@@ -109,6 +109,11 @@ void Interpreter::connectRemoteObject(RemoteObjectPrototype* object)
 	);
 	connect(
 		object,
+		SIGNAL(contextMenuEvent(QString, QPoint, QPoint, Qt::KeyboardModifiers)),
+		SLOT(writeContextMenuEvent(QString, QPoint, QPoint, Qt::KeyboardModifiers))
+	);
+	connect(
+		object,
 		SIGNAL(wheelEvent(QString, QPoint, int, Qt::MouseButtons, Qt::KeyboardModifiers, Qt::Orientation)),
 		SLOT(writeWheelEvent(QString, QPoint, int, Qt::MouseButtons, Qt::KeyboardModifiers, Qt::Orientation))
 	);
@@ -214,6 +219,19 @@ void Interpreter::writeMouseReleaseEvent(const QString& path, const QPoint& posi
 {
 	writeStartElement("mouseButtonRelease");
 	writeMouseAttributes(path, position, button, buttons, modifiers);
+	writeEndElement();
+	waitForAck();
+}
+
+void Interpreter::writeContextMenuEvent(const QString& path, const QPoint& position, const QPoint& globalPosition, Qt::KeyboardModifiers modifiers)
+{
+	writeStartElement("contextMenu");
+	writeAttribute("x", QString::number(position.x()));
+	writeAttribute("y", QString::number(position.y()));
+	writeAttribute("globalX", QString::number(globalPosition.x()));
+	writeAttribute("globalY", QString::number(globalPosition.y()));
+	writeAttribute("modifiers", QString::number(modifiers));
+	writeAttribute("target", path);
 	writeEndElement();
 	waitForAck();
 }

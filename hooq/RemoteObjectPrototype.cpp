@@ -93,6 +93,22 @@ void RemoteObjectPrototype::releaseMouseButton(const QVariantMap& parameters)
 	);
 }
 
+void RemoteObjectPrototype::contextMenu(const QVariantMap& parameters)
+{
+	emit contextMenuEvent(
+		path(),
+		QPoint(
+			parameters.value("x").toInt(),
+			parameters.value("y").toInt()
+		),
+		QPoint(
+			parameters.value("globalX").toInt(),
+			parameters.value("globalY").toInt()
+		),
+		Qt::KeyboardModifiers(static_cast<int>(parameters.value("modifiers").value<Qt::KeyboardModifier>()))
+	);
+}
+
 void RemoteObjectPrototype::pressKey(const QVariantMap& parameters)
 {
 	emit keyPressEvent(

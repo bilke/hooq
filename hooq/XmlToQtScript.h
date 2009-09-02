@@ -33,6 +33,7 @@ class XmlToQtScript : private QXmlStreamReader
 		QString parseMouseEvent();
 		QString parseWheelEvent();
 		QString parseShortcutEvent();
+		QString parseContextMenuEvent();
 
 		static QString stringForMouseButton(int button);
 		static QString stringForMouseButtons(int buttons);

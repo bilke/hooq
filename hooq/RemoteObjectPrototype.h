@@ -40,6 +40,7 @@ class RemoteObjectPrototype : public QObject, public QScriptable
 		void pressKey(const QVariantMap& parameters);
 		void releaseKey(const QVariantMap& parameters);
 		void shortcut(const QVariantMap& parameters);
+		void contextMenu(const QVariantMap& parameters);
 		QVariant property(const QString& name);
 	signals:
 		void propertyRequested(const QString& path, const QString& name, QVariant* result);
@@ -50,6 +51,7 @@ class RemoteObjectPrototype : public QObject, public QScriptable
 		void keyPressEvent(const QString& path, int key, Qt::KeyboardModifiers modifiers, const QString& text, bool autorepeat, ushort count);
 		void keyReleaseEvent(const QString& path, int key, Qt::KeyboardModifiers modifiers, const QString& text, bool autorepeat, ushort count);
 		void shortcutEvent(const QString& path, const QKeySequence& sequence, int id, bool ambiguous);
+		void contextMenuEvent(const QString& path, const QPoint& position, const QPoint& globalPosition, Qt::KeyboardModifiers modifiers);
 	private:
 		const QString m_path;
 };

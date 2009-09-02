@@ -100,6 +100,11 @@ QString XmlToQtScript::parseHooq()
 					items.append(parseShortcutEvent());
 					continue;
 				}
+				if(name() == "contextMenu")
+				{
+					items.append(parseContextMenuEvent());
+					continue;
+				}
 				qDebug() << Q_FUNC_INFO << "skipping unknown element" << name();
 				skipElement();
 				break;
@@ -208,6 +213,39 @@ QString XmlToQtScript::parseMouseEvent()
 		button
 	).arg(
 		buttons
+	).arg(
+		modifiers
+	);
+}
+
+QString XmlToQtScript::parseContextMenuEvent()
+{
+	const QString call("contextMenu");
+
+	const QString target = attributes().value("target").toString();
+	const QString x = attributes().value("x").toString();
+	const QString y = attributes().value("y").toString();
+	const QString globalX = attributes().value("globalX").toString();
+	const QString globalY = attributes().value("globalY").toString();
+	const QString modifiers = stringForModifiers(attributes().value("modifiers").toString().toInt());
+
+	// skip to end of element
+	readElementText();
+
+	return QString(
+		"objectFromPath(\"%1\").%2({\"x\": %3, \"y\": %4, \"globalX\": %5, \"globalY\": %6, \"modifiers\": %7});"
+	).arg(
+		target
+	).arg(
+		call
+	).arg(
+		x
+	).arg(
+		y
+	).arg(
+		globalX
+	).arg(
+		globalY
 	).arg(
 		modifiers
 	);
