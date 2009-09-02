@@ -27,7 +27,11 @@
 class QAbstractItemView;
 class QModelIndex;
 
-
+/** Map clicks on specific columns of a QAbstractItemView to different slots.
+ *
+ * This means you can easily, for example, map column 1 to "play", and column 2 to "edit",
+ * without needing a separate dispatcher slot.
+ */
 class ColumnClickMapper : public QObject
 {
 	Q_OBJECT

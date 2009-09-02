@@ -28,6 +28,15 @@
 
 class QStyleOptionButton;
 
+/** Render pushbuttons in certain columns.
+ * You might like to look at ColumnClickMapper for dealing with the final click.
+ *
+ * This doesn't create actual push buttons, it just draws them with QApplication::style().
+ *
+ * You can add buttons to columns with addButton(), and optionally specifiy a role that controls
+ * the enabled state of the buttons via setEnabledRole() - if enabledRole() is -1, all buttons
+ * will always be enabled.
+ */
 class PushButtonDelegate: public QStyledItemDelegate
 {
 	Q_OBJECT;
@@ -38,11 +47,12 @@ class PushButtonDelegate: public QStyledItemDelegate
 		void addButton(int column, const QIcon& icon, const QString& text = QString());
 		void addButton(int column, const QString& text);
 
-		virtual void paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const;
-
 		int enabledRole() const;
 		void setEnabledRole(int);
-	public slots:
+
+		// QStyledItemDelegate
+		virtual void paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const;
+	private slots:
 		void hoverIndex(const QModelIndex& index);
 		void depressIndex(const QModelIndex& index);
 		void release();

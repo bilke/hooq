@@ -25,6 +25,11 @@
 class QAbstractItemView;
 class QModelIndex;
 
+/** Emit pressed/released signals when a certain key is pressed on a valid model index.
+ *
+ * For example, this lets you easily hook up a QAbstractItemView to a deleteItem(QModelIndex)
+ * slot.
+ */
 class ModelIndexKeyEventObserver : public QObject
 {
 	Q_OBJECT
