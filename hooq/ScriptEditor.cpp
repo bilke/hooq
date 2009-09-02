@@ -171,7 +171,7 @@ void ScriptEditor::insertLine(const QString& text)
 {
 	QTextCursor cursor = m_editor->textCursor();
 	const QTextDocument* const document = m_editor->document();
-	const QTextBlock block = document->findBlockByLineNumber(m_currentLine);
+	const QTextBlock block = document->findBlockByNumber(m_currentLine - 1);
 	cursor.setPosition(block.position());
 	cursor.insertText(text);
 	m_editor->setTextCursor(cursor);
