@@ -22,6 +22,21 @@
 #include <QAbstractItemView>
 #include <QMetaObject>
 #include <QModelIndex>
+#include <QPointer>
+
+struct ColumnClickMapper::Target
+{
+	Target(QObject* _receiver, const char* _slot, int _enabledRole)
+	{
+		receiver = _receiver;
+		slot = _slot;
+		enabledRole = _enabledRole;
+	}
+
+	QPointer<QObject> receiver;
+	const char* slot;
+	int enabledRole;
+};
 
 ColumnClickMapper::ColumnClickMapper(QAbstractItemView* parent)
 : QObject(parent)
@@ -33,11 +48,16 @@ ColumnClickMapper::ColumnClickMapper(QAbstractItemView* parent)
 	);
 }
 
-void ColumnClickMapper::addMapping(int column, QObject* receiver, const char* slot)
+ColumnClickMapper::~ColumnClickMapper()
+{
+
+}
+
+void ColumnClickMapper::addMapping(int column, QObject* receiver, const char* slot, int enabledRole)
 {
 	Q_ASSERT(column >= 0);
 	Q_ASSERT(QMetaObject::checkConnectArgs("void foo(QModelIndex)", slot));
-	m_map.insert(column, Target(receiver, slot));
+	m_map.insert(column, Target(receiver, slot, enabledRole));
 }
 
 void ColumnClickMapper::map(const QModelIndex& index)
@@ -46,15 +66,22 @@ void ColumnClickMapper::map(const QModelIndex& index)
 	{
 		Q_FOREACH(const Target& target, m_map.values(index.column()))
 		{
-			if(!target.first)
+			if(!target.receiver)
 			{
 				continue;
 			}
+			if(target.enabledRole != -1)
+			{
+				if(!index.data(target.enabledRole).toBool())
+				{
+					continue;
+				}
+			}
 			// Qt internal hackery
-			QString method = QString::fromLatin1(target.second);
+			QString method = QString::fromLatin1(target.slot);
 			method.remove(0, 1); // chop off the QSLOT_CODE
 			method.remove(method.indexOf('('), method.length()); // chop off the arguments
-			QMetaObject::invokeMethod(target.first, method.toLatin1().constData(), Q_ARG(QModelIndex, index));
+			QMetaObject::invokeMethod(target.receiver, method.toLatin1().constData(), Q_ARG(QModelIndex, index));
 		}
 	}
 }

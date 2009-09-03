@@ -21,8 +21,6 @@
 
 #include <QMultiHash>
 #include <QObject>
-#include <QPair>
-#include <QPointer>
 
 class QAbstractItemView;
 class QModelIndex;
@@ -37,10 +35,11 @@ class ColumnClickMapper : public QObject
 	Q_OBJECT
 	public:
 		ColumnClickMapper(QAbstractItemView* parent);
-		void addMapping(int column, QObject* receiever, const char* slot);
+		~ColumnClickMapper();
+		void addMapping(int column, QObject* receiever, const char* slot, int enabledRole = -1);
 	private slots:
 		void map(const QModelIndex&);
 	private:
-		typedef QPair<QPointer<QObject>, const char*> Target;
+		struct Target;
 		QMultiHash<int, Target> m_map;
 };
