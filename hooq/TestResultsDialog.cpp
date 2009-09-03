@@ -19,6 +19,7 @@
 */
 #include "TestResultsDialog.h"
 
+#include "ColumnClickMapper.h"
 #include "PushButtonDelegate.h"
 #include "TestFailureDialog.h"
 #include "TestResultsModel.h"
@@ -57,11 +58,8 @@ TestResultsDialog::TestResultsDialog(QWidget* parent)
 	view->setRootIsDecorated(false);
 	view->setUniformRowHeights(true);
 
-	connect(
-		view,
-		SIGNAL(clicked(QModelIndex)),
-		SLOT(showInformation(QModelIndex))
-	);
+	ColumnClickMapper* mapper = new ColumnClickMapper(m_view);
+	mapper->addMapping(TestResultsModel::columnNumber(TestResultsModel::InformationColumn), this, SLOT(showInformation(QModelIndex)), TestResultsModel::ButtonEnabledRole);
 
 	QDialogButtonBox* buttons = new QDialogButtonBox(QDialogButtonBox::Ok, Qt::Horizontal, this);
 	buttons->setCenterButtons(true);
