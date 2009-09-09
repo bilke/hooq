@@ -189,15 +189,15 @@ void Player::processEvents()
 			};
 			case Event::Object:
 			{
-				ObjectEvent* o = Hooq::event_cast<ObjectEvent*>(event.get());
-				QObject* receiver = findObject(o->objectPath());
-				if(!receiver)
+				ObjectEvent* e = Hooq::event_cast<ObjectEvent*>(event.get());
+				QObject* o = findObject(e->objectPath());
+				if(!o)
 				{
-					qDebug() << "Couldn't find receiver" << receiver << "from path" << o->objectPath();
+					qDebug() << "Couldn't find receiver" << o << "from path" << e->objectPath();
 					ack();
 					continue;
 				}
-				QCoreApplication::postEvent(receiver, o->qtEvent());
+				QCoreApplication::postEvent(o, e->qtEvent());
 				ack();
 				break;
 			}
