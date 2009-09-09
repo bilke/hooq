@@ -99,4 +99,17 @@ namespace Hooq
 		private:
 			int m_msec;
 	};
+
+	template<class T> T event_cast(Event* e)
+	{
+		// Segfaults if ::type() depends on class data. "Shouldn't" happen
+		const bool sameType = static_cast<T>(0)->type() == e->type();
+		Q_ASSERT(sameType);
+
+		if(sameType)
+		{
+			return static_cast<T>(e);
+		}
+		return 0;
+	}
 };

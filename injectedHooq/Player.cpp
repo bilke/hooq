@@ -180,7 +180,7 @@ void Player::processEvents()
 		{
 			case Event::Dump:
 			{
-				DumpEvent* e = static_cast<DumpEvent*>(event.get());
+				DumpEvent* e = Hooq::event_cast<DumpEvent*>(event.get());
 				QObject* o = findObject(e->objectPath());
 				Q_ASSERT(o);
 				device()->write("DUMPED\n");
@@ -189,7 +189,7 @@ void Player::processEvents()
 			};
 			case Event::Object:
 			{
-				ObjectEvent* o = static_cast<ObjectEvent*>(event.get());
+				ObjectEvent* o = Hooq::event_cast<ObjectEvent*>(event.get());
 				QObject* receiver = findObject(o->objectPath());
 				if(!receiver)
 				{
@@ -205,7 +205,7 @@ void Player::processEvents()
 				startPick();
 				return;
 			case Event::Sleep:
-				sleep(static_cast<SleepEvent*>(event.get())->msec());
+				sleep(Hooq::event_cast<SleepEvent*>(event.get())->msec());
 				return;
 		}
 	}
