@@ -30,6 +30,7 @@ namespace Hooq
 		public:
 			enum Type
 			{
+				// PathEvent not listed here, as it's abstract
 				Dump,
 				Object,
 				Pick,
@@ -37,11 +38,13 @@ namespace Hooq
 			};
 			virtual Type type() const = 0;
 	};
-	
+
+	/// Abstract base class for events that reference an object.
 	class PathEvent: public Event
 	{
 		public:
 			QString objectPath() const;
+			// NOT IMPLEMENTED: virtual Type type();
 		protected:
 			PathEvent(const QString& objectPath);
 		private:
