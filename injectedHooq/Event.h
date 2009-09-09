@@ -105,6 +105,12 @@ namespace Hooq
 
 	template<class T> T event_cast(Event* e)
 	{
+		Q_ASSERT(e);
+		if(!e)
+		{
+			return 0;
+		}
+
 		// Segfaults if ::type() depends on class data. "Shouldn't" happen
 		const bool sameType = static_cast<T>(0)->type() == e->type();
 		Q_ASSERT(sameType);
