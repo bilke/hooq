@@ -253,6 +253,14 @@ void Player::handleElement()
 	{
 		postContextMenuEvent();
 	}
+	if(name() == "focusIn")
+	{
+		postFocusEvent(QEvent::FocusIn);
+	}
+	if(name() == "focusOut")
+	{
+		postFocusEvent(QEvent::FocusOut);
+	}
 	if(name() == "keyPress")
 	{
 		postKeyEvent(QEvent::KeyPress);
@@ -313,6 +321,16 @@ void Player::postContextMenuEvent()
 		static_cast<Qt::KeyboardModifiers>(attributes().value("modifiers").toString().toInt())
 	);
 	
+	m_eventQueue.enqueue(new ObjectEvent(attributes().value("target").toString(), event));
+}
+
+void Player::postFocusEvent(int type)
+{
+	QFocusEvent* event = new QFocusEvent(
+		static_cast<QEvent::Type>(type),
+		static_cast<Qt::FocusReason>(attributes().value("reason").toString().toInt())
+	);
+
 	m_eventQueue.enqueue(new ObjectEvent(attributes().value("target").toString(), event));
 }
 
