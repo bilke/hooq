@@ -36,10 +36,16 @@ class ScriptEditor : public QMainWindow, public QScriptEngineAgent
 	public:
 		enum Features
 		{
-			BacktraceUi = 1 << 0,
-			Breakpoints = 1 << 1,
+			BacktraceUi   = 1 << 0,
+			Breakpoints   = 1 << 1,
 			CurrentLineUi = 1 << 2,
-			ErrorUi = 1 << 3,
+			ErrorUi       = 1 << 3,
+			DirtyState    = 1 << 4
+
+		};
+		enum FeatureSets
+		{
+			DebuggingFeatures = BacktraceUi | Breakpoints | CurrentLineUi | ErrorUi,
 			AllFeatures = ~0
 		};
 		enum Mode
@@ -58,6 +64,7 @@ class ScriptEditor : public QMainWindow, public QScriptEngineAgent
 
 		Mode mode() const;
 		void setMode(Mode mode);
+		bool isDirty() const;
 	public slots:
 		void open(const QString& filePath);
 		void objectPicked(const ObjectInformation&);
@@ -89,6 +96,7 @@ class ScriptEditor : public QMainWindow, public QScriptEngineAgent
 		QLabel* m_errorLabel;
 
 		int m_currentLine;
+		bool m_dirty;
 		CodeEditor* m_editor;
 		QString m_filePath;
 		Mode m_mode;

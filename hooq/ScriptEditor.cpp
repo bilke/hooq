@@ -54,6 +54,7 @@ ScriptEditor::ScriptEditor(QScriptEngine* engine)
 , m_errorWidget(new QDockWidget(tr("Error"), this))
 , m_errorLabel(new QLabel(this))
 , m_currentLine(-1)
+, m_dirty(false)
 , m_editor(new CodeEditor(this))
 , m_mode(Interactive)
 , m_paused(false)
@@ -90,6 +91,11 @@ ScriptEditor::ScriptEditor(QScriptEngine* engine)
 	setupMenuBar();
 	setupActionShortcuts();
 	updateActionStates();
+}
+
+bool ScriptEditor::isDirty() const
+{
+	return m_dirty;
 }
 
 ScriptEditor::Mode ScriptEditor::mode() const
@@ -270,7 +276,7 @@ void ScriptEditor::pause()
 
 void ScriptEditor::run()
 {
-	reset(AllFeatures & ~Breakpoints);
+	reset(DebuggingFeatures);
 
 	if(isPaused())
 	{
@@ -285,7 +291,7 @@ void ScriptEditor::stop()
 	engine()->abortEvaluation();
 	setPaused(false);
 	updateActionStates();
-	reset(AllFeatures & ~Breakpoints);
+	reset(DebuggingFeatures);
 }
 
 void ScriptEditor::updateActionStates()
@@ -324,6 +330,10 @@ void ScriptEditor::reset(int features)
 	if(features & ErrorUi)
 	{
 		m_errorWidget->hide();
+	}
+	if(features & DirtyState)
+	{
+		m_dirty = false;
 	}
 }
 
