@@ -65,6 +65,7 @@ namespace Hooq
 	{
 		public:
 			FocusEvent(const QString& objectPath, Qt::FocusReason reason);
+			virtual ~FocusEvent();
 			Type type() const;
 			Qt::FocusReason reason() const;
 		private:
@@ -75,6 +76,7 @@ namespace Hooq
 	{
 		public:
 			ObjectEvent(const QString& objectPath, QEvent* qtEvent);
+			virtual ~ObjectEvent();
 			Type type() const;
 
 			QEvent* qtEvent() const;
@@ -93,6 +95,7 @@ namespace Hooq
 	{
 		public:
 			SleepEvent(int msec);
+			virtual ~SleepEvent();
 			Type type() const;
 
 			int msec() const;

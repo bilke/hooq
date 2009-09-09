@@ -45,6 +45,18 @@ PathEvent::~PathEvent()
 {
 }
 
+FocusEvent::~FocusEvent()
+{
+}
+
+ObjectEvent::~ObjectEvent()
+{
+}
+
+SleepEvent::~SleepEvent()
+{
+}
+
 DumpEvent::DumpEvent(const QString& objectPath)
 : PathEvent(objectPath)
 {
