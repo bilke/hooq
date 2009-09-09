@@ -176,6 +176,7 @@ void Player::processEvents()
 	while(!m_eventQueue.isEmpty())
 	{
 		std::auto_ptr<Event> event(m_eventQueue.dequeue());
+		// "break;" for ack, "continue;" for no-ack, "return;" to leave the event loop - be sure to re-enter it later
 		switch(event->type())
 		{
 			case Event::Dump:
@@ -185,7 +186,7 @@ void Player::processEvents()
 				Q_ASSERT(o);
 				device()->write("DUMPED\n");
 				XmlPropertyDumper::dump(o, device());
-				break;
+				continue;
 			}
 			case Event::Focus:
 			{
@@ -202,21 +203,20 @@ void Player::processEvents()
 				{
 					qDebug() << "Couldn't find focus widget" << o << "from" << e->objectPath();
 				}
-				ack();
-				continue;
+				break;
 			}
 			case Event::Object:
 			{
 				ObjectEvent* e = Hooq::event_cast<ObjectEvent*>(event.get());
 				QObject* o = findObject(e->objectPath());
-				if(!o)
+				if(o)
+				{
+					QCoreApplication::postEvent(o, e->qtEvent());
+				}
+				else
 				{
 					qDebug() << "Couldn't find receiver from path" << e->objectPath();
-					ack();
-					continue;
 				}
-				QCoreApplication::postEvent(o, e->qtEvent());
-				ack();
 				break;
 			}
 			case Event::Pick:
@@ -226,6 +226,7 @@ void Player::processEvents()
 				sleep(Hooq::event_cast<SleepEvent*>(event.get())->msec());
 				return;
 		}
+		ack();
 	}
 
 	if(tokenType() == EndDocument)
