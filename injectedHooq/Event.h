@@ -38,12 +38,17 @@ namespace Hooq
 				Pick,
 				Sleep
 			};
-			// static const Event::Type EVENT_TYPE = TypeValueGoesHere; // must be in every instantiable subclass, for event_cast
-			Type type() const;
-		protected:
-			Event(Type type);
-		private:
-			Type m_type;
+			virtual Type type() const = 0;
+	};
+
+	template<class Derived, class Base> class TypedEvent : public Base
+	{
+		public:
+			TypedEvent() : Base() {}
+			TypedEvent(const QString& p) : Base(p) {}
+
+			static Event::Type staticType() { return Derived::EVENT_TYPE; };
+			virtual Event::Type type() const { return staticType(); }
 	};
 
 	/// Abstract base class for events that reference an object.
@@ -54,19 +59,19 @@ namespace Hooq
 			virtual ~PathEvent();
 			// NOT IMPLEMENTED: virtual Type type();
 		protected:
-			PathEvent(const QString& objectPath, Type type);
+			PathEvent(const QString& objectPath);
 		private:
 			QString m_objectPath;
 	};
 
-	class DumpEvent : public PathEvent
+	class DumpEvent : public TypedEvent<DumpEvent, PathEvent>
 	{
 		public:
 			static const Event::Type EVENT_TYPE = Dump;
 			DumpEvent(const QString& objectPath);
 	};
 
-	class FocusEvent: public PathEvent
+	class FocusEvent: public TypedEvent<FocusEvent, PathEvent>
 	{
 		public:
 			static const Event::Type EVENT_TYPE = Focus;
@@ -77,7 +82,7 @@ namespace Hooq
 			Qt::FocusReason m_reason;
 	};
 
-	class ObjectEvent : public PathEvent
+	class ObjectEvent : public TypedEvent<ObjectEvent, PathEvent>
 	{
 		public:
 			static const Event::Type EVENT_TYPE = Object;
@@ -89,14 +94,13 @@ namespace Hooq
 			QEvent* m_qtEvent;
 	};
 
-	class PickEvent : public Event
+	class PickEvent : public TypedEvent<PickEvent, Event>
 	{
 		public:
 			static const Event::Type EVENT_TYPE = Pick;
-			PickEvent();
 	};
 
-	class SleepEvent : public Event
+	class SleepEvent : public TypedEvent<SleepEvent, Event>
 	{
 		public:
 			static const Event::Type EVENT_TYPE = Sleep;
@@ -116,7 +120,7 @@ namespace Hooq
 			return 0;
 		}
 
-		const Event::Type wantedType = static_cast<T>(0)->EVENT_TYPE;
+		const Event::Type wantedType = static_cast<T>(0)->staticType();
 		const bool sameType = e->type() == wantedType;
 		Q_ASSERT(sameType);
 
