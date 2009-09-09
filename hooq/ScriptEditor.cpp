@@ -290,7 +290,6 @@ void ScriptEditor::stop()
 {
 	engine()->abortEvaluation();
 	setPaused(false);
-	updateActionStates();
 	reset(DebuggingFeatures);
 }
 
@@ -335,6 +334,7 @@ void ScriptEditor::reset(int features)
 	{
 		m_dirty = false;
 	}
+	updateActionStates();
 }
 
 void ScriptEditor::open(const QString& filePath)
