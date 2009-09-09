@@ -92,7 +92,7 @@ void PushButtonDelegate::paint(QPainter* painter, const QStyleOptionViewItem& op
 		if(m_buttonColumns.contains(index.column()))
 		{
 			QStyleOptionButton opt;
-			initStyleOption(&opt, option, index);
+			initStyleOptionButton(&opt, option, index);
 			QApplication::style()->drawControl(QStyle::CE_PushButton, &opt, painter);
 		}
 	}
@@ -114,7 +114,7 @@ void PushButtonDelegate::hoverIndex(const QModelIndex& index)
 	m_hoverIndex = index;
 }
 
-void PushButtonDelegate::initStyleOption(QStyleOptionButton* out, const QStyleOptionViewItem& in, const QModelIndex& index) const
+void PushButtonDelegate::initStyleOptionButton(QStyleOptionButton* out, const QStyleOptionViewItem& in, const QModelIndex& index) const
 {
 	out->icon = m_buttonIcons.value(index.column());
 	out->text= m_buttonText.value(index.column());

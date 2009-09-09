@@ -57,7 +57,7 @@ class PushButtonDelegate: public QStyledItemDelegate
 		void depressIndex(const QModelIndex& index);
 		void release();
 	private:
-		void initStyleOption(QStyleOptionButton* out, const QStyleOptionViewItem& in, const QModelIndex& index) const;
+		void initStyleOptionButton(QStyleOptionButton* out, const QStyleOptionViewItem& in, const QModelIndex& index) const;
 
 		QSet<int> m_buttonColumns;
 		QHash<int, QIcon> m_buttonIcons;
