@@ -319,7 +319,7 @@ void ScriptEditor::reset(int features)
 	}
 	if(features & CurrentLineUi)
 	{
-		//m_editor->markerDeleteAll(m_currentLineMarker);
+		m_editor->clearLineHighlight();
 	}
 	if(features & ErrorUi)
 	{
