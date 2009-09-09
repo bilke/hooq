@@ -66,14 +66,6 @@ void RemoteObjectPrototype::raiseMouseEvent(const QVariantMap& parameters, Mouse
 	);
 }
 
-void RemoteObjectPrototype::raiseFocusEvent(const QVariantMap& parameters, FocusSignal signal)
-{
-	emit (this->*signal)(
-		path(),
-		parameters.value("reason").value<Qt::FocusReason>()
-	);
-}
-
 void RemoteObjectPrototype::doubleClickMouseButton(const QVariantMap& parameters)
 {
 	raiseMouseEvent(parameters, &RemoteObjectPrototype::mouseDoubleClickEvent);
@@ -127,14 +119,12 @@ void RemoteObjectPrototype::pressKey(const QVariantMap& parameters)
 	raiseKeyEvent(parameters, &RemoteObjectPrototype::keyPressEvent);
 }
 
-void RemoteObjectPrototype::focusIn(const QVariantMap& parameters)
+void RemoteObjectPrototype::setFocus(const QVariantMap& parameters)
 {
-	raiseFocusEvent(parameters, &RemoteObjectPrototype::focusInEvent);
-}
-
-void RemoteObjectPrototype::focusOut(const QVariantMap& parameters)
-{
-	raiseFocusEvent(parameters, &RemoteObjectPrototype::focusOutEvent);
+	emit setFocusEvent(
+		path(),
+		parameters.value("reason").value<Qt::FocusReason>()
+	);
 }
 
 void RemoteObjectPrototype::releaseKey(const QVariantMap& parameters)

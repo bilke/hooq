@@ -124,13 +124,8 @@ void Interpreter::connectRemoteObject(RemoteObjectPrototype* object)
 	);
 	connect(
 		object,
-		SIGNAL(focusInEvent(QString, Qt::FocusReason)),
-		SLOT(writeFocusInEvent(QString, Qt::FocusReason))
-	);
-	connect(
-		object,
-		SIGNAL(focusOutEvent(QString, Qt::FocusReason)),
-		SLOT(writeFocusOutEvent(QString, Qt::FocusReason))
+		SIGNAL(setFocusEvent(QString, Qt::FocusReason)),
+		SLOT(writeSetFocusEvent(QString, Qt::FocusReason))
 	);
 	connect(
 		object,
@@ -206,18 +201,9 @@ void Interpreter::writeKeyPressEvent(const QString& path, int key, Qt::KeyboardM
 	waitForAck();
 }
 
-void Interpreter::writeFocusInEvent(const QString& path, Qt::FocusReason reason)
+void Interpreter::writeSetFocusEvent(const QString& path, Qt::FocusReason reason)
 {
-	writeStartElement("focusIn");
-	writeAttribute("target", path);
-	writeAttribute("reason", QString::number(reason));
-	writeEndElement();
-	waitForAck();
-}
-
-void Interpreter::writeFocusOutEvent(const QString& path, Qt::FocusReason reason)
-{
-	writeStartElement("focusOut");
+	writeStartElement("focusChanged");
 	writeAttribute("target", path);
 	writeAttribute("reason", QString::number(reason));
 	writeEndElement();

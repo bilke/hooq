@@ -80,7 +80,7 @@ QString XmlToQtScript::parseHooq()
 					items.append(parseMsec());
 					continue;
 				}
-				if(name() == "focusIn" || name() == "focusOut")
+				if(name() == "focusChanged")
 				{
 					items.append(parseFocusEvent());
 					continue;
@@ -137,7 +137,7 @@ QString XmlToQtScript::escapeString(const QString& _string)
 
 QString XmlToQtScript::parseFocusEvent()
 {
-	const QString call(name().toString());
+	const QString call("setFocus");
 	Q_ASSERT(!call.isEmpty());
 
 	const QString target = attributes().value("target").toString();
