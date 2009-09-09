@@ -22,18 +22,24 @@
 namespace Hooq
 {
 
-PathEvent::PathEvent(const QString& objectPath)
-: m_objectPath(objectPath)
+PathEvent::PathEvent(const QString& objectPath, Event::Type type)
+: Event(type)
+, m_objectPath(objectPath)
 {
+}
+
+Event::Event(Event::Type type)
+: m_type(type)
+{
+}
+
+Event::Type Event::type() const
+{
+	return m_type;
 }
 
 Event::~Event()
 {
-}
-
-Event::Type FocusEvent::type() const
-{
-	return Focus;
 }
 
 QString PathEvent::objectPath() const
@@ -58,17 +64,13 @@ SleepEvent::~SleepEvent()
 }
 
 DumpEvent::DumpEvent(const QString& objectPath)
-: PathEvent(objectPath)
+: PathEvent(objectPath, EVENT_TYPE)
 {
-}
-
-Event::Type DumpEvent::type() const
-{
-	return Dump;
 }
 
 SleepEvent::SleepEvent(int msec)
-: m_msec(msec)
+: Event(EVENT_TYPE)
+, m_msec(msec)
 {
 }
 
@@ -77,13 +79,8 @@ int SleepEvent::msec() const
 	return m_msec;
 }
 
-Event::Type SleepEvent::type() const
-{
-	return Sleep;
-}
-
 ObjectEvent::ObjectEvent(const QString& objectPath, QEvent* qtEvent)
-: PathEvent(objectPath)
+: PathEvent(objectPath, EVENT_TYPE)
 , m_qtEvent(qtEvent)
 {
 }
@@ -93,17 +90,13 @@ QEvent* ObjectEvent::qtEvent() const
 	return m_qtEvent;
 }
 
-Event::Type ObjectEvent::type() const
-{
-	return Object;
-}
-
 PickEvent::PickEvent()
+: Event(EVENT_TYPE)
 {
 }
 
 FocusEvent::FocusEvent(const QString& objectPath, Qt::FocusReason reason)
-: PathEvent(objectPath)
+: PathEvent(objectPath, EVENT_TYPE)
 , m_reason(reason)
 {
 }
@@ -111,11 +104,6 @@ FocusEvent::FocusEvent(const QString& objectPath, Qt::FocusReason reason)
 Qt::FocusReason FocusEvent::reason() const
 {
 	return m_reason;
-}
-
-Event::Type PickEvent::type() const
-{
-	return Pick;
 }
 
 };

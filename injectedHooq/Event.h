@@ -38,7 +38,11 @@ namespace Hooq
 				Pick,
 				Sleep
 			};
-			virtual Type type() const = 0;
+			Type type() const;
+		protected:
+			Event(Type type);
+		private:
+			Type m_type;
 	};
 
 	/// Abstract base class for events that reference an object.
@@ -49,7 +53,7 @@ namespace Hooq
 			virtual ~PathEvent();
 			// NOT IMPLEMENTED: virtual Type type();
 		protected:
-			PathEvent(const QString& objectPath);
+			PathEvent(const QString& objectPath, Type type);
 		private:
 			QString m_objectPath;
 	};
@@ -57,16 +61,16 @@ namespace Hooq
 	class DumpEvent : public PathEvent
 	{
 		public:
+			static const Event::Type EVENT_TYPE = Dump;
 			DumpEvent(const QString& objectPath);
-			Type type() const;
 	};
 
 	class FocusEvent: public PathEvent
 	{
 		public:
+			static const Event::Type EVENT_TYPE = Focus;
 			FocusEvent(const QString& objectPath, Qt::FocusReason reason);
 			virtual ~FocusEvent();
-			Type type() const;
 			Qt::FocusReason reason() const;
 		private:
 			Qt::FocusReason m_reason;
@@ -75,9 +79,9 @@ namespace Hooq
 	class ObjectEvent : public PathEvent
 	{
 		public:
+			static const Event::Type EVENT_TYPE = Object;
 			ObjectEvent(const QString& objectPath, QEvent* qtEvent);
 			virtual ~ObjectEvent();
-			Type type() const;
 
 			QEvent* qtEvent() const;
 		private:
@@ -87,16 +91,16 @@ namespace Hooq
 	class PickEvent : public Event
 	{
 		public:
+			static const Event::Type EVENT_TYPE = Pick;
 			PickEvent();
-			Type type() const;
 	};
 
 	class SleepEvent : public Event
 	{
 		public:
+			static const Event::Type EVENT_TYPE = Sleep;
 			SleepEvent(int msec);
 			virtual ~SleepEvent();
-			Type type() const;
 
 			int msec() const;
 		private:
@@ -111,8 +115,8 @@ namespace Hooq
 			return 0;
 		}
 
-		// Segfaults if ::type() depends on class data. "Shouldn't" happen
-		const bool sameType = static_cast<T>(0)->type() == e->type();
+		const Event::Type wantedType = static_cast<T>(0)->EVENT_TYPE;
+		const bool sameType = e->type() == wantedType;
 		Q_ASSERT(sameType);
 
 		if(sameType)
