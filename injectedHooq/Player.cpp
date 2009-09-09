@@ -186,14 +186,32 @@ void Player::processEvents()
 				device()->write("DUMPED\n");
 				XmlPropertyDumper::dump(o, device());
 				break;
-			};
+			}
+			case Event::Focus:
+			{
+				FocusEvent* e = Hooq::event_cast<FocusEvent*>(event.get());
+				QObject* o = findObject(e->objectPath());
+				Q_ASSERT(o);
+				QWidget* w = qobject_cast<QWidget*>(o);
+				Q_ASSERT(w);
+				if(w)
+				{
+					w->setFocus(e->reason());
+				}
+				else
+				{
+					qDebug() << "Couldn't find focus widget" << o << "from" << e->objectPath();
+				}
+				ack();
+				continue;
+			}
 			case Event::Object:
 			{
 				ObjectEvent* e = Hooq::event_cast<ObjectEvent*>(event.get());
 				QObject* o = findObject(e->objectPath());
 				if(!o)
 				{
-					qDebug() << "Couldn't find receiver" << o << "from path" << e->objectPath();
+					qDebug() << "Couldn't find receiver from path" << e->objectPath();
 					ack();
 					continue;
 				}
