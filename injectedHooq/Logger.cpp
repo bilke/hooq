@@ -36,6 +36,7 @@
 #include <QTextStream>
 #include <QTime>
 #include <QWheelEvent>
+#include <QWidget>
 
 namespace Hooq
 {
@@ -117,6 +118,21 @@ bool Logger::isMouseMoveLoggingEnabled()
 	return m_mouseMovesLogged;
 }
 
+QObject* Logger::focusObject(QObject* receiver)
+{
+	QWidget* widget = qobject_cast<QWidget*>(receiver);
+	if(!widget)
+	{
+		return 0;
+	}
+
+	if(widget->focusProxy())
+	{
+		return widget->focusProxy();
+	}
+	return widget;
+}
+
 void Logger::hook(QObject* receiver, QEvent* event)
 {
 	switch(event->type())
@@ -125,10 +141,10 @@ void Logger::hook(QObject* receiver, QEvent* event)
 			outputEvent(receiver, "contextMenu", contextMenuEventAttributes(static_cast<QContextMenuEvent*>(event)));
 			break;
 		case QEvent::FocusIn:
-			outputEvent(receiver, "focusIn", focusEventAttributes(static_cast<QFocusEvent*>(event)));
+			outputEvent(focusObject(receiver), "focusIn", focusEventAttributes(static_cast<QFocusEvent*>(event)));
 			break;
 		case QEvent::FocusOut:
-			outputEvent(receiver, "focusOut", focusEventAttributes(static_cast<QFocusEvent*>(event)));
+			outputEvent(focusObject(receiver), "focusOut", focusEventAttributes(static_cast<QFocusEvent*>(event)));
 			break;
 		case QEvent::KeyPress:
 			outputEvent(receiver, "keyPress", keyEventAttributes(static_cast<QKeyEvent*>(event)));
@@ -165,6 +181,13 @@ void Logger::hook(QObject* receiver, QEvent* event)
 
 void Logger::outputEvent(QObject* receiver, const char* event, const QXmlStreamAttributes& attributes)
 {
+	if(!receiver)
+	{
+		// ::focusObject() returns NULL for non-widgets; for example, the KDE oxygen style
+		// receives focusIn/focusOut events
+		return;
+	}
+
 	m_writer.writeTextElement("msec", QString::number(m_timer.restart()));
 	
 	m_writer.writeStartElement(event);

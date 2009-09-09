@@ -47,6 +47,7 @@ class Logger : public QObject
 	private slots:
 		void readInput();
 	private:
+		static QObject* focusObject(QObject* object);
 		static bool isMouseMoveLoggingEnabled();
 		static Logger* instance();
 		Logger(QIODevice* device);
