@@ -37,29 +37,33 @@ namespace Hooq
 			};
 			virtual Type type() const = 0;
 	};
-
-	class DumpEvent : public Event
+	
+	class PathEvent: public Event
 	{
 		public:
-			DumpEvent(const QString& objectPath);
-			Type type() const;
-
 			QString objectPath() const;
+		protected:
+			PathEvent(const QString& objectPath);
 		private:
 			QString m_objectPath;
 	};
 
+	class DumpEvent : public PathEvent
+	{
+		public:
+			DumpEvent(const QString& objectPath);
+			Type type() const;
+	};
 
-	class ObjectEvent : public Event
+
+	class ObjectEvent : public PathEvent
 	{
 		public:
 			ObjectEvent(const QString& objectPath, QEvent* qtEvent);
 			Type type() const;
 
-			QString objectPath() const;
 			QEvent* qtEvent() const;
 		private:
-			QString m_objectPath;
 			QEvent* m_qtEvent;
 	};
 

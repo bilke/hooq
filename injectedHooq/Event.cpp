@@ -22,19 +22,24 @@
 namespace Hooq
 {
 
-DumpEvent::DumpEvent(const QString& objectPath)
+PathEvent::PathEvent(const QString& objectPath)
 : m_objectPath(objectPath)
+{
+}
+
+QString PathEvent::objectPath() const
+{
+	return m_objectPath;
+}
+
+DumpEvent::DumpEvent(const QString& objectPath)
+: PathEvent(objectPath)
 {
 }
 
 Event::Type DumpEvent::type() const
 {
 	return Dump;
-}
-
-QString DumpEvent::objectPath() const
-{
-	return m_objectPath;
 }
 
 SleepEvent::SleepEvent(int msec)
@@ -53,14 +58,9 @@ Event::Type SleepEvent::type() const
 }
 
 ObjectEvent::ObjectEvent(const QString& objectPath, QEvent* qtEvent)
-: m_objectPath(objectPath)
+: PathEvent(objectPath)
 , m_qtEvent(qtEvent)
 {
-}
-
-QString ObjectEvent::objectPath() const
-{
-	return m_objectPath;
 }
 
 QEvent* ObjectEvent::qtEvent() const
