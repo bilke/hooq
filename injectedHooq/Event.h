@@ -38,6 +38,7 @@ namespace Hooq
 				Pick,
 				Sleep
 			};
+			// static const Event::Type EVENT_TYPE = TypeValueGoesHere; // must be in every instantiable subclass, for event_cast
 			Type type() const;
 		protected:
 			Event(Type type);

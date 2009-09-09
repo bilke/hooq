@@ -345,12 +345,12 @@ void Player::postContextMenuEvent()
 
 void Player::postFocusEvent(int type)
 {
-	QFocusEvent* event = new QFocusEvent(
-		static_cast<QEvent::Type>(type),
-		static_cast<Qt::FocusReason>(attributes().value("reason").toString().toInt())
-	);
-
-	m_eventQueue.enqueue(new ObjectEvent(attributes().value("target").toString(), event));
+	const Qt::FocusReason reason = static_cast<Qt::FocusReason>(attributes().value("reason").toString().toInt());
+	const QString target = attributes().value("target").toString();
+	if(type == QEvent::FocusIn) // ignore FocusOut
+	{
+		m_eventQueue.enqueue(new FocusEvent(target, reason));
+	}
 }
 
 void Player::postKeyEvent(int type)
