@@ -32,6 +32,7 @@ namespace Hooq
 			{
 				// PathEvent not listed here, as it's abstract
 				Dump,
+				Focus,
 				Object,
 				Pick,
 				Sleep
@@ -58,6 +59,15 @@ namespace Hooq
 			Type type() const;
 	};
 
+	class FocusEvent: public PathEvent
+	{
+		public:
+			FocusEvent(const QString& objectPath, Qt::FocusReason reason);
+			Type type() const;
+			Qt::FocusReason reason() const;
+		private:
+			Qt::FocusReason m_reason;
+	};
 
 	class ObjectEvent : public PathEvent
 	{

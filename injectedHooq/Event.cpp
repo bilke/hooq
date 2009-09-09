@@ -77,6 +77,17 @@ PickEvent::PickEvent()
 {
 }
 
+FocusEvent::FocusEvent(const QString& objectPath, Qt::FocusReason reason)
+: PathEvent(objectPath)
+, m_reason(reason)
+{
+}
+
+Qt::FocusReason FocusEvent::reason() const
+{
+	return m_reason;
+}
+
 Event::Type PickEvent::type() const
 {
 	return Pick;
