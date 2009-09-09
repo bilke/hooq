@@ -32,7 +32,7 @@ namespace Hooq
 			enum Type
 			{
 				// PathEvent not listed here, as it's abstract
-				Ack, // No-operation event, just send the frontend and ack
+				Ack, // No-operation event, just send the frontend an ack
 				Dump,
 				Focus,
 				Object,
