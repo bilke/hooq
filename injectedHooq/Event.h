@@ -28,6 +28,7 @@ namespace Hooq
 	class Event
 	{
 		public:
+			virtual ~Event();
 			enum Type
 			{
 				// PathEvent not listed here, as it's abstract
@@ -45,6 +46,7 @@ namespace Hooq
 	{
 		public:
 			QString objectPath() const;
+			virtual ~PathEvent();
 			// NOT IMPLEMENTED: virtual Type type();
 		protected:
 			PathEvent(const QString& objectPath);

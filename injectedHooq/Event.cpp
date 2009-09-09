@@ -27,9 +27,22 @@ PathEvent::PathEvent(const QString& objectPath)
 {
 }
 
+Event::~Event()
+{
+}
+
+Event::Type FocusEvent::type() const
+{
+	return Focus;
+}
+
 QString PathEvent::objectPath() const
 {
 	return m_objectPath;
+}
+
+PathEvent::~PathEvent()
+{
 }
 
 DumpEvent::DumpEvent(const QString& objectPath)
