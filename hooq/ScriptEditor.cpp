@@ -70,10 +70,6 @@ ScriptEditor::ScriptEditor(QScriptEngine* engine)
 	engine->setAgent(this);
 	setCentralWidget(m_editor);
 
-	/*
-	m_editor->setLexer(lexer);
-	*/
-
 	QToolBar* toolBar = addToolBar(tr("Toolbar"));
 	toolBar->setMovable(false);
 
@@ -90,6 +86,18 @@ ScriptEditor::ScriptEditor(QScriptEngine* engine)
 	m_pickAction = toolBar->addAction(style()->standardIcon(QStyle::SP_FileLinkIcon), tr("Pick Property"), this, SIGNAL(pickRequested()));
 	setupMenuBar();
 	setupActionShortcuts();
+	updateActionStates();
+
+	connect(
+		m_editor,
+		SIGNAL(textChanged()),
+		SLOT(markAsDirty())
+	);
+}
+
+void ScriptEditor::markAsDirty()
+{
+	m_dirty = true;
 	updateActionStates();
 }
 
@@ -295,6 +303,8 @@ void ScriptEditor::stop()
 
 void ScriptEditor::updateActionStates()
 {
+	m_saveAction->setEnabled(isDirty());
+	m_discardAction->setEnabled(isDirty());
 	m_stopAction->setEnabled(engine()->isEvaluating());
 	m_pickAction->setEnabled(engine()->isEvaluating());
 }
@@ -305,6 +315,8 @@ void ScriptEditor::save()
 	file.open(QIODevice::WriteOnly | QFile::Truncate);
 	file.write(m_editor->toPlainText().toUtf8());
 	file.close();
+
+	reset(DirtyState);
 }
 
 void ScriptEditor::revert()
@@ -314,6 +326,11 @@ void ScriptEditor::revert()
 
 void ScriptEditor::reset(int features)
 {
+	if(!features)
+	{
+		return;
+	}
+
 	if(features & BacktraceUi)
 	{
 		m_backtraceDockWidget->hide();
@@ -339,9 +356,9 @@ void ScriptEditor::reset(int features)
 
 void ScriptEditor::open(const QString& filePath)
 {
-	reset();
 	m_filePath = filePath;
 	QFile file(filePath);
 	file.open(QIODevice::ReadOnly);
 	m_editor->setPlainText(QString::fromUtf8(file.readAll()));
+	reset();
 }

@@ -73,6 +73,7 @@ class ScriptEditor : public QMainWindow, public QScriptEngineAgent
 		void pickRequested();
 		void exceptionThrown(const QString& exception, const QStringList& backtrace);
 	private slots:
+		void markAsDirty();
 		void save();
 		void revert();
 		void stop();
