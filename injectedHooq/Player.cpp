@@ -275,13 +275,9 @@ void Player::handleElement()
 	{
 		postContextMenuEvent();
 	}
-	if(name() == "focusIn")
+	if(name() == "focusChanged")
 	{
-		postFocusEvent(QEvent::FocusIn);
-	}
-	if(name() == "focusOut")
-	{
-		postFocusEvent(QEvent::FocusOut);
+		postFocusEvent();
 	}
 	if(name() == "keyPress")
 	{
@@ -346,19 +342,11 @@ void Player::postContextMenuEvent()
 	m_eventQueue.enqueue(new ObjectEvent(attributes().value("target").toString(), event));
 }
 
-void Player::postFocusEvent(int type)
+void Player::postFocusEvent()
 {
 	const Qt::FocusReason reason = static_cast<Qt::FocusReason>(attributes().value("reason").toString().toInt());
 	const QString target = attributes().value("target").toString();
-	if(type == QEvent::FocusIn)
-	{
-		m_eventQueue.enqueue(new FocusEvent(target, reason));
-	}
-	else
-	{
-		// ignore FocusOut
-		m_eventQueue.enqueue(new AckEvent());
-	}
+	m_eventQueue.enqueue(new FocusEvent(target, reason));
 }
 
 void Player::postKeyEvent(int type)

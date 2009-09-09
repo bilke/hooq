@@ -141,10 +141,7 @@ void Logger::hook(QObject* receiver, QEvent* event)
 			outputEvent(receiver, "contextMenu", contextMenuEventAttributes(static_cast<QContextMenuEvent*>(event)));
 			break;
 		case QEvent::FocusIn:
-			outputEvent(focusObject(receiver), "focusIn", focusEventAttributes(static_cast<QFocusEvent*>(event)));
-			break;
-		case QEvent::FocusOut:
-			outputEvent(focusObject(receiver), "focusOut", focusEventAttributes(static_cast<QFocusEvent*>(event)));
+			outputEvent(focusObject(receiver), "focusChanged", focusEventAttributes(static_cast<QFocusEvent*>(event)));
 			break;
 		case QEvent::KeyPress:
 			outputEvent(receiver, "keyPress", keyEventAttributes(static_cast<QKeyEvent*>(event)));
