@@ -32,6 +32,7 @@ namespace Hooq
 			enum Type
 			{
 				// PathEvent not listed here, as it's abstract
+				Ack, // No-operation event, just send the frontend and ack
 				Dump,
 				Focus,
 				Object,
@@ -51,13 +52,19 @@ namespace Hooq
 			virtual Event::Type type() const { return staticType(); }
 	};
 
+
+	class AckEvent : public TypedEvent<AckEvent,Event>
+	{
+		public:
+			static const Event::Type EVENT_TYPE = Ack;
+	};
+
 	/// Abstract base class for events that reference an object.
 	class PathEvent: public Event
 	{
 		public:
 			QString objectPath() const;
 			virtual ~PathEvent();
-			// NOT IMPLEMENTED: virtual Type type();
 		protected:
 			PathEvent(const QString& objectPath);
 		private:

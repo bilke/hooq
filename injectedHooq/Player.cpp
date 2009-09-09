@@ -179,6 +179,9 @@ void Player::processEvents()
 		// "break;" for ack, "continue;" for no-ack, "return;" to leave the event loop - be sure to re-enter it later
 		switch(event->type())
 		{
+			case Event::Ack:
+				// no-op
+				break;
 			case Event::Dump:
 			{
 				DumpEvent* e = Hooq::event_cast<DumpEvent*>(event.get());
@@ -347,9 +350,14 @@ void Player::postFocusEvent(int type)
 {
 	const Qt::FocusReason reason = static_cast<Qt::FocusReason>(attributes().value("reason").toString().toInt());
 	const QString target = attributes().value("target").toString();
-	if(type == QEvent::FocusIn) // ignore FocusOut
+	if(type == QEvent::FocusIn)
 	{
 		m_eventQueue.enqueue(new FocusEvent(target, reason));
+	}
+	else
+	{
+		// ignore FocusOut
+		m_eventQueue.enqueue(new AckEvent());
 	}
 }
 
