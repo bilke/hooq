@@ -147,7 +147,7 @@ QString XmlToQtScript::parseFocusEvent()
 	readElementText();
 
 	return QString(
-		"objectFromPath(\"%1\").%2({\"reason\": %3};"
+		"objectFromPath(\"%1\").%2({\"reason\": %3});"
 	).arg(
 		target
 	).arg(
