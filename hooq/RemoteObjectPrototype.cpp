@@ -23,6 +23,7 @@
 #include <QKeySequence>
 #include <QPoint>
 
+Q_DECLARE_METATYPE(Qt::FocusReason);
 Q_DECLARE_METATYPE(Qt::Key);
 Q_DECLARE_METATYPE(Qt::MouseButton);
 Q_DECLARE_METATYPE(Qt::MouseButtons);
@@ -62,6 +63,14 @@ void RemoteObjectPrototype::raiseMouseEvent(const QVariantMap& parameters, Mouse
 		parameters.value("button").value<Qt::MouseButton>(),
 		parameters.value("buttons").value<Qt::MouseButtons>(),
 		Qt::KeyboardModifiers(static_cast<int>(parameters.value("modifiers").value<Qt::KeyboardModifier>()))
+	);
+}
+
+void RemoteObjectPrototype::raiseFocusEvent(const QVariantMap& parameters, FocusSignal signal)
+{
+	emit (this->*signal)(
+		path(),
+		parameters.value("reason").value<Qt::FocusReason>()
 	);
 }
 
@@ -112,9 +121,20 @@ void RemoteObjectPrototype::raiseKeyEvent(const QVariantMap& parameters, KeySign
 		parameters.value("count").value<ushort>()
 	);
 }
+
 void RemoteObjectPrototype::pressKey(const QVariantMap& parameters)
 {
 	raiseKeyEvent(parameters, &RemoteObjectPrototype::keyPressEvent);
+}
+
+void RemoteObjectPrototype::focusIn(const QVariantMap& parameters)
+{
+	raiseFocusEvent(parameters, &RemoteObjectPrototype::focusInEvent);
+}
+
+void RemoteObjectPrototype::focusOut(const QVariantMap& parameters)
+{
+	raiseFocusEvent(parameters, &RemoteObjectPrototype::focusOutEvent);
 }
 
 void RemoteObjectPrototype::releaseKey(const QVariantMap& parameters)
