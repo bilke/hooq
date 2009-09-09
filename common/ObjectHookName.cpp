@@ -27,12 +27,6 @@ namespace Hooq
 
 QString ObjectHookName::objectName(QObject* object)
 {
-	//return rawObjectName(object).toLower().replace(":", "-");
-	return rawObjectName(object);
-}
-
-QString ObjectHookName::rawObjectName(QObject* object)
-{
 	// Grab the object name
 	if(!object->objectName().isEmpty())
 	{
