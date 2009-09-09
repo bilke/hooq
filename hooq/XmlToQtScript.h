@@ -29,6 +29,8 @@ class XmlToQtScript : private QXmlStreamReader
 		QString parseDocument();
 		QString parseHooq();
 		QString parseMsec();
+
+		QString parseFocusEvent();
 		QString parseKeyEvent();
 		QString parseMouseEvent();
 		QString parseWheelEvent();
@@ -40,6 +42,8 @@ class XmlToQtScript : private QXmlStreamReader
 
 		static QString stringForModifier(int modifier);
 		static QString stringForModifiers(int modifier);
+
+		static QString stringForFocusReason(int focusReason);
 
 		void skipElement();
 

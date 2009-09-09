@@ -42,8 +42,12 @@ class RemoteObjectPrototype : public QObject, public QScriptable
 		void releaseKey(const QVariantMap& parameters);
 		void shortcut(const QVariantMap& parameters);
 		void contextMenu(const QVariantMap& parameters);
+		void focusIn(const QVariantMap& parameters);
+		void focusOut(const QVariantMap& parameters);
 		QVariant property(const QString& name);
 	signals:
+		void focusInEvent(const QString& path, Qt::FocusReason reason);
+		void focusOutEvent(const QString& path, Qt::FocusReason reason);
 		void propertyRequested(const QString& path, const QString& name, QVariant* result);
 		void mouseMoveEvent(const QString& path, const QPoint& position, Qt::MouseButton button, Qt::MouseButtons buttons, Qt::KeyboardModifiers modifiers);
 		void mousePressEvent(const QString& path, const QPoint& position, Qt::MouseButton button, Qt::MouseButtons buttons, Qt::KeyboardModifiers modifiers);
@@ -55,12 +59,15 @@ class RemoteObjectPrototype : public QObject, public QScriptable
 		void shortcutEvent(const QString& path, const QKeySequence& sequence, int id, bool ambiguous);
 		void contextMenuEvent(const QString& path, const QPoint& position, const QPoint& globalPosition, Qt::KeyboardModifiers modifiers);
 	private:
+		/// FocusSignal typedef - pointer to either focusInEvent or focusOutEvent signals
+		typedef void(RemoteObjectPrototype::*FocusSignal)(const QString&, Qt::FocusReason);
+		/// KeySignal typedef - pointer to either the keyPressEvent or keyReleaseEvent signals
+		typedef void(RemoteObjectPrototype::*KeySignal)(const QString&, int, Qt::KeyboardModifiers, const QString&, bool, ushort);
 		/// MouseSignal typedef - pointer to any of the mouse signals
 		typedef void(RemoteObjectPrototype::*MouseSignal)(const QString&, const QPoint&, Qt::MouseButton, Qt::MouseButtons, Qt::KeyboardModifiers);
-		/// KeySignal typedef - pointer to either the keyPress or keyRelease signals
-		typedef void(RemoteObjectPrototype::*KeySignal)(const QString&, int, Qt::KeyboardModifiers, const QString&, bool, ushort);
 
-		void raiseMouseEvent(const QVariantMap& parameters, MouseSignal signal);
+		void raiseFocusEvent(const QVariantMap& parameters, FocusSignal signal);
 		void raiseKeyEvent(const QVariantMap& parameters, KeySignal signal);
+		void raiseMouseEvent(const QVariantMap& parameters, MouseSignal signal);
 		const QString m_path;
 };

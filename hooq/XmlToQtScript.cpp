@@ -80,6 +80,11 @@ QString XmlToQtScript::parseHooq()
 					items.append(parseMsec());
 					continue;
 				}
+				if(name() == "focusIn" || name() == "focusOut")
+				{
+					items.append(parseFocusEvent());
+					continue;
+				}
 				if(name() == "keyPress" || name() == "keyRelease")
 				{
 					items.append(parseKeyEvent());
@@ -128,6 +133,28 @@ QString XmlToQtScript::escapeString(const QString& _string)
 	string.replace("\"", "\\\"");
 	string.replace("\r", "\\r");
 	return string;
+}
+
+QString XmlToQtScript::parseFocusEvent()
+{
+	const QString call(name().toString());
+	Q_ASSERT(!call.isEmpty());
+
+	const QString target = attributes().value("target").toString();
+	const QString reason = stringForFocusReason(attributes().value("reason").toString().toInt());
+
+	// skip to end of element
+	readElementText();
+
+	return QString(
+		"objectFromPath(\"%1\").%2({\"reason\": %3});"
+	).arg(
+		target
+	).arg(
+		call
+	).arg(
+		reason
+	);
 }
 
 QString XmlToQtScript::parseKeyEvent()
@@ -291,6 +318,30 @@ QString XmlToQtScript::stringForModifier(int modifier)
 			return "Qt.GroupSwitchModifier";
 	}
 	return "Qt.NoModifier";
+}
+
+QString XmlToQtScript::stringForFocusReason(int focusReason)
+{
+	switch(focusReason)
+	{
+		case Qt::MouseFocusReason:
+			return "Qt.MouseFocusReason";
+		case Qt::TabFocusReason:
+			return "Qt.TabFocusReason";
+		case Qt::BacktabFocusReason:
+			return "Qt.BacktabFocusReason";
+		case Qt::ActiveWindowFocusReason:
+			return "Qt.ActiveWindowFocusReason";
+		case Qt::PopupFocusReason:
+			return "Qt.PopupFocusReason";
+		case Qt::ShortcutFocusReason:
+			return "Qt.ShortcutFocusReason";
+		case Qt::MenuBarFocusReason:
+			return "Qt.MenuBarFocusReason";
+		case Qt::OtherFocusReason:
+			return "Qt.OtherFocusReason";
+	}
+	return "Qt.OtherFocusReason";
 }
 
 QString XmlToQtScript::parseWheelEvent()

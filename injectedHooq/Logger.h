@@ -26,6 +26,7 @@
 #include <QXmlStreamWriter>
 
 class QContextMenuEvent;
+class QFocusEvent;
 class QKeyEvent;
 class QMouseEvent;
 class QShortcutEvent;
@@ -87,6 +88,8 @@ class Logger : public QObject
 		static QXmlStreamAttributes wheelEventAttributes(QWheelEvent* event);
 		/// Return a list of parameters for a context menu event
 		static QXmlStreamAttributes contextMenuEventAttributes(QContextMenuEvent* event);
+		/// Return a list of parameters for a focus event
+		static QXmlStreamAttributes focusEventAttributes(QFocusEvent* event);
 };
 
 } // namespace

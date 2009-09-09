@@ -28,6 +28,7 @@
 #include <QContextMenuEvent>
 #include <QDebug>
 #include <QEvent>
+#include <QFocusEvent>
 #include <QKeyEvent>
 #include <QMouseEvent>
 #include <QObject>
@@ -122,6 +123,12 @@ void Logger::hook(QObject* receiver, QEvent* event)
 	{
 		case QEvent::ContextMenu:
 			outputEvent(receiver, "contextMenu", contextMenuEventAttributes(static_cast<QContextMenuEvent*>(event)));
+			break;
+		case QEvent::FocusIn:
+			outputEvent(receiver, "focusIn", focusEventAttributes(static_cast<QFocusEvent*>(event)));
+			break;
+		case QEvent::FocusOut:
+			outputEvent(receiver, "focusOut", focusEventAttributes(static_cast<QFocusEvent*>(event)));
 			break;
 		case QEvent::KeyPress:
 			outputEvent(receiver, "keyPress", keyEventAttributes(static_cast<QKeyEvent*>(event)));
@@ -231,6 +238,13 @@ QXmlStreamAttributes Logger::shortcutEventAttributes(QShortcutEvent* event)
 	data.append("string", event->key().toString());
 	data.append("id", QString::number(event->shortcutId()));
 	data.append("ambiguous", event->isAmbiguous() ? "true" : "false");
+	return data;
+}
+
+QXmlStreamAttributes Logger::focusEventAttributes(QFocusEvent* event)
+{
+	QXmlStreamAttributes data;
+	data.append("reason", QString::number(event->reason()));
 	return data;
 }
 
