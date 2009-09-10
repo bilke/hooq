@@ -161,6 +161,12 @@ MainWindow::MainWindow(QWidget* parent)
 
 	connect(
 		m_editor,
+		SIGNAL(startRequested()),
+		SLOT(runEditorTest())
+	);
+
+	connect(
+		m_editor,
 		SIGNAL(exceptionThrown(QString, QStringList)),
 		SLOT(logException(QString, QStringList))
 	);
@@ -181,6 +187,19 @@ MainWindow::MainWindow(QWidget* parent)
 	ColumnClickMapper* mapper = new ColumnClickMapper(m_testList);
 	mapper->addMapping(1, this, SLOT(runTestScript(QModelIndex)));
 	mapper->addMapping(2, this, SLOT(editTestScript(QModelIndex)));
+}
+
+void MainWindow::runEditorTest()
+{
+	for(int i = 0; i < m_testModel->rowCount(); ++i)
+	{
+		const QModelIndex index = m_testModel->index(i, 0);
+		if(index.data(TestModel::FilePathRole).toString() == m_editor->filePath())
+		{
+			runTestScript(index);
+			break;
+		}
+	}
 }
 
 bool MainWindow::editTestScript(const QModelIndex& index)

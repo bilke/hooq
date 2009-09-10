@@ -332,9 +332,16 @@ void ScriptEditor::run()
 	if(isPaused())
 	{
 		setPaused(false);
-		return;
 	}
-	// TODO
+	else
+	{
+		emit startRequested();
+	}
+}
+
+QString ScriptEditor::filePath() const
+{
+	return m_filePath;
 }
 
 void ScriptEditor::stop()

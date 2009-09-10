@@ -65,11 +65,14 @@ class ScriptEditor : public QMainWindow, public QScriptEngineAgent
 		Mode mode() const;
 		void setMode(Mode mode);
 		bool isDirty() const;
+
+		QString filePath() const;
 	public slots:
 		bool open(const QString& filePath);
 		void objectPicked(const ObjectInformation&);
 		void reset(int features = AllFeatures);
 	signals:
+		void startRequested();
 		void pickRequested();
 		void exceptionThrown(const QString& exception, const QStringList& backtrace);
 	protected:

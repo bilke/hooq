@@ -49,6 +49,7 @@ class MainWindow : public QMainWindow, private Ui::MainWindow
 		MainWindow(QWidget* parent = 0);
 	private slots:
 		void logException(const QString& exception, const QStringList& backtrace);
+		void runEditorTest();
 		void runCurrentTest();
 		void editCurrentTest();
 		void deleteCurrentTest();
