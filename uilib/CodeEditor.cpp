@@ -61,13 +61,21 @@ void CodeEditor::clearLineHighlight()
 
 void CodeEditor::highlightLine(int lineNumber)
 {
+	QList<QTextEdit::ExtraSelection> selections;
+
 	QTextEdit::ExtraSelection selection;
 	selection.format.setBackground(QColor(255, 140, 0)); // orange
 	selection.format.setProperty(QTextFormat::FullWidthSelection, true);
 	selection.cursor = QTextCursor(document());
-	selection.cursor.setPosition(document()->findBlockByNumber(lineNumber - 1).position());
-	selection.cursor.clearSelection();
-	setExtraSelections(QList<QTextEdit::ExtraSelection>() << selection);
+
+	const QTextBlock begin = document()->findBlockByNumber(lineNumber - 1);
+	const QTextBlock end = document()->findBlockByNumber(lineNumber);
+
+	selection.cursor.setPosition(begin.position());
+	selection.cursor.setPosition(end.position(), QTextCursor::KeepAnchor);
+	selections.append(selection);
+
+	setExtraSelections(selections);
 	viewport()->update();
 }
 
