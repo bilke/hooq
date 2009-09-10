@@ -41,7 +41,7 @@ bool ModelIndexKeyEventObserver::eventFilter(QObject* watched, QEvent* event)
 		{
 			QKeyEvent* k = static_cast<QKeyEvent*>(event);
 			const QModelIndex& index = m_view->currentIndex();
-			if(k->matches(m_key) & index.isValid())
+			if(k->matches(m_key) && index.isValid())
 			{
 				if(isKeyPress)
 				{
