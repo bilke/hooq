@@ -327,7 +327,7 @@ void ScriptEditor::pause()
 
 void ScriptEditor::run()
 {
-	reset(DebuggingFeatures);
+	reset(RuntimeFeatures);
 
 	if(isPaused())
 	{
@@ -341,7 +341,7 @@ void ScriptEditor::stop()
 {
 	engine()->abortEvaluation();
 	setPaused(false);
-	reset(DebuggingFeatures);
+	reset(RuntimeFeatures);
 }
 
 void ScriptEditor::updateActionStates()

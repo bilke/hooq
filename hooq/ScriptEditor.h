@@ -45,7 +45,7 @@ class ScriptEditor : public QMainWindow, public QScriptEngineAgent
 		};
 		enum FeatureSets
 		{
-			DebuggingFeatures = BacktraceUi | Breakpoints | CurrentLineUi | ErrorUi,
+			RuntimeFeatures = BacktraceUi | CurrentLineUi | ErrorUi,
 			AllFeatures = ~0
 		};
 		enum Mode
