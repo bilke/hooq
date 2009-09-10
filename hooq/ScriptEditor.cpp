@@ -365,6 +365,7 @@ void ScriptEditor::save()
 void ScriptEditor::revert()
 {
 	reset(DirtyState); // Don't popup confirmation dialog
+	m_filePath = QString(); // otherwise open() is a no-op
 	open(m_filePath);
 }
 
