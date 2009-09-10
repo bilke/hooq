@@ -183,8 +183,19 @@ MainWindow::MainWindow(QWidget* parent)
 	mapper->addMapping(2, this, SLOT(editTestScript(QModelIndex)));
 }
 
-void MainWindow::editTestScript(const QModelIndex& index)
+bool MainWindow::editTestScript(const QModelIndex& index)
 {
+	return editTestScript(index, EnsureVisible);
+}
+
+bool MainWindow::editTestScript(const QModelIndex& index, VisibleAction action)
+{
+	const bool cancelled = !m_editor->open(index.data(TestModel::FilePathRole).toString());
+	if(cancelled)
+	{
+		return false;
+	}
+
 	m_editor->setWindowTitle(
 		QString(
 			"[*]%3 (%2) - %1"
@@ -196,12 +207,20 @@ void MainWindow::editTestScript(const QModelIndex& index)
 			index.data(TestModel::ScriptNameRole).toString()
 		)
 	);
-	m_editor->open(index.data(TestModel::FilePathRole).toString());
-	m_editor->show();
+	if(action == EnsureVisible)
+	{
+		m_editor->show();
+	}
+	return true;
 }
 
 void MainWindow::runTestScript(const QModelIndex& index)
 {
+	if(!editTestScript(index, IgnoreVisible))
+	{
+		// ScriptEditor had unsaved changes, prompted save/discard/cancel, user clicked cancel
+		return;
+	}
 	delete m_hooqPlayer;
 	m_testRunning = true;
 	m_testList->setEnabled(false);

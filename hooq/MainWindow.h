@@ -64,9 +64,16 @@ class MainWindow : public QMainWindow, private Ui::MainWindow
 		void runAllTests();
 		void testFinished();
 
-		void editTestScript(const QModelIndex& index);
+		bool editTestScript(const QModelIndex& index);
 		void runTestScript(const QModelIndex& index);
 	private:
+		enum VisibleAction
+		{
+			EnsureVisible,
+			IgnoreVisible
+		};
+
+		bool editTestScript(const QModelIndex& index, VisibleAction);
 		void waitForEndOfTest();
 		void populateTestSets();
 
