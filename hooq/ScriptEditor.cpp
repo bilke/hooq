@@ -401,6 +401,10 @@ void ScriptEditor::reset(int features)
 
 bool ScriptEditor::open(const QString& filePath)
 {
+	if(filePath == m_filePath)
+	{
+		return true;
+	}
 	if(shouldCancelDocumentChange())
 	{
 		return false;
