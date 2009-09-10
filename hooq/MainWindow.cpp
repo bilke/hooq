@@ -187,7 +187,7 @@ void MainWindow::editTestScript(const QModelIndex& index)
 {
 	m_editor->setWindowTitle(
 		QString(
-			"%3 - %2 - %1"
+			"[*]%3 (%2) - %1"
 		).arg(
 			QCoreApplication::applicationName()
 		).arg(

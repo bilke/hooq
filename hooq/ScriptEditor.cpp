@@ -59,6 +59,7 @@ ScriptEditor::ScriptEditor(QScriptEngine* engine)
 , m_mode(Interactive)
 , m_paused(false)
 {
+	setWindowTitle("[*] ScriptEditor"); // so we don't get warnings in markAsDirty before the window title is set
 	new SharedTools::QScriptHighlighter(m_editor->document());
 	m_backtraceDockWidget->setWidget(m_backtraceWidget);
 	m_errorWidget->setWidget(m_errorLabel);
@@ -98,6 +99,7 @@ ScriptEditor::ScriptEditor(QScriptEngine* engine)
 void ScriptEditor::markAsDirty()
 {
 	m_dirty = true;
+	setWindowModified(true);
 	updateActionStates();
 }
 
@@ -143,6 +145,12 @@ bool ScriptEditor::shouldCancelDocumentChange()
 	{
 		return false;
 	}
+	if(m_filePath.isNull()) // First run through, syntaxHighlighter marks us as dirty
+	{
+		reset(DirtyState);
+		return false;
+	}
+
 	QMessageBox messageBox;
 	messageBox.setText(tr("The test script has been modified."));
 	messageBox.setInformativeText(tr("Do you want to save your changes?"));
@@ -356,6 +364,7 @@ void ScriptEditor::save()
 
 void ScriptEditor::revert()
 {
+	reset(DirtyState); // Don't popup confirmation dialog
 	open(m_filePath);
 }
 
@@ -385,15 +394,22 @@ void ScriptEditor::reset(int features)
 	if(features & DirtyState)
 	{
 		m_dirty = false;
+		setWindowModified(false);
 	}
 	updateActionStates();
 }
 
-void ScriptEditor::open(const QString& filePath)
+bool ScriptEditor::open(const QString& filePath)
 {
+	if(shouldCancelDocumentChange())
+	{
+		return false;
+	}
 	m_filePath = filePath;
 	QFile file(filePath);
 	file.open(QIODevice::ReadOnly);
 	m_editor->setPlainText(QString::fromUtf8(file.readAll()));
 	reset();
+
+	return true;
 }

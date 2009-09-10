@@ -66,7 +66,7 @@ class ScriptEditor : public QMainWindow, public QScriptEngineAgent
 		void setMode(Mode mode);
 		bool isDirty() const;
 	public slots:
-		void open(const QString& filePath);
+		bool open(const QString& filePath);
 		void objectPicked(const ObjectInformation&);
 		void reset(int features = AllFeatures);
 	signals:
