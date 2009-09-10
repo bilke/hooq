@@ -72,6 +72,8 @@ class ScriptEditor : public QMainWindow, public QScriptEngineAgent
 	signals:
 		void pickRequested();
 		void exceptionThrown(const QString& exception, const QStringList& backtrace);
+	protected:
+		virtual void closeEvent(QCloseEvent* event);
 	private slots:
 		void markAsDirty();
 		void save();
