@@ -137,27 +137,37 @@ void ScriptEditor::setupMenuBar()
 	toolsMenu->addAction(m_pickAction);
 }
 
+bool ScriptEditor::shouldCancelDocumentChange()
+{
+	if(!isDirty())
+	{
+		return false;
+	}
+	QMessageBox messageBox;
+	messageBox.setText(tr("The test script has been modified."));
+	messageBox.setInformativeText(tr("Do you want to save your changes?"));
+	messageBox.setStandardButtons(QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
+	messageBox.setDefaultButton(QMessageBox::Save);
+	switch(messageBox.exec())
+	{
+		case QMessageBox::Cancel:
+			return true;
+		case QMessageBox::Discard:
+			revert();
+			break;
+		case QMessageBox::Save:
+			save();
+			break;
+	}
+	return false;
+}
+
 void ScriptEditor::closeEvent(QCloseEvent* event)
 {
-	if(isDirty())
+	if(shouldCancelDocumentChange())
 	{
-		QMessageBox messageBox;
-		messageBox.setText(tr("The test script has been modified."));
-		messageBox.setInformativeText(tr("Do you want to save your changes?"));
-		messageBox.setStandardButtons(QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
-		messageBox.setDefaultButton(QMessageBox::Save);
-		switch(messageBox.exec())
-		{
-			case QMessageBox::Cancel:
-				event->ignore();
-				return;
-			case QMessageBox::Discard:
-				revert();
-				break;
-			case QMessageBox::Save:
-				save();
-				break;
-		}
+		event->ignore();
+		return;
 	}
 	QWidget::closeEvent(event);
 }

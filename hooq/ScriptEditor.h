@@ -84,6 +84,7 @@ class ScriptEditor : public QMainWindow, public QScriptEngineAgent
 		void insertPropertyFetch(const QString& objectPath, const QString& property);
 		void insertPropertyAssert(const QString& objectPath, const QString& property, const QVariant& value);
 	private:
+		bool shouldCancelDocumentChange();
 		void setupActionShortcuts();
 		void setupMenuBar();
 		void updateActionStates();
