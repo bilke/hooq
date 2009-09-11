@@ -30,7 +30,7 @@ ScriptInterface::ScriptInterface()
 {
 }
 
-QScriptValue ScriptInterface::assert(QScriptContext* context, QScriptEngine* engine)
+QScriptValue ScriptInterface::scriptAssert(QScriptContext* context, QScriptEngine* engine)
 {
 	Q_UNUSED(engine);
 	const bool success = context->argument(0).toBool();
@@ -41,7 +41,7 @@ QScriptValue ScriptInterface::assert(QScriptContext* context, QScriptEngine* eng
 	return QScriptValue();
 }
 
-QScriptValue ScriptInterface::compare(QScriptContext* context, QScriptEngine* engine)
+QScriptValue ScriptInterface::scriptCompare(QScriptContext* context, QScriptEngine* engine)
 {
 	Q_UNUSED(engine);
 	const QVariant firstValue = context->argument(0).toVariant();
@@ -63,7 +63,7 @@ ScriptInterface* ScriptInterface::instance()
 	return m_instance;
 }
 
-QScriptValue ScriptInterface::msleep(QScriptContext* context, QScriptEngine* engine)
+QScriptValue ScriptInterface::scriptMsleep(QScriptContext* context, QScriptEngine* engine)
 {
 	Q_UNUSED(engine);
 	const int msec = context->argument(0).toInteger();
@@ -71,7 +71,7 @@ QScriptValue ScriptInterface::msleep(QScriptContext* context, QScriptEngine* eng
 	return QScriptValue();
 }
 
-QScriptValue ScriptInterface::objectFromPath(QScriptContext* context, QScriptEngine* engine)
+QScriptValue ScriptInterface::scriptObjectFromPath(QScriptContext* context, QScriptEngine* engine)
 {
 	const QString path = context->argument(0).toString();
 	RemoteObjectPrototype* object = new RemoteObjectPrototype(path);

@@ -43,19 +43,19 @@ Interpreter::Interpreter(QObject* parent)
 
 	m_engine->globalObject().setProperty(
 		"msleep",
-		m_engine->newFunction(ScriptInterface::msleep, 1)
+		m_engine->newFunction(ScriptInterface::scriptMsleep, 1)
 	);
 	m_engine->globalObject().setProperty(
 		"objectFromPath",
-		m_engine->newFunction(ScriptInterface::objectFromPath, 1)
+		m_engine->newFunction(ScriptInterface::scriptObjectFromPath, 1)
 	);
 	m_engine->globalObject().setProperty(
 		"assert",
-		m_engine->newFunction(ScriptInterface::assert, 1)
+		m_engine->newFunction(ScriptInterface::scriptAssert, 1)
 	);
 	m_engine->globalObject().setProperty(
 		"compare",
-		m_engine->newFunction(ScriptInterface::compare, 2)
+		m_engine->newFunction(ScriptInterface::scriptCompare, 2)
 	);
 
 	connect(
