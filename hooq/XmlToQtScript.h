@@ -19,12 +19,20 @@
 */
 #pragma once
 
+#include <QFlags>
 #include <QXmlStreamReader>
 
 class XmlToQtScript : private QXmlStreamReader
 {
 	public:
-		QString parse(QIODevice* xml);
+		enum Option
+		{
+			NoOptions = 0x0,
+			SkipMouseMovements = 0x1,
+		};
+		Q_DECLARE_FLAGS(Options, Option);
+
+		QString parse(QIODevice* xml, Options);
 		static QString escapeString(const QString&);
 	private:
 		QString parseDocument();
@@ -47,4 +55,8 @@ class XmlToQtScript : private QXmlStreamReader
 		static QString stringForFocusReason(int focusReason);
 
 		void skipElement();
+
+		Options m_options;
 };
+
+Q_DECLARE_OPERATORS_FOR_FLAGS(XmlToQtScript::Options);

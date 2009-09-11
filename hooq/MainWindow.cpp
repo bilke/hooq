@@ -332,14 +332,7 @@ void MainWindow::startRecording()
 	m_xmlDump = new QTemporaryFile();
 	m_xmlDump->open();
 
-	Hooq::RemoteLogger::Events events = Hooq::RemoteLogger::AllEvents;
-
-	if(! m_recordMouseMovements->isChecked())
-	{
-		events &= ~Hooq::RemoteLogger::MouseMoveEvent;
-	}
-
-	m_hooqLogger = new Hooq::RemoteLogger(events);
+	m_hooqLogger = new Hooq::RemoteLogger();
 	m_hooqLogger->start(QDir::fromNativeSeparators(m_applicationEdit->text()), m_xmlDump, m_hooqRecordInjector);
 }
 
@@ -355,8 +348,15 @@ void MainWindow::finishRecording()
 	script.open(QIODevice::WriteOnly | QFile::Truncate);
 	Q_ASSERT(script.isOpen() && script.isWritable());
 
+	XmlToQtScript::Options options = XmlToQtScript::NoOptions;
+
+	if(! m_recordMouseMovements->isChecked())
+	{
+		options |= XmlToQtScript::SkipMouseMovements;
+	}
+
 	XmlToQtScript parser;
-	script.write(parser.parse(m_xmlDump).toUtf8());
+	script.write(parser.parse(m_xmlDump, options).toUtf8());
 	script.close();
 
 	delete m_xmlDump;

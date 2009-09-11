@@ -24,8 +24,10 @@
 #include <QDebug>
 #include <QStringList>
 
-QString XmlToQtScript::parse(QIODevice* xml)
+QString XmlToQtScript::parse(QIODevice* xml, Options options)
 {
+	m_options = options;
+
 	Q_ASSERT(xml->isOpen() && xml->isReadable());
 	setDevice(xml);
 	return parseDocument();
