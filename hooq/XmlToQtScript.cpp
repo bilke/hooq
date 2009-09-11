@@ -71,7 +71,7 @@ void XmlToQtScript::skipElement()
 
 QString XmlToQtScript::parseHooq()
 {
-	QStringList items;
+	QList<Item> items;
 	while(!atEnd())
 	{
 		readNext();
@@ -95,22 +95,7 @@ QString XmlToQtScript::parseHooq()
 				}
 				if(name() == "mouseMove" || name() == "mouseButtonPress" || name() == "mouseButtonRelease" || name() == "mouseButtonDoubleClick")
 				{
-					if(name() == "mouseMove" && m_options.testFlag(SkipMouseMovements))
-					{
-						skipElement(); // the mouseMove
-						while(tokenType() != StartElement && !atEnd())
-						{
-							readNext();
-						}
-						Q_ASSERT(!atEnd());
-						Q_ASSERT(tokenType() == StartElement);
-						Q_ASSERT(name() == "msec");
-						skipElement(); // and, the following msec
-					}
-					else
-					{
-						items.append(parseMouseEvent());
-					}
+					items.append(parseMouseEvent());
 					continue;
 				}
 				if(name() == "mouseWheel")
@@ -132,7 +117,7 @@ QString XmlToQtScript::parseHooq()
 				skipElement();
 				break;
 			case EndElement:
-				return items.join("\n");
+				return itemString(items);
 			default:
 				break;
 		}
@@ -140,9 +125,42 @@ QString XmlToQtScript::parseHooq()
 	return QString();
 }
 
-QString XmlToQtScript::parseMsec()
+QString XmlToQtScript::itemString(const QList<Item>& items) const
 {
-	return QString("msleep(%1);").arg(readElementText());
+	QList<Item> in(items);
+	QStringList out;
+	while(!in.isEmpty())
+	{
+		Item item = in.takeFirst();
+		if((m_options & SkipMouseMovements) && item.method == "moveMouse")
+		{
+			Q_ASSERT(in.first().method == "msleep");
+			in.takeFirst();
+			continue;
+		}
+		if(item.target.isNull())
+		{
+			out.append(QString("%1(%2);").arg(item.method).arg(item.parameters));
+		}
+		else
+		{
+			out.append(QString("objectFromPath(\"%1\").%2(%3);").arg(item.target).arg(item.method).arg(item.parameters));
+		}
+	}
+	return out.join("\n");
+}
+
+XmlToQtScript::Item::Item(const QString& _target, const QString& _method, const QString& _parameters)
+: target(_target)
+, method(_method)
+, parameters(_parameters)
+{
+}
+
+XmlToQtScript::Item XmlToQtScript::parseMsec()
+
+{
+	return Item(QString(), "msleep", readElementText());
 }
 
 QString XmlToQtScript::escapeString(const QString& _string)
@@ -154,7 +172,7 @@ QString XmlToQtScript::escapeString(const QString& _string)
 	return string;
 }
 
-QString XmlToQtScript::parseFocusEvent()
+XmlToQtScript::Item XmlToQtScript::parseFocusEvent()
 {
 	const QString call("setFocus");
 	Q_ASSERT(!call.isEmpty());
@@ -165,18 +183,10 @@ QString XmlToQtScript::parseFocusEvent()
 	// skip to end of element
 	readElementText();
 
-	return QString(
-		"objectFromPath(\"%1\").%2({\"reason\": %3});"
-	).arg(
-		target
-	).arg(
-		call
-	).arg(
-		reason
-	);
+	return Item(target, call, QString("{\"reason\": %1}").arg(reason));
 }
 
-QString XmlToQtScript::parseKeyEvent()
+XmlToQtScript::Item XmlToQtScript::parseKeyEvent()
 {
 	QString call;
 	if(name() == "keyPress")
@@ -199,26 +209,26 @@ QString XmlToQtScript::parseKeyEvent()
 	// skip to end of element
 	readElementText();
 
-	return QString(
-		"objectFromPath(\"%1\").%2({\"key\": %3, \"modifiers\": %4, \"text\": \"%5\", \"autorepeat\": %6, \"count\": %7});"
-	).arg(
-		target
-	).arg(
-		call
-	).arg(
-		key
-	).arg(
-		modifiers
-	).arg(
-		text
-	).arg(
-		autoRepeat
-	).arg(
-		count
+	return Item(
+		target,
+		call,
+		QString(
+			"{\"key\": %1, \"modifiers\": %2, \"text\": \"%3\", \"autorepeat\": %4, \"count\": %5}"
+		).arg(
+			key
+		).arg(
+			modifiers
+		).arg(
+			text
+		).arg(
+			autoRepeat
+		).arg(
+			count
+		)
 	);
 }
 
-QString XmlToQtScript::parseMouseEvent()
+XmlToQtScript::Item XmlToQtScript::parseMouseEvent()
 {
 	QString call;
 	if(name() == "mouseMove")
@@ -249,26 +259,26 @@ QString XmlToQtScript::parseMouseEvent()
 	// skip to end of element
 	readElementText();
 
-	return QString(
-		"objectFromPath(\"%1\").%2({\"x\": %3, \"y\": %4, \"button\": %5, \"buttons\": %6, \"modifiers\": %7});"
-	).arg(
-		target
-	).arg(
-		call
-	).arg(
-		x
-	).arg(
-		y
-	).arg(
-		button
-	).arg(
-		buttons
-	).arg(
-		modifiers
+	return Item(
+		target,
+		call,
+		QString(
+			"{\"x\": %1, \"y\": %2, \"button\": %3, \"buttons\": %4, \"modifiers\": %5}"
+		).arg(
+			x
+		).arg(
+			y
+		).arg(
+			button
+		).arg(
+			buttons
+		).arg(
+			modifiers
+		)
 	);
 }
 
-QString XmlToQtScript::parseContextMenuEvent()
+XmlToQtScript::Item XmlToQtScript::parseContextMenuEvent()
 {
 	const QString call("contextMenu");
 
@@ -282,22 +292,22 @@ QString XmlToQtScript::parseContextMenuEvent()
 	// skip to end of element
 	readElementText();
 
-	return QString(
-		"objectFromPath(\"%1\").%2({\"x\": %3, \"y\": %4, \"globalX\": %5, \"globalY\": %6, \"modifiers\": %7});"
-	).arg(
-		target
-	).arg(
-		call
-	).arg(
-		x
-	).arg(
-		y
-	).arg(
-		globalX
-	).arg(
-		globalY
-	).arg(
-		modifiers
+	return Item(
+		target,
+		call,
+		QString(
+			"{\"x\": %1, \"y\": %2, \"globalX\": %3, \"globalY\": %4, \"modifiers\": %5}"
+		).arg(
+			x
+		).arg(
+			y
+		).arg(
+			globalX
+		).arg(
+			globalY
+		).arg(
+			modifiers
+		)
 	);
 }
 
@@ -363,7 +373,7 @@ QString XmlToQtScript::stringForFocusReason(int focusReason)
 	return "Qt.OtherFocusReason";
 }
 
-QString XmlToQtScript::parseWheelEvent()
+XmlToQtScript::Item XmlToQtScript::parseWheelEvent()
 {
 	const QString call = "mouseWheel";
 
@@ -378,28 +388,28 @@ QString XmlToQtScript::parseWheelEvent()
 	// skip to end of element
 	readElementText();
 
-	return QString(
-		"objectFromPath(\"%1\").%2({\"x\": %3, \"y\": %4, \"delta\": %5, \"buttons\": %6, \"modifiers\": %7, \"orientation\": \"%8\"});"
-	).arg(
-		target
-	).arg(
-		call
-	).arg(
-		x
-	).arg(
-		y
-	).arg(
-		delta
-	).arg(
-		buttons
-	).arg(
-		modifiers
-	).arg(
-		orientation
+	return Item(
+		target,
+		call,
+		QString(
+			"{\"x\": %1, \"y\": %2, \"delta\": %3, \"buttons\": %4, \"modifiers\": %5, \"orientation\": \"%6\"}"
+		).arg(
+			x
+		).arg(
+			y
+		).arg(
+			delta
+		).arg(
+			buttons
+		).arg(
+			modifiers
+		).arg(
+			orientation
+		)
 	);
 }
 
-QString XmlToQtScript::parseShortcutEvent()
+XmlToQtScript::Item XmlToQtScript::parseShortcutEvent()
 {
 	const QString call = "shortcut";
 
@@ -411,18 +421,18 @@ QString XmlToQtScript::parseShortcutEvent()
 	// skip to end of element
 	readElementText();
 
-	return QString(
-		"objectFromPath(\"%1\").%2({\"string\": \"%3\", \"id\": %4, \"ambiguous\": %5});"
-	).arg(
-		target
-	).arg(
-		call
-	).arg(
-		string
-	).arg(
-		id
-	).arg(
-		ambiguous
+	return Item(
+		target,
+		call,
+		QString(
+			"{\"string\": \"%1\", \"id\": %2, \"ambiguous\": %3}"
+		).arg(
+			string
+		).arg(
+			id
+		).arg(
+			ambiguous
+		)
 	);
 }
 

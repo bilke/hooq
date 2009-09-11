@@ -35,16 +35,26 @@ class XmlToQtScript : private QXmlStreamReader
 		QString parse(QIODevice* xml, Options);
 		static QString escapeString(const QString&);
 	private:
+		struct Item
+		{
+			Item(const QString& target, const QString& method, const QString& parameters);
+			QString target;
+			QString method;
+			QString parameters;
+		};
+		QString itemString(const QList<Item>& items) const;
+
 		QString parseDocument();
 		QString parseHooq();
-		QString parseMsec();
 
-		QString parseFocusEvent();
-		QString parseKeyEvent();
-		QString parseMouseEvent();
-		QString parseWheelEvent();
-		QString parseShortcutEvent();
-		QString parseContextMenuEvent();
+		Item parseMsec();
+
+		Item parseFocusEvent();
+		Item parseKeyEvent();
+		Item parseMouseEvent();
+		Item parseWheelEvent();
+		Item parseShortcutEvent();
+		Item parseContextMenuEvent();
 
 		static QString stringForMouseButton(int button);
 		static QString stringForMouseButtons(int buttons);
