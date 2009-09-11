@@ -127,6 +127,44 @@ void RemoteObjectPrototype::setFocus(const QVariantMap& parameters)
 	);
 }
 
+void RemoteObjectPrototype::sendText(const QString& text)
+{
+	const int interval = 5; // msec between keypress/keyrelease/next key
+	Q_FOREACH(const QChar& character, text)
+	{
+		if(character.isUpper())
+		{
+			keyPressEvent(path(), Qt::Key_Shift, Qt::NoModifier, QString(), false, 0);
+			sleepRequested(interval);
+			keyPressEvent(path(), static_cast<Qt::Key>(character.toLower().toLatin1()), Qt::ShiftModifier, character, false, 0);
+			sleepRequested(interval);
+			keyReleaseEvent(path(), static_cast<Qt::Key>(character.toLower().toLatin1()), Qt::ShiftModifier, character, false, 0);
+			sleepRequested(interval);
+			keyReleaseEvent(path(), Qt::Key_Shift, Qt::NoModifier, QString(), false, 0);
+			sleepRequested(interval);
+		}
+		else
+		{
+			keyPressEvent(path(), keyForChar(character), Qt::NoModifier, character, false, 0);
+			sleepRequested(interval);
+			keyReleaseEvent(path(), keyForChar(character), Qt::NoModifier, character, false, 0);
+			sleepRequested(interval);
+		}
+	}
+}
+
+Qt::Key RemoteObjectPrototype::keyForChar(const QChar& character)
+{
+	if(character == '\n')
+	{
+		return Qt::Key_Enter;
+	}
+	else
+	{
+		return static_cast<Qt::Key>(character.toLower().toLatin1());
+	}
+}
+
 void RemoteObjectPrototype::releaseKey(const QVariantMap& parameters)
 {
 	raiseKeyEvent(parameters, &RemoteObjectPrototype::keyReleaseEvent);

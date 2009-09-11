@@ -147,6 +147,11 @@ void Interpreter::connectRemoteObject(RemoteObjectPrototype* object)
 		SIGNAL(propertyRequested(QString, QString, QVariant*)),
 		SLOT(fetchProperty(QString, QString, QVariant*))
 	);
+	connect(
+		object,
+		SIGNAL(sleepRequested(int)),
+		SLOT(writeSleep(int))
+	);
 }
 
 bool Interpreter::ack() const
