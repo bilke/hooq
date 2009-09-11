@@ -125,13 +125,6 @@
              <widget class="QLineEdit" name="m_testNameEdit"/>
             </item>
             <item>
-             <widget class="QCheckBox" name="m_recordMouseMovements">
-              <property name="text">
-               <string>Record mouse movements</string>
-              </property>
-             </widget>
-            </item>
-            <item>
              <widget class="QToolButton" name="m_addTestButton">
               <property name="enabled">
                <bool>false</bool>
@@ -160,8 +153,65 @@
      <height>24</height>
     </rect>
    </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>File</string>
+    </property>
+    <addaction name="m_quit"/>
+   </widget>
+   <widget class="QMenu" name="menuHelp">
+    <property name="title">
+     <string>Help</string>
+    </property>
+    <addaction name="m_about"/>
+    <addaction name="m_aboutQt"/>
+   </widget>
+   <widget class="QMenu" name="menuOptions">
+    <property name="title">
+     <string>Options</string>
+    </property>
+    <addaction name="m_recordMouseMovements"/>
+    <addaction name="m_simplifyStrings"/>
+   </widget>
+   <addaction name="menuFile"/>
+   <addaction name="menuOptions"/>
+   <addaction name="menuHelp"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
+  <action name="m_quit">
+   <property name="text">
+    <string>Quit</string>
+   </property>
+  </action>
+  <action name="m_about">
+   <property name="text">
+    <string>About Hooq</string>
+   </property>
+  </action>
+  <action name="m_aboutQt">
+   <property name="text">
+    <string>About Qt</string>
+   </property>
+  </action>
+  <action name="m_recordMouseMovements">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Record Mouse Movements</string>
+   </property>
+  </action>
+  <action name="m_simplifyStrings">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Simplify Strings</string>
+   </property>
+  </action>
  </widget>
  <resources/>
  <connections/>

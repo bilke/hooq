@@ -184,9 +184,52 @@ MainWindow::MainWindow(QWidget* parent)
 		SLOT(testFinished())
 	);
 
+	connect(
+		m_quit,
+		SIGNAL(triggered()),
+		qApp,
+		SLOT(quit())
+	);
+
+	connect(
+		m_aboutQt,
+		SIGNAL(triggered()),
+		qApp,
+		SLOT(aboutQt())
+	);
+
+	connect(
+		m_about,
+		SIGNAL(triggered()),
+		SLOT(about())
+	);
+
 	ColumnClickMapper* mapper = new ColumnClickMapper(m_testList);
 	mapper->addMapping(1, this, SLOT(runTestScript(QModelIndex)));
 	mapper->addMapping(2, this, SLOT(editTestScript(QModelIndex)));
+}
+
+void MainWindow::about()
+{
+	QMessageBox::about(
+		this,
+		tr("About Hooq"),
+		tr(
+			"<h1>About Hooq</h1>"
+			"<p>Hooq is a cross-platform program for testing GUI applications written using Qt 4.</p>"
+			"<p>Different parts of Hooq are licensed differently - see individual source files for information on which of the following license applies to the specific file.</p>"
+			"<ul>"
+			"<li>The GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.</li>"
+			"<li>The GNU Lesser General Public License as published by the Free Software Foundation; either version 2.1 of the License, or (at your option) any later version.</li>"
+			"</ul>"
+			"<p>The following entitites have contributed code used by Hooq:</p>"
+			"<ul>"
+			"<li>Copyright &#169; 2009 Mendeley Limited &lt;copyright@mendeley.com&gt;</li>"
+			"<li>Copyright &#169; 2009 Frederick Emmott &lt;mail@fredemmott.co.uk&gt;</li>"
+			"<li>Copyright &#169; 2009 Nokia Corporation and/or its supsidary(-ies).</li>"
+			"</ul>"
+		)
+	);
 }
 
 void MainWindow::runEditorTest()
