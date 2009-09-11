@@ -52,6 +52,7 @@ QString XmlToQtScript::parseDocument()
 
 void XmlToQtScript::skipElement()
 {
+	Q_ASSERT(tokenType() == StartElement);
 	while(!atEnd())
 	{
 		readNext();
@@ -94,7 +95,22 @@ QString XmlToQtScript::parseHooq()
 				}
 				if(name() == "mouseMove" || name() == "mouseButtonPress" || name() == "mouseButtonRelease" || name() == "mouseButtonDoubleClick")
 				{
-					items.append(parseMouseEvent());
+					if(name() == "mouseMove" && m_options.testFlag(SkipMouseMovements))
+					{
+						skipElement(); // the mouseMove
+						while(tokenType() != StartElement && !atEnd())
+						{
+							readNext();
+						}
+						Q_ASSERT(!atEnd());
+						Q_ASSERT(tokenType() == StartElement);
+						Q_ASSERT(name() == "msec");
+						skipElement(); // and, the following msec
+					}
+					else
+					{
+						items.append(parseMouseEvent());
+					}
 					continue;
 				}
 				if(name() == "mouseWheel")
