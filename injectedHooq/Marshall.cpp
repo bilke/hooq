@@ -107,10 +107,6 @@ void Marshall::readCommand()
 			player->run();
 			break;
 		}
-		else if(command == "NO MOUSE MOVES\n")
-		{
-			Logger::disableMouseMoveLogging();
-		}
 		else if(command == "DIE\n")
 		{
 			m_socket->write("ACK\n");

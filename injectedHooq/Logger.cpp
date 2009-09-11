@@ -42,12 +42,6 @@ namespace Hooq
 {
 
 QPointer<Logger> Logger::m_instance;
-bool Logger::m_mouseMovesLogged(true);
-
-void Logger::disableMouseMoveLogging()
-{
-	m_mouseMovesLogged = false;
-}
 
 Logger* Logger::instance(QIODevice* device)
 {
@@ -113,11 +107,6 @@ bool Logger::hook(void** data)
 	return false;
 }
 
-bool Logger::isMouseMoveLoggingEnabled()
-{
-	return m_mouseMovesLogged;
-}
-
 QObject* Logger::focusObject(QObject* receiver)
 {
 	QWidget* widget = qobject_cast<QWidget*>(receiver);
@@ -150,10 +139,7 @@ void Logger::hook(QObject* receiver, QEvent* event)
 			outputEvent(receiver, "keyRelease", keyEventAttributes(static_cast<QKeyEvent*>(event)));
 			break;
 		case QEvent::MouseMove:
-			if(isMouseMoveLoggingEnabled())
-			{
-				outputEvent(receiver, "mouseMove", mouseEventAttributes(static_cast<QMouseEvent*>(event)));
-			}
+			outputEvent(receiver, "mouseMove", mouseEventAttributes(static_cast<QMouseEvent*>(event)));
 			break;
 		case QEvent::MouseButtonPress:
 			outputEvent(receiver, "mouseButtonPress", mouseEventAttributes(static_cast<QMouseEvent*>(event)));

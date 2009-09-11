@@ -41,14 +41,12 @@ class Logger : public QObject
 	public:
 		~Logger();
 		static Logger* instance(QIODevice*);
-		static void disableMouseMoveLogging();
 	signals:
 		void finished();
 	private slots:
 		void readInput();
 	private:
 		static QObject* focusObject(QObject* object);
-		static bool isMouseMoveLoggingEnabled();
 		static Logger* instance();
 		Logger(QIODevice* device);
 		static QPointer<Logger> m_instance;
@@ -56,7 +54,6 @@ class Logger : public QObject
 		static void deactivate();
 
 		/// The main hook.
-		static bool m_mouseMovesLogged;
 		static bool hook(void** data);
 		void hook(QObject* receiver, QEvent* event);
 
