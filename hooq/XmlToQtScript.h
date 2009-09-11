@@ -25,6 +25,7 @@ class XmlToQtScript : private QXmlStreamReader
 {
 	public:
 		QString parse(QIODevice* xml);
+		static QString escapeString(const QString&);
 	private:
 		QString parseDocument();
 		QString parseHooq();
@@ -46,6 +47,4 @@ class XmlToQtScript : private QXmlStreamReader
 		static QString stringForFocusReason(int focusReason);
 
 		void skipElement();
-
-		static QString escapeString(const QString&);
 };

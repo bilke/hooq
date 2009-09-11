@@ -132,6 +132,7 @@ QString XmlToQtScript::escapeString(const QString& _string)
 	QString string(_string);
 	string.replace("\"", "\\\"");
 	string.replace("\r", "\\r");
+	string.replace("\n", "\\n");
 	return string;
 }
 

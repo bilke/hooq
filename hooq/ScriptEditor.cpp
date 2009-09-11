@@ -23,6 +23,7 @@
 #include "CodeEditor.h"
 #include "ObjectInformation.h"
 #include "PropertyDialog.h"
+#include "XmlToQtScript.h"
 
 #include "qscripthighlighter.h"
 
@@ -244,7 +245,7 @@ QString ScriptEditor::escapeValue(const QVariant& value)
 		case QVariant::Int:
 			return QString::number(value.toInt());
 		case QVariant::String:
-			return QString("\"%1\"").arg(value.toString().replace("\\", "\\\\").replace("\"", "\\\""));
+			return QString("\"%1\"").arg(XmlToQtScript::escapeString(value.toString()));
 		default:
 			return QString();
 	}
