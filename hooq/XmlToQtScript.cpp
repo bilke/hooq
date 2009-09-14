@@ -178,13 +178,21 @@ QString XmlToQtScript::serialize(const QList<Item>& items)
 		{
 			continue;
 		}
+
 		if(item.target.isNull())
 		{
 			out.append(QString("%1(%2);").arg(item.method).arg(parametersString(item.parameters)));
 		}
 		else
 		{
-			out.append(QString("objectFromPath(\"%1\").%2(%3);").arg(item.target).arg(item.method).arg(parametersString(item.parameters)));
+			if(item.target.canConvert<Variable>())
+			{
+				out.append(QString("%1.%2(%3);").arg(item.target.value<Variable>().name).arg(item.method).arg(parametersString(item.parameters)));
+			}
+			else
+			{
+				out.append(QString("objectFromPath(\"%1\").%2(%3);").arg(item.target.toString()).arg(item.method).arg(parametersString(item.parameters)));
+			}
 		}
 	}
 	return out.join("\n");
@@ -247,10 +255,14 @@ QString XmlToQtScript::parametersString(const QVariant& parameters)
 	return QString();
 }
 
-XmlToQtScript::Item::Item(const QString& _target, const QString& _method, const QVariant& _parameters)
+XmlToQtScript::Item::Item(const QVariant& _target, const QString& _method, const QVariant& _parameters)
 : target(_target)
 , method(_method)
 , parameters(_parameters)
+{
+}
+
+XmlToQtScript::Item::Item()
 {
 }
 

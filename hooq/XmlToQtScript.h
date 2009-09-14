@@ -26,6 +26,7 @@
 class XmlToQtScript : private QXmlStreamReader
 {
 	public:
+		struct Variable	{ QString name; };
 		enum Option
 		{
 			NoOptions = 0,
@@ -39,8 +40,9 @@ class XmlToQtScript : private QXmlStreamReader
 	private:
 		struct Item
 		{
-			Item(const QString& target, const QString& method, const QVariant& parameters);
-			QString target;
+			Item();
+			Item(const QVariant& target, const QString& method, const QVariant& parameters);
+			QVariant target; // string or Variable
 			QString method;
 			QVariant parameters; // Either a scalar, or QVariantMap
 		};
@@ -81,5 +83,7 @@ class XmlToQtScript : private QXmlStreamReader
 		class StripMouseMovementsPostProcessor;
 		class SimplifyStringsPostProcessor;
 };
+
+Q_DECLARE_METATYPE(XmlToQtScript::Variable);
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(XmlToQtScript::Options);

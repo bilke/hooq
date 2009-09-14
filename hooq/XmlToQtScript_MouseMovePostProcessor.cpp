@@ -19,7 +19,7 @@ void XmlToQtScript::StripMouseMovementsPostProcessor::process(Item* iterator, QL
 		}
 		else
 		{
-			*iterator = Item(QString(), QString(), QVariant());
+			*iterator = Item();
 		}
 	}
 }

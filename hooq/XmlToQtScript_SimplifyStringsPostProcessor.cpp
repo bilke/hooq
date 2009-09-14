@@ -15,11 +15,11 @@ void XmlToQtScript::SimplifyStringsPostProcessor::process(Item* iterator, QList<
 {
 	if(iterator->method == "pressKey")
 	{
-		const QString target = iterator->target;
+		const QVariant target = iterator->target;
 		QVariantMap parameters = iterator->parameters.toMap();
 		Qt::KeyboardModifiers modifiers = parameters["modifiers"].value<Qt::KeyboardModifiers>();
 		QString string;
-		Item msec = Item(QString(), QString(), QVariant());
+		Item msec;
 		while(! (modifiers & ~Qt::ShiftModifier) )
 		{
 			if(iterator->method == "pressKey")
