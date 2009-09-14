@@ -21,7 +21,7 @@ class XmlToQtScript::ForwardOnlyPostProcessor : public XmlToQtScript::PostProces
 	public:
 		Type type() const;
 		virtual ~ForwardOnlyPostProcessor();
-		virtual void process(Item* iterator, QList<Item>* in, QStringList* out, bool* skip) const = 0;
+		virtual void process(Item* iterator, QList<Item>* in, QList<Item>* out) const = 0;
 	protected:
 		ForwardOnlyPostProcessor();
 };

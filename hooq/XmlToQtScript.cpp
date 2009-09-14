@@ -137,41 +137,40 @@ QString XmlToQtScript::parseHooq()
 QString XmlToQtScript::itemString(const QList<Item>& items) const
 {
 	QList<Item> in(items);
+	QList<Item> out;
+
 	QList<XmlToQtScript::ForwardOnlyPostProcessor*> postProcessors;
 	if(m_options & SkipMouseMovements)
 	{
 		postProcessors.append(new StripMouseMovementsPostProcessor());
 	}
 
-	QStringList out;
 	while(!in.isEmpty())
 	{
 		Item item = in.takeFirst();
-		bool skip = false;
 		Q_FOREACH(ForwardOnlyPostProcessor* postProcessor, postProcessors)
 		{
-			postProcessor->process(&item, &in, &out, &skip);
-			if(skip)
-			{
-				break;
-			}
+			postProcessor->process(&item, &in, &out);
 		}
-		if(skip)
-		{
-			continue;
-		}
+		out.append(item);
+	}
 
+	qDeleteAll(postProcessors);
+
+	// Serialise
+	QStringList stringOut;
+	Q_FOREACH(const Item& item, out)
+	{
 		if(item.target.isNull())
 		{
-			out.append(QString("%1(%2);").arg(item.method).arg(parametersString(item.parameters)));
+			stringOut.append(QString("%1(%2);").arg(item.method).arg(parametersString(item.parameters)));
 		}
 		else
 		{
-			out.append(QString("objectFromPath(\"%1\").%2(%3);").arg(item.target).arg(item.method).arg(parametersString(item.parameters)));
+			stringOut.append(QString("objectFromPath(\"%1\").%2(%3);").arg(item.target).arg(item.method).arg(parametersString(item.parameters)));
 		}
 	}
-	qDeleteAll(postProcessors);
-	return out.join("\n");
+	return stringOut.join("\n");
 }
 
 QString XmlToQtScript::parametersString(const QVariant& parameters)
