@@ -18,6 +18,7 @@
 	51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 #include "XmlToQtScript.h"
+#include "XmlToQtScript_MouseMovePostProcessor.h"
 
 #include "EnumConverter.h"
 
@@ -136,16 +137,30 @@ QString XmlToQtScript::parseHooq()
 QString XmlToQtScript::itemString(const QList<Item>& items) const
 {
 	QList<Item> in(items);
+	QList<XmlToQtScript::ForwardOnlyPostProcessor*> postProcessors;
+	if(m_options & SkipMouseMovements)
+	{
+		postProcessors.append(new StripMouseMovementsPostProcessor());
+	}
+
 	QStringList out;
 	while(!in.isEmpty())
 	{
 		Item item = in.takeFirst();
-		if((m_options & SkipMouseMovements) && item.method == "moveMouse")
+		bool skip = false;
+		Q_FOREACH(ForwardOnlyPostProcessor* postProcessor, postProcessors)
 		{
-			Q_ASSERT(in.first().method == "msleep");
-			in.takeFirst();
+			postProcessor->process(&item, &in, &out, &skip);
+			if(skip)
+			{
+				break;
+			}
+		}
+		if(skip)
+		{
 			continue;
 		}
+
 		if(item.target.isNull())
 		{
 			out.append(QString("%1(%2);").arg(item.method).arg(parametersString(item.parameters)));
@@ -155,6 +170,7 @@ QString XmlToQtScript::itemString(const QList<Item>& items) const
 			out.append(QString("objectFromPath(\"%1\").%2(%3);").arg(item.target).arg(item.method).arg(parametersString(item.parameters)));
 		}
 	}
+	qDeleteAll(postProcessors);
 	return out.join("\n");
 }
 

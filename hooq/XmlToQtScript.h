@@ -69,6 +69,13 @@ class XmlToQtScript : private QXmlStreamReader
 		void skipElement();
 
 		Options m_options;
+
+		// Abstract PostProcessors
+		class ForwardOnlyPostProcessor;
+		class PostProcessor;
+
+		// Instantiable PostProcessors
+		class StripMouseMovementsPostProcessor;
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(XmlToQtScript::Options);

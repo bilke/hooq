@@ -40,6 +40,8 @@ HEADERS += \
 	TestResultsDialog.h \
 	VariantMapModel.h \
 	XmlToQtScript.h \
+	XmlToQtScript_MouseMovePostProcessor.h \
+	XmlToQtScript_PostProcessor.h \
 
 FORMS += \
 	MainWindow.ui \
@@ -64,5 +66,7 @@ SOURCES += \
 	TestResultsDialog.cpp \
 	VariantMapModel.cpp \
 	XmlToQtScript.cpp \
+	XmlToQtScript_MouseMovePostProcessor.cpp \
+	XmlToQtScript_PostProcessor.cpp \
 	main.cpp \
 
