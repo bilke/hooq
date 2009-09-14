@@ -176,7 +176,7 @@ QString XmlToQtScript::parametersString(const QVariant& parameters)
 				{
 					out += QString("\"%1\": %2").arg(escapeString(it.key())).arg(parametersString(it.value()));
 				}
-				return "{\n" + out.join(",\n") + "\n}";
+				return "{" + out.join(", ") + "}";
 			}
 		case QVariant::UserType:
 			if(parameters.canConvert<Qt::FocusReason>())
