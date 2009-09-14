@@ -20,6 +20,7 @@
 #pragma once
 
 #include <QFlags>
+#include <QVariant>
 #include <QXmlStreamReader>
 
 class XmlToQtScript : private QXmlStreamReader
@@ -37,12 +38,13 @@ class XmlToQtScript : private QXmlStreamReader
 	private:
 		struct Item
 		{
-			Item(const QString& target, const QString& method, const QString& parameters);
+			Item(const QString& target, const QString& method, const QVariant& parameters);
 			QString target;
 			QString method;
-			QString parameters;
+			QVariant parameters; // Either a scalar, or QVariantMap
 		};
 		QString itemString(const QList<Item>& items) const;
+		static QString parametersString(const QVariant& parameters);
 
 		QString parseDocument();
 		QString parseHooq();

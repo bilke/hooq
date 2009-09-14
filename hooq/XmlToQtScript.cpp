@@ -24,6 +24,14 @@
 #include <QDebug>
 #include <QStringList>
 
+Q_DECLARE_METATYPE(Qt::FocusReason);
+Q_DECLARE_METATYPE(Qt::Key);
+Q_DECLARE_METATYPE(Qt::MouseButton);
+Q_DECLARE_METATYPE(Qt::MouseButtons);
+Q_DECLARE_METATYPE(Qt::Orientation);
+Q_DECLARE_METATYPE(Qt::KeyboardModifier);
+Q_DECLARE_METATYPE(Qt::KeyboardModifiers);
+
 QString XmlToQtScript::parse(QIODevice* xml, Options options)
 {
 	m_options = options;
@@ -140,17 +148,74 @@ QString XmlToQtScript::itemString(const QList<Item>& items) const
 		}
 		if(item.target.isNull())
 		{
-			out.append(QString("%1(%2);").arg(item.method).arg(item.parameters));
+			out.append(QString("%1(%2);").arg(item.method).arg(parametersString(item.parameters)));
 		}
 		else
 		{
-			out.append(QString("objectFromPath(\"%1\").%2(%3);").arg(item.target).arg(item.method).arg(item.parameters));
+			out.append(QString("objectFromPath(\"%1\").%2(%3);").arg(item.target).arg(item.method).arg(parametersString(item.parameters)));
 		}
 	}
 	return out.join("\n");
 }
 
-XmlToQtScript::Item::Item(const QString& _target, const QString& _method, const QString& _parameters)
+QString XmlToQtScript::parametersString(const QVariant& parameters)
+{
+	switch(parameters.type())
+	{
+		case QVariant::Bool:
+			return parameters.toBool() ? "true" : "false";
+		case QVariant::Int:
+			return QString::number(parameters.toInt());
+		case QVariant::String:
+			return "\"" + escapeString(parameters.toString()) + "\"";
+		case QVariant::Map:
+			{
+				QVariantMap map = parameters.toMap();
+				QStringList out;
+				for(QVariantMap::ConstIterator it = map.constBegin(); it != map.constEnd(); ++it)
+				{
+					out += QString("\"%1\": %2").arg(escapeString(it.key())).arg(parametersString(it.value()));
+				}
+				return "{\n" + out.join(",\n") + "\n}";
+			}
+		case QVariant::UserType:
+			if(parameters.canConvert<Qt::FocusReason>())
+			{
+				return stringForFocusReason(parameters.value<Qt::FocusReason>());
+			}
+			if(parameters.canConvert<Qt::Key>())
+			{
+				return "Qt." + EnumConverter::stringFromValue(parameters.value<Qt::Key>(), "Key");
+			}
+			if(parameters.canConvert<Qt::MouseButton>())
+			{
+				return stringForMouseButton(parameters.value<Qt::MouseButton>());
+			}
+			if(parameters.canConvert<Qt::MouseButtons>())
+			{
+				return stringForMouseButtons(parameters.value<Qt::MouseButtons>());
+			}
+			if(parameters.canConvert<Qt::Orientation>())
+			{
+				return parameters.value<Qt::Orientation>() == Qt::Horizontal ? "Qt.Horizontal" : "Qt.Vertical";
+			}
+			if(parameters.canConvert<Qt::KeyboardModifier>())
+			{
+				return stringForModifier(parameters.value<Qt::KeyboardModifier>());
+			}
+			if(parameters.canConvert<Qt::KeyboardModifiers>())
+			{
+				return stringForModifiers(parameters.value<Qt::KeyboardModifiers>());
+			}
+			qDebug() << "Unhandled usertype:" << parameters.userType() << parameters.typeName();
+			break;
+		default:
+			qDebug() << "Unhandled standard QVariant type:" << parameters.typeName();
+	}
+	return QString();
+}
+
+XmlToQtScript::Item::Item(const QString& _target, const QString& _method, const QVariant& _parameters)
 : target(_target)
 , method(_method)
 , parameters(_parameters)
@@ -158,9 +223,8 @@ XmlToQtScript::Item::Item(const QString& _target, const QString& _method, const 
 }
 
 XmlToQtScript::Item XmlToQtScript::parseMsec()
-
 {
-	return Item(QString(), "msleep", readElementText());
+	return Item(QString(), "msleep", readElementText().toInt());
 }
 
 QString XmlToQtScript::escapeString(const QString& _string)
@@ -178,12 +242,13 @@ XmlToQtScript::Item XmlToQtScript::parseFocusEvent()
 	Q_ASSERT(!call.isEmpty());
 
 	const QString target = attributes().value("target").toString();
-	const QString reason = stringForFocusReason(attributes().value("reason").toString().toInt());
+	QVariantMap parameters;
+	parameters["reason"] = QVariant::fromValue(static_cast<Qt::FocusReason>(attributes().value("reason").toString().toInt()));
 
 	// skip to end of element
 	readElementText();
 
-	return Item(target, call, QString("{\"reason\": %1}").arg(reason));
+	return Item(target, call, parameters);
 }
 
 XmlToQtScript::Item XmlToQtScript::parseKeyEvent()
@@ -200,11 +265,14 @@ XmlToQtScript::Item XmlToQtScript::parseKeyEvent()
 	Q_ASSERT(!call.isEmpty());
 
 	const QString target = attributes().value("target").toString();
-	const QString text = escapeString(attributes().value("text").toString());
-	const QString autoRepeat = attributes().value("isAutoRepeat").toString();
-	const QString count = attributes().value("count").toString();;
-	const QString key = "Qt." + EnumConverter::stringFromValue(attributes().value("key").toString().toInt(), "Key");
-	const QString modifiers = stringForModifiers(attributes().value("modifiers").toString().toInt());
+
+	QVariantMap parameters;
+
+	parameters["key"] = QVariant::fromValue(static_cast<Qt::Key>(attributes().value("key").toString().toInt()));
+	parameters["text"] = escapeString(attributes().value("text").toString());
+	parameters["autoRepeat"] = attributes().value("isAutoRepeat").toString() == "true" ? true : false;
+	parameters["count"] = attributes().value("count").toString().toInt();
+	parameters["modifiers"] = QVariant::fromValue(Qt::KeyboardModifiers(attributes().value("modifiers").toString().toInt()));
 
 	// skip to end of element
 	readElementText();
@@ -212,19 +280,7 @@ XmlToQtScript::Item XmlToQtScript::parseKeyEvent()
 	return Item(
 		target,
 		call,
-		QString(
-			"{\"key\": %1, \"modifiers\": %2, \"text\": \"%3\", \"autorepeat\": %4, \"count\": %5}"
-		).arg(
-			key
-		).arg(
-			modifiers
-		).arg(
-			text
-		).arg(
-			autoRepeat
-		).arg(
-			count
-		)
+		parameters
 	);
 }
 
@@ -250,11 +306,14 @@ XmlToQtScript::Item XmlToQtScript::parseMouseEvent()
 	Q_ASSERT(!call.isEmpty());
 
 	const QString target = attributes().value("target").toString();
-	const QString x = attributes().value("x").toString();
-	const QString y = attributes().value("y").toString();
-	const QString button = stringForMouseButton(attributes().value("button").toString().toInt());
-	const QString buttons = stringForMouseButtons(attributes().value("buttons").toString().toInt());
-	const QString modifiers = stringForModifiers(attributes().value("modifiers").toString().toInt());
+
+	QVariantMap parameters;
+
+	parameters["x"] = attributes().value("x").toString().toInt();
+	parameters["y"] = attributes().value("y").toString().toInt();
+	parameters["button"] = QVariant::fromValue(static_cast<Qt::MouseButton>(attributes().value("button").toString().toInt()));
+	parameters["buttons"] = QVariant::fromValue(Qt::MouseButtons(attributes().value("buttons").toString().toInt()));
+	parameters["modifiers"] = QVariant::fromValue(Qt::KeyboardModifiers(attributes().value("modifiers").toString().toInt()));
 
 	// skip to end of element
 	readElementText();
@@ -262,19 +321,7 @@ XmlToQtScript::Item XmlToQtScript::parseMouseEvent()
 	return Item(
 		target,
 		call,
-		QString(
-			"{\"x\": %1, \"y\": %2, \"button\": %3, \"buttons\": %4, \"modifiers\": %5}"
-		).arg(
-			x
-		).arg(
-			y
-		).arg(
-			button
-		).arg(
-			buttons
-		).arg(
-			modifiers
-		)
+		parameters
 	);
 }
 
@@ -283,11 +330,13 @@ XmlToQtScript::Item XmlToQtScript::parseContextMenuEvent()
 	const QString call("contextMenu");
 
 	const QString target = attributes().value("target").toString();
-	const QString x = attributes().value("x").toString();
-	const QString y = attributes().value("y").toString();
-	const QString globalX = attributes().value("globalX").toString();
-	const QString globalY = attributes().value("globalY").toString();
-	const QString modifiers = stringForModifiers(attributes().value("modifiers").toString().toInt());
+
+	QVariantMap parameters;
+	parameters["x"] = attributes().value("x").toString().toInt();
+	parameters["y"] = attributes().value("y").toString().toInt();
+	parameters["globalX"] = attributes().value("globalX").toString().toInt();
+	parameters["globalY"] = attributes().value("globalY").toString().toInt();
+	parameters["modifiers"] = QVariant::fromValue(Qt::KeyboardModifiers(attributes().value("modifiers").toString().toInt()));
 
 	// skip to end of element
 	readElementText();
@@ -295,19 +344,7 @@ XmlToQtScript::Item XmlToQtScript::parseContextMenuEvent()
 	return Item(
 		target,
 		call,
-		QString(
-			"{\"x\": %1, \"y\": %2, \"globalX\": %3, \"globalY\": %4, \"modifiers\": %5}"
-		).arg(
-			x
-		).arg(
-			y
-		).arg(
-			globalX
-		).arg(
-			globalY
-		).arg(
-			modifiers
-		)
+		parameters
 	);
 }
 
@@ -378,12 +415,15 @@ XmlToQtScript::Item XmlToQtScript::parseWheelEvent()
 	const QString call = "mouseWheel";
 
 	const QString target = attributes().value("target").toString();
-	const QString x = attributes().value("x").toString();
-	const QString y = attributes().value("y").toString();
-	const QString orientation = attributes().value("orientation").toString() == "horizontal" ? "Qt.Horizontal" : "Qt.Vertical";
-	const QString buttons = stringForMouseButtons(attributes().value("buttons").toString().toInt());
-	const QString modifiers = stringForModifiers(attributes().value("modifiers").toString().toInt());
-	const QString delta = attributes().value("delta").toString();
+
+	QVariantMap parameters;
+
+	parameters["x"] = attributes().value("x").toString().toInt();
+	parameters["y"] = attributes().value("y").toString().toInt();
+	parameters["buttons"] = QVariant::fromValue(Qt::MouseButtons(attributes().value("buttons").toString().toInt()));
+	parameters["modifiers"] = QVariant::fromValue(Qt::KeyboardModifiers(attributes().value("modifiers").toString().toInt()));
+	parameters["orientation"] = QVariant::fromValue(static_cast<Qt::Orientation>(attributes().value("orientation").toString() == "horizontal" ? Qt::Horizontal : Qt::Vertical));
+	parameters["delta"] = attributes().value("delta").toString().toInt();
 
 	// skip to end of element
 	readElementText();
@@ -391,21 +431,7 @@ XmlToQtScript::Item XmlToQtScript::parseWheelEvent()
 	return Item(
 		target,
 		call,
-		QString(
-			"{\"x\": %1, \"y\": %2, \"delta\": %3, \"buttons\": %4, \"modifiers\": %5, \"orientation\": \"%6\"}"
-		).arg(
-			x
-		).arg(
-			y
-		).arg(
-			delta
-		).arg(
-			buttons
-		).arg(
-			modifiers
-		).arg(
-			orientation
-		)
+		parameters
 	);
 }
 
@@ -414,9 +440,12 @@ XmlToQtScript::Item XmlToQtScript::parseShortcutEvent()
 	const QString call = "shortcut";
 
 	const QString target = attributes().value("target").toString();
-	const QString string = attributes().value("string").toString();
-	const QString id = attributes().value("id").toString();
-	const QString ambiguous = attributes().value("ambiguous").toString();
+
+	QVariantMap parameters;
+
+	parameters["string"] = attributes().value("string").toString();
+	parameters["id"] = attributes().value("id").toString().toInt();
+	parameters["ambiguous"] = attributes().value("ambiguous").toString() == "true" ? true : false;
 
 	// skip to end of element
 	readElementText();
@@ -424,15 +453,7 @@ XmlToQtScript::Item XmlToQtScript::parseShortcutEvent()
 	return Item(
 		target,
 		call,
-		QString(
-			"{\"string\": \"%1\", \"id\": %2, \"ambiguous\": %3}"
-		).arg(
-			string
-		).arg(
-			id
-		).arg(
-			ambiguous
-		)
+		parameters
 	);
 }
 
