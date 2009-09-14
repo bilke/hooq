@@ -45,6 +45,8 @@ class XmlToQtScript : private QXmlStreamReader
 			QVariant parameters; // Either a scalar, or QVariantMap
 		};
 		QString itemString(const QList<Item>& items) const;
+		/// Raw serialization - you probably want itemString instead
+		static QString serialize(const QList<Item>& items);
 		static QString parametersString(const QVariant& parameters);
 
 		QString parseDocument();
@@ -77,6 +79,7 @@ class XmlToQtScript : private QXmlStreamReader
 
 		// Instantiable PostProcessors
 		class StripMouseMovementsPostProcessor;
+		class SimplifyStringsPostProcessor;
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(XmlToQtScript::Options);

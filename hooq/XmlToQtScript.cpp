@@ -19,6 +19,7 @@
 */
 #include "XmlToQtScript.h"
 #include "XmlToQtScript_MouseMovePostProcessor.h"
+#include "XmlToQtScript_SimplifyStringsPostProcessor.h"
 
 #include "EnumConverter.h"
 
@@ -136,6 +137,7 @@ QString XmlToQtScript::parseHooq()
 
 QString XmlToQtScript::itemString(const QList<Item>& items) const
 {
+	qDebug() << "RAW:" << serialize(items);
 	QList<Item> in(items);
 	QList<Item> out;
 
@@ -144,33 +146,48 @@ QString XmlToQtScript::itemString(const QList<Item>& items) const
 	{
 		postProcessors.append(new StripMouseMovementsPostProcessor());
 	}
-
-	while(!in.isEmpty())
+	if(m_options & SimplifyStrings)
 	{
-		Item item = in.takeFirst();
-		Q_FOREACH(ForwardOnlyPostProcessor* postProcessor, postProcessors)
+		postProcessors.append(new SimplifyStringsPostProcessor());
+	}
+
+	Q_FOREACH(ForwardOnlyPostProcessor* postProcessor, postProcessors)
+	{
+		out.clear();
+		while(!in.isEmpty())
 		{
+			Item item = in.takeFirst();
 			postProcessor->process(&item, &in, &out);
+			out.append(item);
 		}
-		out.append(item);
+		in = out;
 	}
 
 	qDeleteAll(postProcessors);
 
 	// Serialise
-	QStringList stringOut;
-	Q_FOREACH(const Item& item, out)
+	return serialize(out);
+}
+
+QString XmlToQtScript::serialize(const QList<Item>& items)
+{
+	QStringList out;
+	Q_FOREACH(const Item& item, items)
 	{
+		if(item.method.isNull())
+		{
+			continue;
+		}
 		if(item.target.isNull())
 		{
-			stringOut.append(QString("%1(%2);").arg(item.method).arg(parametersString(item.parameters)));
+			out.append(QString("%1(%2);").arg(item.method).arg(parametersString(item.parameters)));
 		}
 		else
 		{
-			stringOut.append(QString("objectFromPath(\"%1\").%2(%3);").arg(item.target).arg(item.method).arg(parametersString(item.parameters)));
+			out.append(QString("objectFromPath(\"%1\").%2(%3);").arg(item.target).arg(item.method).arg(parametersString(item.parameters)));
 		}
 	}
-	return stringOut.join("\n");
+	return out.join("\n");
 }
 
 QString XmlToQtScript::parametersString(const QVariant& parameters)

@@ -42,6 +42,7 @@ HEADERS += \
 	XmlToQtScript.h \
 	XmlToQtScript_MouseMovePostProcessor.h \
 	XmlToQtScript_PostProcessor.h \
+	XmlToQtScript_SimplifyStringsPostProcessor.h \
 
 FORMS += \
 	MainWindow.ui \
@@ -68,5 +69,6 @@ SOURCES += \
 	XmlToQtScript.cpp \
 	XmlToQtScript_MouseMovePostProcessor.cpp \
 	XmlToQtScript_PostProcessor.cpp \
+	XmlToQtScript_SimplifyStringsPostProcessor.cpp \
 	main.cpp \
 

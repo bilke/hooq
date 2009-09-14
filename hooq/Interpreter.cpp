@@ -349,6 +349,7 @@ void Interpreter::processSocketData()
 
 void Interpreter::run(QLocalSocket* socket)
 {
+	m_pendingAcks = 0;
 	connect(
 		socket,
 		SIGNAL(readyRead()),
