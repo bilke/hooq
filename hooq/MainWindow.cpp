@@ -354,6 +354,10 @@ void MainWindow::finishRecording()
 	{
 		options |= XmlToQtScript::SkipMouseMovements;
 	}
+	if(m_simplifyStrings->isChecked())
+	{
+		options |= XmlToQtScript::SimplifyStrings;
+	}
 
 	XmlToQtScript parser;
 	script.write(parser.parse(m_xmlDump, options).toUtf8());

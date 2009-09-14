@@ -29,7 +29,8 @@ class XmlToQtScript : private QXmlStreamReader
 		enum Option
 		{
 			NoOptions = 0,
-			SkipMouseMovements =  1 << 0
+			SkipMouseMovements = 1 << 0,
+			SimplifyStrings    = 1 << 1
 		};
 		Q_DECLARE_FLAGS(Options, Option);
 
