@@ -203,7 +203,7 @@ void Player::processEvents()
 				}
 				else
 				{
-					qDebug() << "Couldn't find focus widget" << o << "from" << e->objectPath();
+					qDebug() << "Couldn't find focus widget from" << e->objectPath() << "- QObject:" << o;
 					Q_ASSERT(o);
 					Q_ASSERT(w);
 				}
@@ -220,6 +220,7 @@ void Player::processEvents()
 				else
 				{
 					qDebug() << "Couldn't find receiver from path" << e->objectPath();
+					Q_ASSERT(o);
 				}
 				break;
 			}
