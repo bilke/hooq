@@ -27,6 +27,7 @@
 #include "ScriptEditor.h"
 #include "TestModel.h"
 #include "TestResultsDialog.h"
+#include "TestSetDialog.h"
 #include "PushButtonDelegate.h"
 #include "XmlToQtScript.h"
 
@@ -42,7 +43,6 @@
 #include <QDir>
 #include <QFile>
 #include <QFileDialog>
-#include <QInputDialog>
 #include <QMessageBox>
 #include <QString>
 #include <QStringList>
@@ -488,12 +488,16 @@ void MainWindow::showTestContextMenu(const QPoint& position)
 
 void MainWindow::addTestSet()
 {
-	const QString newName = QInputDialog::getText(this, tr("Test set name"), tr("Enter a name for your new test set"));
-	if(!newName.isEmpty())
+	TestSetDialog dialog(this);
+	if(dialog.exec() == QDialog::Accepted)
 	{
-		// todo: check unique
-		m_testSetEdit->addItem(newName);
-		m_testSetEdit->setCurrentIndex(m_testSetEdit->findText(newName));
-		setTestSet(newName);
+		const QString newName = dialog.name();
+		if(!newName.isEmpty())
+		{
+			// todo: check unique
+			m_testSetEdit->addItem(newName);
+			m_testSetEdit->setCurrentIndex(m_testSetEdit->findText(newName));
+			setTestSet(newName);
+		}
 	}
 }
