@@ -35,6 +35,7 @@ class ScriptInterface : public QObject
 		static QScriptValue scriptObjectFromPath(QScriptContext*, QScriptEngine*);
 		static QScriptValue scriptAssert(QScriptContext*, QScriptEngine*);
 		static QScriptValue scriptCompare(QScriptContext*, QScriptEngine*);
+		static QScriptValue scriptImportExtension(QScriptContext*, QScriptEngine*);
 	signals:
 		void msleep(int msec);
 		void newRemoteObject(RemoteObjectPrototype*);

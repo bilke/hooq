@@ -22,6 +22,12 @@ The following additional methods are defined:
 	preferable to assert(result == expected), as it provides a more
 	detailed error message.
 
+ - importExtension("extensionName");
+	Attempts to load the specified QtScript extension. If the extension can
+	not be loaded, an exception is thrown. Example:
+
+	 importExtension("qt.sql"); // loads QtSql
+
 There are several options while recording to make the resulting script easier
 to read and alter under the "Options" menu, all of which are turned on by
 default:

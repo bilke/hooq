@@ -54,6 +54,20 @@ QScriptValue ScriptInterface::scriptCompare(QScriptContext* context, QScriptEngi
 	return QScriptValue();
 }
 
+QScriptValue ScriptInterface::scriptImportExtension(QScriptContext* context, QScriptEngine* engine)
+{
+	const QString extension = context->argument(0).toString();
+	const QScriptValue result = engine->importExtension(extension);
+	if(result.isError())
+	{
+		return context->throwError(tr("Failed to load QtScript extension '%1': %2").arg(extension).arg(result.toString()));
+	}
+	else
+	{
+		return QScriptValue();
+	}
+}
+
 ScriptInterface* ScriptInterface::instance()
 {
 	if(!m_instance)

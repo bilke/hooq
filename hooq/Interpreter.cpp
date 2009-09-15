@@ -57,6 +57,10 @@ Interpreter::Interpreter(QObject* parent)
 		"compare",
 		m_engine->newFunction(ScriptInterface::scriptCompare, 2)
 	);
+	m_engine->globalObject().setProperty(
+		"importExtension",
+		m_engine->newFunction(ScriptInterface::scriptImportExtension, 1)
+	);
 
 	connect(
 		ScriptInterface::instance(),
