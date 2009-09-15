@@ -21,6 +21,7 @@
 #include "XmlToQtScript_MouseMovePostProcessor.h"
 #include "XmlToQtScript_ObjectVariablesPostProcessor.h"
 #include "XmlToQtScript_SimplifyStringsPostProcessor.h"
+#include "XmlToQtScript_StringVariablesPostProcessor.h"
 
 #include "EnumConverter.h"
 
@@ -164,6 +165,10 @@ QString XmlToQtScript::itemString(const QList<Item>& items) const
 	{
 		postProcessors.append(new ObjectVariablesPostProcessor());
 	}
+	if(m_options & StringVariables)
+	{
+		postProcessors.append(new StringVariablesPostProcessor());
+	}
 
 	Q_FOREACH(PostProcessor* postProcessor, postProcessors)
 	{
@@ -195,7 +200,14 @@ QString XmlToQtScript::serialize(const QList<Item>& items)
 
 		if(item.target.isNull())
 		{
-			out.append(QString("%1(%2);").arg(item.method).arg(parametersString(item.parameters)));
+			if(item.parameters.isNull())
+			{
+				out.append(item.method + ";");
+			}
+			else
+			{
+				out.append(QString("%1(%2);").arg(item.method).arg(parametersString(item.parameters)));
+			}
 		}
 		else
 		{
@@ -260,6 +272,10 @@ QString XmlToQtScript::parametersString(const QVariant& parameters)
 			if(parameters.canConvert<Qt::KeyboardModifiers>())
 			{
 				return stringForModifiers(parameters.value<Qt::KeyboardModifiers>());
+			}
+			if(parameters.canConvert<Variable>())
+			{
+				return parameters.value<Variable>().name;
 			}
 			qDebug() << "Unhandled usertype:" << parameters.userType() << parameters.typeName();
 			break;

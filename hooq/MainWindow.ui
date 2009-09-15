@@ -173,6 +173,7 @@
     <addaction name="m_recordMouseMovements"/>
     <addaction name="m_simplifyStrings"/>
     <addaction name="m_objectVariables"/>
+    <addaction name="m_stringVariables"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuOptions"/>
@@ -222,6 +223,17 @@
    </property>
    <property name="text">
     <string>Use Variables for Object References</string>
+   </property>
+  </action>
+  <action name="m_stringVariables">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Use Variables for Strings</string>
    </property>
   </action>
  </widget>

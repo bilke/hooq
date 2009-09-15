@@ -44,6 +44,7 @@ HEADERS += \
 	XmlToQtScript_ObjectVariablesPostProcessor.h \
 	XmlToQtScript_PostProcessor.h \
 	XmlToQtScript_SimplifyStringsPostProcessor.h \
+	XmlToQtScript_StringVariablesPostProcessor.h \
 
 FORMS += \
 	MainWindow.ui \
@@ -72,5 +73,6 @@ SOURCES += \
 	XmlToQtScript_ObjectVariablesPostProcessor.cpp \
 	XmlToQtScript_PostProcessor.cpp \
 	XmlToQtScript_SimplifyStringsPostProcessor.cpp \
+	XmlToQtScript_StringVariablesPostProcessor.cpp \
 	main.cpp \
 

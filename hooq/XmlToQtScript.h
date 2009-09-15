@@ -32,7 +32,8 @@ class XmlToQtScript : private QXmlStreamReader
 			NoOptions = 0,
 			SkipMouseMovements = 1 << 0,
 			SimplifyStrings    = 1 << 1,
-			ObjectVariables    = 1 << 2
+			ObjectVariables    = 1 << 2,
+			StringVariables    = 1 << 3
 		};
 		Q_DECLARE_FLAGS(Options, Option);
 
@@ -78,11 +79,11 @@ class XmlToQtScript : private QXmlStreamReader
 
 		// Abstract PostProcessors
 		class PostProcessor;
-		class PostProcessor;
 
 		// Instantiable PostProcessors
-		class StripMouseMovementsPostProcessor;
 		class SimplifyStringsPostProcessor;
+		class StringVariablesPostProcessor;
+		class StripMouseMovementsPostProcessor;
 		class ObjectVariablesPostProcessor;
 };
 
