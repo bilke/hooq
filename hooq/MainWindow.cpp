@@ -350,7 +350,7 @@ void MainWindow::finishRecording()
 
 	XmlToQtScript::Options options = XmlToQtScript::NoOptions;
 
-	if(! m_recordMouseMovements->isChecked())
+	if(m_ignoreMouseMovements->isChecked())
 	{
 		options |= XmlToQtScript::SkipMouseMovements;
 	}

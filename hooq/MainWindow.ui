@@ -170,7 +170,7 @@
     <property name="title">
      <string>Options</string>
     </property>
-    <addaction name="m_recordMouseMovements"/>
+    <addaction name="m_ignoreMouseMovements"/>
     <addaction name="m_simplifyStrings"/>
     <addaction name="m_objectVariables"/>
     <addaction name="m_stringVariables"/>
@@ -195,12 +195,15 @@
     <string>About Qt</string>
    </property>
   </action>
-  <action name="m_recordMouseMovements">
+  <action name="m_ignoreMouseMovements">
    <property name="checkable">
     <bool>true</bool>
    </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
    <property name="text">
-    <string>Record Mouse Movements</string>
+    <string>Ignore Mouse Movements</string>
    </property>
   </action>
   <action name="m_simplifyStrings">
