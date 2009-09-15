@@ -2,7 +2,7 @@
 
 #include "XmlToQtScript_PostProcessor.h"
 
-class XmlToQtScript::SimplifyStringsPostProcessor : public ForwardOnlyPostProcessor
+class XmlToQtScript::SimplifyStringsPostProcessor : public PostProcessor
 {
 	public:
 		SimplifyStringsPostProcessor();

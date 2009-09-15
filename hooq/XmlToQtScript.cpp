@@ -151,7 +151,7 @@ QString XmlToQtScript::itemString(const QList<Item>& items) const
 	QList<Item> in(items);
 	QList<Item> out;
 
-	QList<XmlToQtScript::ForwardOnlyPostProcessor*> postProcessors;
+	QList<XmlToQtScript::PostProcessor*> postProcessors;
 	if(m_options & SkipMouseMovements)
 	{
 		postProcessors.append(new StripMouseMovementsPostProcessor());
@@ -165,7 +165,7 @@ QString XmlToQtScript::itemString(const QList<Item>& items) const
 		postProcessors.append(new ObjectVariablesPostProcessor());
 	}
 
-	Q_FOREACH(ForwardOnlyPostProcessor* postProcessor, postProcessors)
+	Q_FOREACH(PostProcessor* postProcessor, postProcessors)
 	{
 		out.clear();
 		while(!in.isEmpty())

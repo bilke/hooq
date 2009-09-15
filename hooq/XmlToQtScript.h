@@ -77,7 +77,7 @@ class XmlToQtScript : private QXmlStreamReader
 		Options m_options;
 
 		// Abstract PostProcessors
-		class ForwardOnlyPostProcessor;
+		class PostProcessor;
 		class PostProcessor;
 
 		// Instantiable PostProcessors
