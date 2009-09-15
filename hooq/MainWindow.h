@@ -56,8 +56,6 @@ class MainWindow : public QMainWindow, private Ui::MainWindow
 		void deleteCurrentTest();
 
 		void setTestSet(const QString&);
-		void saveApplicationPath();
-		void browseForApplication();
 		void startRecording();
 		void finishRecording();
 		void updateAddState();
@@ -75,6 +73,8 @@ class MainWindow : public QMainWindow, private Ui::MainWindow
 			IgnoreVisible
 		};
 
+		QString applicationPath() const;
+		void setApplicationPath(const QString&);
 		bool editTestScript(const QModelIndex& index, VisibleAction);
 		void waitForEndOfTest();
 		void populateTestSets();
@@ -97,4 +97,6 @@ class MainWindow : public QMainWindow, private Ui::MainWindow
 		TestResultsDialog* m_testResultsWindow;
 
 		QTemporaryFile* m_xmlDump;
+
+		QString m_applicationPath;
 };

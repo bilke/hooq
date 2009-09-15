@@ -42,7 +42,6 @@
 #include <QDesktopServices>
 #include <QDir>
 #include <QFile>
-#include <QFileDialog>
 #include <QMessageBox>
 #include <QString>
 #include <QStringList>
@@ -111,21 +110,9 @@ MainWindow::MainWindow(QWidget* parent)
 	);
 
 	connect(
-		m_applicationEdit,
-		SIGNAL(editingFinished()),
-		SLOT(saveApplicationPath())
-	);
-
-	connect(
 		m_runAllButton,
 		SIGNAL(clicked()),
 		SLOT(runAllTests())
-	);
-
-	connect(
-		m_applicationBrowseButton,
-		SIGNAL(clicked()),
-		SLOT(browseForApplication())
 	);
 
 	connect(
@@ -301,7 +288,7 @@ void MainWindow::runTestScript(const QModelIndex& index)
 		m_interpreter,
 		SLOT(run(QLocalSocket*))
 	);
-	m_hooqPlayer->start(QDir::fromNativeSeparators(m_applicationEdit->text()), m_hooqPlayInjector);
+	m_hooqPlayer->start(applicationPath(), m_hooqPlayInjector);
 }
 
 void MainWindow::logException(const QString& exception, const QStringList& backtrace)
@@ -333,7 +320,7 @@ void MainWindow::startRecording()
 	m_xmlDump->open();
 
 	m_hooqLogger = new Hooq::RemoteLogger();
-	m_hooqLogger->start(QDir::fromNativeSeparators(m_applicationEdit->text()), m_xmlDump, m_hooqRecordInjector);
+	m_hooqLogger->start(applicationPath(), m_xmlDump, m_hooqRecordInjector);
 }
 
 void MainWindow::finishRecording()
@@ -384,32 +371,27 @@ void MainWindow::updateAddState()
 		&&
 		(!m_testNameEdit->text().isEmpty())
 		&&
-		(!m_applicationEdit->text().isEmpty())
+		(!applicationPath().isEmpty())
 		&&
-		QFile::exists(QDir::fromNativeSeparators(m_applicationEdit->text()))
+		QFile::exists(applicationPath())
 	);
 }
 
-void MainWindow::browseForApplication()
+QString MainWindow::applicationPath() const
 {
-	const QString applicationPath = QFileDialog::getOpenFileName(this, tr("Application for %1").arg(m_testModel->testSet()));
-	if(!applicationPath.isEmpty())
-	{
-		const QString native = QDir::toNativeSeparators(applicationPath);
-		m_applicationEdit->setText(native);
-		Locations::setApplicationPath(m_testModel->testSet(), applicationPath);
-	}
+	return m_applicationPath;
 }
 
-void MainWindow::saveApplicationPath()
+void MainWindow::setApplicationPath(const QString& path)
 {
-	Locations::setApplicationPath(m_testModel->testSet(), QDir::fromNativeSeparators(m_applicationEdit->text()));
+	Locations::setApplicationPath(m_testModel->testSet(), path);
+	m_applicationPath = path;
 }
 
 void MainWindow::setTestSet(const QString& testSet)
 {
 	m_testModel->setTestSet(testSet);
-	m_applicationEdit->setText(QDir::toNativeSeparators(Locations::applicationPath(testSet)));
+	m_applicationPath = Locations::applicationPath(testSet);
 }
 
 void MainWindow::populateTestSets()
@@ -498,6 +480,7 @@ void MainWindow::addTestSet()
 			m_testSetEdit->addItem(newName);
 			m_testSetEdit->setCurrentIndex(m_testSetEdit->findText(newName));
 			setTestSet(newName);
+			setApplicationPath(dialog.application());
 		}
 	}
 }
