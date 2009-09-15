@@ -36,6 +36,8 @@ class CodeEditor : public QPlainTextEdit
 
 		void highlightLine(int lineNumber);
 		void clearLineHighlight();
+
+		void ensureVisible(int lineNumber);
 	public slots:
 		void toggleBreakpoint(int lineNumber);
 	signals:

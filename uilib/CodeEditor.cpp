@@ -79,6 +79,14 @@ void CodeEditor::highlightLine(int lineNumber)
 	viewport()->update();
 }
 
+void CodeEditor::ensureVisible(int lineNumber)
+{
+	QTextCursor cursor(document());
+	cursor.setPosition(document()->findBlockByNumber(lineNumber - 1).position());
+	setTextCursor(cursor);
+	ensureCursorVisible();
+}
+
 void CodeEditor::toggleBreakpoint(int lineNumber)
 {
 	if(m_breakpoints.contains(lineNumber))

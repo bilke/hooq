@@ -288,7 +288,9 @@ void ScriptEditor::exceptionThrow(qint64 scriptId, const QScriptValue& exception
 			m_errorWidget->show();
 			m_backtraceWidget->setContext(context);
 			addDockWidget(Qt::BottomDockWidgetArea, m_backtraceDockWidget);
-			m_editor->highlightLine(QScriptContextInfo(context).lineNumber());
+			const int lineNumber = QScriptContextInfo(context).lineNumber();
+			m_editor->highlightLine(lineNumber);
+			m_editor->ensureVisible(lineNumber);
 			show();
 			raise();
 		}
@@ -301,6 +303,7 @@ void ScriptEditor::pauseOnLine(int lineNumber)
 {
 	updateActionStates();
 	m_editor->highlightLine(lineNumber);
+	m_editor->ensureVisible(lineNumber);
 	pause();
 	m_editor->clearLineHighlight();
 }
