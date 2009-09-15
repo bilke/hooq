@@ -23,6 +23,7 @@
 #include "CodeEditor.h"
 #include "ObjectInformation.h"
 #include "PropertyDialog.h"
+#include "ReplaceDialog.h"
 #include "XmlToQtScript.h"
 
 #include "qscripthighlighter.h"
@@ -161,6 +162,7 @@ void ScriptEditor::setupMenuBar()
 	QMenu* editMenu = menuBar()->addMenu(tr("&Edit"));
 	editMenu->addAction(tr("&Find..."), this, SLOT(search()), QKeySequence::Find);
 	editMenu->addAction(tr("Find &Next"), this, SLOT(findNext()), QKeySequence::FindNext);
+	editMenu->addAction(tr("Replace..."), this, SLOT(replace()), QKeySequence::Replace);
 
 	QMenu* toolsMenu = menuBar()->addMenu(tr("&Tools"));
 	toolsMenu->addAction(m_runAction);
@@ -375,6 +377,29 @@ void ScriptEditor::run()
 QString ScriptEditor::filePath() const
 {
 	return m_filePath;
+}
+
+void ScriptEditor::replace()
+{
+	ReplaceDialog dialog(this);
+	if(dialog.exec() == QDialog::Accepted)
+	{
+		const QString find = dialog.searchText();
+		const QString replace = dialog.replacementText();
+		const QTextDocument::FindFlags flags = dialog.flags();
+		QTextDocument* document = m_editor->document();
+		Q_ASSERT(document);
+		QTextCursor cursor(document);
+		while(!cursor.isNull())
+		{
+			cursor = document->find(find, cursor, flags);
+			if(!cursor.isNull())
+			{
+				cursor.removeSelectedText();
+				cursor.insertText(replace);
+			}
+		}
+	}
 }
 
 void ScriptEditor::stop()

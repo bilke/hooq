@@ -85,6 +85,7 @@ class ScriptEditor : public QMainWindow, public QScriptEngineAgent
 		void run();
 		void search();
 		void findNext();
+		void replace();
 
 		void insertPropertyFetch(const QString& objectPath, const QString& property);
 		void insertPropertyAssert(const QString& objectPath, const QString& property, const QVariant& value);

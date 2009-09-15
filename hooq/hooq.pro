@@ -1,7 +1,7 @@
 TEMPLATE = app
 TARGET = 
 DEPENDPATH += .
-INCLUDEPATH += . ../hooqInjector/ ../uilib/
+INCLUDEPATH += . ../hooqInjector/ ../uilib/ $$OUT_PWD/../uilib/
 
 include(../qscripthighlighter/qscripthighlighter.pri)
 
