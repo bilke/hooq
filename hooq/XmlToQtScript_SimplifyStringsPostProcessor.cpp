@@ -45,11 +45,15 @@ void XmlToQtScript::SimplifyStringsPostProcessor::process(Item* iterator, QList<
 			{
 				switch(parameters["key"].value<Qt::Key>())
 				{
+					case Qt::Key_Backspace:
+						string.chop(1);
+						break;
 					case Qt::Key_Shift:
 						break;
 					case Qt::Key_Return:
 					case Qt::Key_Enter:
 						string.append("\n");
+						break;
 					default:
 						string.append(parameters.value("text").toString());
 				}
