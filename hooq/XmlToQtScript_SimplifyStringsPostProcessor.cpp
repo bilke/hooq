@@ -64,7 +64,7 @@ void XmlToQtScript::SimplifyStringsPostProcessor::process(Item* iterator, QList<
 			*iterator = in->takeFirst(); // ?
 			if(iterator->method != "pressKey" && iterator->method != "releaseKey")
 			{
-				qDebug() << __LINE__ << iterator->method;
+//				qDebug() << Q_FUNC_INFO << __LINE__ << iterator->method;
 				break;
 			}
 			parameters = iterator->parameters.toMap();

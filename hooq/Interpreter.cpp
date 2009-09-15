@@ -335,7 +335,8 @@ void Interpreter::processSocketData()
 		}
 		if(line == "PICKED")
 		{
-			emit objectPicked(ObjectInformation::fromXml(device()));
+			ObjectInformation information = ObjectInformation::fromXml(device());
+			emit objectPicked(information);
 			continue;
 		}
 		if(line == "DUMPED")

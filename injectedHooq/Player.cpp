@@ -159,6 +159,7 @@ void Player::readNext()
 		}
 		if(tokenType() == EndDocument)
 		{
+			ack();
 			disconnect(device(), 0, this, 0);
 			break;
 		}
@@ -195,9 +196,7 @@ void Player::processEvents()
 			{
 				FocusEvent* e = Hooq::event_cast<FocusEvent*>(event.get());
 				QObject* o = findObject(e->objectPath());
-				Q_ASSERT(o);
 				QWidget* w = qobject_cast<QWidget*>(o);
-				Q_ASSERT(w);
 				if(w)
 				{
 					w->setFocus(e->reason());
@@ -205,6 +204,8 @@ void Player::processEvents()
 				else
 				{
 					qDebug() << "Couldn't find focus widget" << o << "from" << e->objectPath();
+					Q_ASSERT(o);
+					Q_ASSERT(w);
 				}
 				break;
 			}
@@ -234,10 +235,6 @@ void Player::processEvents()
 
 	if(tokenType() == EndDocument)
 	{
-		if(device())
-		{
-			ack();
-		}
 		setDevice(0);
 		emit finished();
 	}
