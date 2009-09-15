@@ -38,6 +38,7 @@ HEADERS += \
 	TestResult.h \
 	TestResultsModel.h \
 	TestResultsDialog.h \
+	TestSetDialog.h \ 
 	VariantMapModel.h \
 	XmlToQtScript.h \
 	XmlToQtScript_MouseMovePostProcessor.h \
@@ -49,6 +50,7 @@ HEADERS += \
 FORMS += \
 	MainWindow.ui \
 	PropertyDialog.ui \
+	TestSetDialog.ui \
 
 SOURCES += \
 	BacktraceWidget.cpp \
@@ -67,6 +69,7 @@ SOURCES += \
 	TestResult.cpp \
 	TestResultsModel.cpp \
 	TestResultsDialog.cpp \
+	TestSetDialog.cpp \ 
 	VariantMapModel.cpp \
 	XmlToQtScript.cpp \
 	XmlToQtScript_MouseMovePostProcessor.cpp \
