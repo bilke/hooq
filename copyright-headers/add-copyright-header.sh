@@ -1,5 +1,5 @@
 #!/bin/sh
-NOTICE_HEADER="is free software; you can redistribute it"
+NOTICE_HEADER="General Public License"
 TMPFILE=$(mktemp)
 for file in $(find .. -name *.cpp -o -name *.h); do
 	if ! grep -q "$NOTICE_HEADER" "$file"; then
