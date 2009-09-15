@@ -148,7 +148,7 @@ QString XmlToQtScript::parseHooq()
 
 QString XmlToQtScript::itemString(const QList<Item>& items) const
 {
-	qDebug() << "RAW:" << serialize(items);
+//	qDebug() << "RAW:" << serialize(items);
 	QList<Item> in(items);
 	QList<Item> out;
 
