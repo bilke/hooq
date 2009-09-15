@@ -41,6 +41,7 @@ HEADERS += \
 	VariantMapModel.h \
 	XmlToQtScript.h \
 	XmlToQtScript_MouseMovePostProcessor.h \
+	XmlToQtScript_ObjectVariablesPostProcessor.h \
 	XmlToQtScript_PostProcessor.h \
 	XmlToQtScript_SimplifyStringsPostProcessor.h \
 
@@ -68,6 +69,7 @@ SOURCES += \
 	VariantMapModel.cpp \
 	XmlToQtScript.cpp \
 	XmlToQtScript_MouseMovePostProcessor.cpp \
+	XmlToQtScript_ObjectVariablesPostProcessor.cpp \
 	XmlToQtScript_PostProcessor.cpp \
 	XmlToQtScript_SimplifyStringsPostProcessor.cpp \
 	main.cpp \

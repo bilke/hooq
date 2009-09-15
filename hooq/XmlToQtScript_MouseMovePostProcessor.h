@@ -6,5 +6,5 @@ class XmlToQtScript::StripMouseMovementsPostProcessor : public ForwardOnlyPostPr
 {
 	public:
 		StripMouseMovementsPostProcessor();
-		void process(Item* iterator, QList<Item>* in, QList<Item>* out) const;
+		void process(Item* iterator, QList<Item>* in, QList<Item>* out);
 };

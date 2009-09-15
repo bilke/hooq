@@ -26,12 +26,13 @@
 class XmlToQtScript : private QXmlStreamReader
 {
 	public:
-		struct Variable	{ QString name; };
+		struct Variable	{ public: Variable(); Variable(const QString& name); QString name; };
 		enum Option
 		{
 			NoOptions = 0,
 			SkipMouseMovements = 1 << 0,
-			SimplifyStrings    = 1 << 1
+			SimplifyStrings    = 1 << 1,
+			ObjectVariables    = 1 << 2
 		};
 		Q_DECLARE_FLAGS(Options, Option);
 
@@ -82,6 +83,7 @@ class XmlToQtScript : private QXmlStreamReader
 		// Instantiable PostProcessors
 		class StripMouseMovementsPostProcessor;
 		class SimplifyStringsPostProcessor;
+		class ObjectVariablesPostProcessor;
 };
 
 Q_DECLARE_METATYPE(XmlToQtScript::Variable);

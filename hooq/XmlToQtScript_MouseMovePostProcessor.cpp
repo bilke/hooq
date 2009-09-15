@@ -4,7 +4,7 @@ XmlToQtScript::StripMouseMovementsPostProcessor::StripMouseMovementsPostProcesso
 {
 }
 
-void XmlToQtScript::StripMouseMovementsPostProcessor::process(Item* iterator, QList<Item>* in, QList<Item>* out) const
+void XmlToQtScript::StripMouseMovementsPostProcessor::process(Item* iterator, QList<Item>* in, QList<Item>* out)
 {
 	Q_UNUSED(out);
 	if(iterator->method == "moveMouse")

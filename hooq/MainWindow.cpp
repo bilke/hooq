@@ -358,6 +358,10 @@ void MainWindow::finishRecording()
 	{
 		options |= XmlToQtScript::SimplifyStrings;
 	}
+	if(m_objectVariables->isChecked())
+	{
+		options |= XmlToQtScript::ObjectVariables;
+	}
 
 	XmlToQtScript parser;
 	script.write(parser.parse(m_xmlDump, options).toUtf8());

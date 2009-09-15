@@ -19,6 +19,7 @@
 */
 #include "XmlToQtScript.h"
 #include "XmlToQtScript_MouseMovePostProcessor.h"
+#include "XmlToQtScript_ObjectVariablesPostProcessor.h"
 #include "XmlToQtScript_SimplifyStringsPostProcessor.h"
 
 #include "EnumConverter.h"
@@ -33,6 +34,15 @@ Q_DECLARE_METATYPE(Qt::MouseButtons);
 Q_DECLARE_METATYPE(Qt::Orientation);
 Q_DECLARE_METATYPE(Qt::KeyboardModifier);
 Q_DECLARE_METATYPE(Qt::KeyboardModifiers);
+
+XmlToQtScript::Variable::Variable()
+{
+}
+
+XmlToQtScript::Variable::Variable(const QString& _name)
+: name(_name)
+{
+}
 
 QString XmlToQtScript::parse(QIODevice* xml, Options options)
 {
@@ -149,6 +159,10 @@ QString XmlToQtScript::itemString(const QList<Item>& items) const
 	if(m_options & SimplifyStrings)
 	{
 		postProcessors.append(new SimplifyStringsPostProcessor());
+	}
+	if(m_options & ObjectVariables)
+	{
+		postProcessors.append(new ObjectVariablesPostProcessor());
 	}
 
 	Q_FOREACH(ForwardOnlyPostProcessor* postProcessor, postProcessors)

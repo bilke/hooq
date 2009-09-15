@@ -11,7 +11,7 @@ XmlToQtScript::SimplifyStringsPostProcessor::SimplifyStringsPostProcessor()
 {
 }
 
-void XmlToQtScript::SimplifyStringsPostProcessor::process(Item* iterator, QList<Item>* in, QList<Item>* out) const
+void XmlToQtScript::SimplifyStringsPostProcessor::process(Item* iterator, QList<Item>* in, QList<Item>* out)
 {
 	if(iterator->method == "pressKey")
 	{

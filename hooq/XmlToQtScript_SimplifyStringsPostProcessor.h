@@ -6,5 +6,5 @@ class XmlToQtScript::SimplifyStringsPostProcessor : public ForwardOnlyPostProces
 {
 	public:
 		SimplifyStringsPostProcessor();
-		void process(Item* iterator, QList<Item>* in, QList<Item>* out) const;
+		void process(Item* iterator, QList<Item>* in, QList<Item>* out);
 };
