@@ -22,7 +22,9 @@
 #include <QObject>
 #include <QPointer>
 #include <QQueue>
+#include <QSharedPointer>
 #include <QString>
+#include <QTextStream>
 #include <QXmlStreamReader>
 
 class QWidget;
@@ -36,6 +38,7 @@ class Player: public QObject, private QXmlStreamReader
 	Q_OBJECT;
 	public:
 		static Player* instance(QIODevice*);
+		~Player();
 		void run();
 	signals:
 		void finished();
@@ -44,6 +47,7 @@ class Player: public QObject, private QXmlStreamReader
 		void readNext();
 		void processEvents();
 	private:
+		void debugPrintObjectTree(int nestingDepth = 0, QWidget* root = 0, QSharedPointer<QTextStream> stream = QSharedPointer<QTextStream>());
 		static Player* instance();
 		Player(QIODevice* device);
 		static QPointer<Player> m_instance;

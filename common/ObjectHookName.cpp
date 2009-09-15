@@ -48,6 +48,7 @@ QString ObjectHookName::rawObjectName(QObject* object)
 
 	// It does - classname:Index
 	const QList<QObject*> siblings = object->parent()->children();
+	Q_ASSERT(siblings.contains(object));
 
 	int index = 1;
 	Q_FOREACH(QObject* sibling, siblings)

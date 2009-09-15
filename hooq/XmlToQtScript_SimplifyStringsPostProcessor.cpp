@@ -43,6 +43,24 @@ void XmlToQtScript::SimplifyStringsPostProcessor::process(Item* iterator, QList<
 		{
 			if(iterator->method == "pressKey")
 			{
+				if(in->count() < 2) // no release key, let it stay as a press
+				{
+					break;
+				}
+
+				// Now, check the next non-sleep event is a keyrelease
+				const QString nextMethod = in->at(1).method;
+				if(
+					!(
+						(nextMethod == "releaseKey" || nextMethod == "pressKey")
+						&&
+						in->at(1).target == target
+					)
+				)
+				{
+					break;
+				}
+
 				switch(parameters["key"].value<Qt::Key>())
 				{
 					case Qt::Key_Backspace:
@@ -59,10 +77,6 @@ void XmlToQtScript::SimplifyStringsPostProcessor::process(Item* iterator, QList<
 				}
 			}
 			
-			if(in->count() < 2)
-			{
-				break;
-			}
 
 			msec = in->takeFirst(); // msec << pointing at
 			*iterator = in->takeFirst(); // ?

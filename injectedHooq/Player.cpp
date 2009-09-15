@@ -28,6 +28,7 @@
 #include <QContextMenuEvent>
 #include <QCursor>
 #include <QDebug>
+#include <QFile>
 #include <QKeyEvent>
 #include <QLabel>
 #include <QMouseEvent>
@@ -41,6 +42,10 @@
 
 namespace Hooq
 {
+
+Player::~Player()
+{
+}
 
 bool Player::hook(void** data)
 {
@@ -220,6 +225,7 @@ void Player::processEvents()
 				else
 				{
 					qDebug() << "Couldn't find receiver from path" << e->objectPath();
+					debugPrintObjectTree();
 					Q_ASSERT(o);
 				}
 				break;
@@ -240,6 +246,45 @@ void Player::processEvents()
 		emit finished();
 	}
 	m_processingEvents = false;
+}
+
+void Player::debugPrintObjectTree(int nestingDepth, QWidget* root, QSharedPointer<QTextStream> streamPointer)
+{
+	QFile file;
+	if(streamPointer.isNull())
+	{
+		file.setFileName("/tmp/hooq-object-tree");
+		qDebug() << "Dumping object tree to" << file.fileName();
+		file.open(QIODevice::WriteOnly | QFile::Truncate);
+		streamPointer = QSharedPointer<QTextStream>(new QTextStream(&file));
+	}
+	QTextStream& stream = *streamPointer;
+
+	QList<QWidget*> children;
+	if(root == 0)
+	{
+		stream << "****************************" << endl;
+		stream << "***** WIDGET TREE DUMP *****" << endl;
+		stream << "****************************" << endl;
+		children = QApplication::topLevelWidgets();
+	}
+	else
+	{
+		Q_FOREACH(QObject* object, root->children())
+		{
+			QWidget* widget = qobject_cast<QWidget*>(object);
+			if(widget)
+			{
+				children.append(widget);
+			}
+		}
+	}
+
+	Q_FOREACH(QWidget* widget, children)
+	{
+		stream << QString(nestingDepth * 4, '.') << ObjectHookName::objectName(widget) << endl; 
+		debugPrintObjectTree(nestingDepth + 1, widget, streamPointer);
+	}
 }
 
 void Player::postPickEvent()
@@ -427,6 +472,7 @@ QObject* Player::findObject(const QString& path)
 			return 0;
 		}
 	}
+
 	Q_FOREACH(QObject* child, parent->children())
 	{
 		if(ObjectHookName::objectName(child) == name)
@@ -434,7 +480,7 @@ QObject* Player::findObject(const QString& path)
 			return child;
 		}
 	}
-	
+
 	return 0;
 }
 
