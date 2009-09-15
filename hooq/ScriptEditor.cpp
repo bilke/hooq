@@ -341,6 +341,7 @@ void ScriptEditor::pauseOnLine(int lineNumber)
 
 void ScriptEditor::positionChange(qint64 scriptId, int lineNumber, int columnNumber)
 {
+	reset(RuntimeFeatures);
 	Q_UNUSED(columnNumber);
 	Q_UNUSED(scriptId);
 
