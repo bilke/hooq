@@ -336,6 +336,7 @@ void Interpreter::processSocketData()
 		if(line == "PICKED")
 		{
 			ObjectInformation information = ObjectInformation::fromXml(device());
+			qDebug() << Q_FUNC_INFO << __LINE__ << "Picked object with path" << information.path();
 			emit objectPicked(information);
 			continue;
 		}

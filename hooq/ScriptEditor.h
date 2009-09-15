@@ -83,6 +83,8 @@ class ScriptEditor : public QMainWindow, public QScriptEngineAgent
 		void revert();
 		void stop();
 		void run();
+		void search();
+		void findNext();
 
 		void insertPropertyFetch(const QString& objectPath, const QString& property);
 		void insertPropertyAssert(const QString& objectPath, const QString& property, const QVariant& value);
@@ -117,4 +119,6 @@ class ScriptEditor : public QMainWindow, public QScriptEngineAgent
 		QAction* m_runAction;
 		QAction* m_stopAction;
 		QAction* m_pickAction;
+
+		QString m_searchString;
 };

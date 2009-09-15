@@ -34,6 +34,7 @@
 #include <QDockWidget>
 #include <QFile>
 #include <QKeySequence>
+#include <QInputDialog>
 #include <QLabel>
 #include <QMenu>
 #include <QMenuBar>
@@ -119,6 +120,30 @@ void ScriptEditor::setMode(Mode mode)
 	m_mode = mode;
 }
 
+void ScriptEditor::search()
+{
+	bool ok;
+	const QString result = QInputDialog::getText(this, tr("Search"), tr("Search text (case sensitive):"), QLineEdit::Normal, m_searchString, &ok);
+	if(ok)
+	{
+		m_searchString = result;
+		findNext();
+	}
+}
+
+void ScriptEditor::findNext()
+{
+	if(m_searchString.isEmpty())
+	{
+		return;
+	}
+	const QTextCursor cursor = m_editor->document()->find(m_searchString, m_editor->textCursor());
+	if(!cursor.isNull())
+	{
+		m_editor->setTextCursor(cursor);
+	}
+}
+
 void ScriptEditor::setupActionShortcuts()
 {
 	m_saveAction->setShortcut(QKeySequence::Save);
@@ -132,6 +157,10 @@ void ScriptEditor::setupMenuBar()
 	fileMenu->addAction(m_discardAction);
 	fileMenu->addSeparator();
 	m_closeAction = fileMenu->addAction(tr("Close"), this, SLOT(hide()));
+
+	QMenu* editMenu = menuBar()->addMenu(tr("&Edit"));
+	editMenu->addAction(tr("&Find..."), this, SLOT(search()), QKeySequence::Find);
+	editMenu->addAction(tr("Find &Next"), this, SLOT(findNext()), QKeySequence::FindNext);
 
 	QMenu* toolsMenu = menuBar()->addMenu(tr("&Tools"));
 	toolsMenu->addAction(m_runAction);
