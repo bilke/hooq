@@ -73,6 +73,11 @@ class MainWindow : public QMainWindow, private Ui::MainWindow
 			IgnoreVisible
 		};
 
+		void saveApplicationArguments(const QString& testSet, const QStringList& arguments);
+		QStringList applicationArguments(const QString& testSet);
+
+		QStringList m_arguments;
+
 		QString applicationPath() const;
 		void setApplicationPath(const QString&);
 		bool editTestScript(const QModelIndex& index, VisibleAction);

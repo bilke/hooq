@@ -27,6 +27,7 @@
 QString Locations::applicationPath(const QString& testSet)
 {
 	QSettings settings;
+	settings.beginGroup("Test Sets");
 	settings.beginGroup(testSet);
 	return settings.value("application").toString();
 }
@@ -39,6 +40,7 @@ void Locations::setApplicationPath(const QString& testSet, const QString& applic
 	}
 
 	QSettings settings;
+	settings.beginGroup("Test Sets");
 	settings.beginGroup(testSet);
 	settings.setValue("application", application);
 }

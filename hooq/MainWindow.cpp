@@ -43,6 +43,7 @@
 #include <QDir>
 #include <QFile>
 #include <QMessageBox>
+#include <QSettings>
 #include <QString>
 #include <QStringList>
 #include <QStyle>
@@ -392,6 +393,36 @@ void MainWindow::setTestSet(const QString& testSet)
 {
 	m_testModel->setTestSet(testSet);
 	m_applicationPath = Locations::applicationPath(testSet);
+	m_arguments = applicationArguments(testSet);
+}
+
+void MainWindow::saveApplicationArguments(const QString& testSet, const QStringList& arguments)
+{
+	QSettings settings;
+	settings.beginGroup("Test Sets");
+	settings.beginGroup(testSet);
+	settings.beginWriteArray("arguments");
+	for(int i = 0; i < arguments.count(); ++i)
+	{
+		settings.setArrayIndex(i);
+		settings.setValue("value", arguments.at(i));
+	}
+	settings.endArray();
+}
+
+QStringList MainWindow::applicationArguments(const QString& testSet)
+{
+	QStringList arguments;
+	QSettings settings;
+	settings.beginGroup("Test Sets");
+	settings.beginGroup(testSet);
+	const int count = settings.beginReadArray("arguments");
+	for(int i = 0; i < count; ++i)
+	{
+		settings.setArrayIndex(i);
+		arguments.append(settings.value("value").toString());
+	}
+	return arguments;
 }
 
 void MainWindow::populateTestSets()
@@ -481,6 +512,8 @@ void MainWindow::addTestSet()
 			m_testSetEdit->setCurrentIndex(m_testSetEdit->findText(newName));
 			setTestSet(newName);
 			setApplicationPath(dialog.application());
+			m_arguments = dialog.arguments();
+			saveApplicationArguments(newName, m_arguments);
 		}
 	}
 }
