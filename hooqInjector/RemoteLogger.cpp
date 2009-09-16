@@ -40,11 +40,11 @@ RemoteLogger::RemoteLogger(QObject* parent)
 	);
 }
 
-void RemoteLogger::start(const QString& application, QIODevice* logDevice, Injector* injector)
+void RemoteLogger::start(const QString& application, const QStringList& arguments, QIODevice* logDevice, Injector* injector)
 {
 	Q_ASSERT(logDevice && logDevice->isOpen() && logDevice->isWritable());
 	m_log = logDevice;
-	m_server->start(application, injector);
+	m_server->start(application, arguments, injector);
 }
 
 void RemoteLogger::logData()

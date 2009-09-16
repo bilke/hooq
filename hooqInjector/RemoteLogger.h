@@ -40,7 +40,7 @@ class HOOQ_INJECTOR_EXPORT RemoteLogger : public QObject
 	public:
 		RemoteLogger(QObject* parent = 0);
 
-		void start(const QString& application, QIODevice* logDevice, Injector* injector);
+		void start(const QString& application, const QStringList& arguments, QIODevice* logDevice, Injector* injector);
 		// TODO: attach()
 	private slots:
 		void logData();

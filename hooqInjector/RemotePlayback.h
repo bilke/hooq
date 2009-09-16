@@ -37,7 +37,7 @@ class HOOQ_INJECTOR_EXPORT RemotePlayback : public QObject
 	Q_OBJECT
 	public:
 		RemotePlayback(QObject* parent = 0);
-		void start(const QString& application, QIODevice* logDevice, Injector* injector);
+		void start(const QString& application, const QStringList& arguments, QIODevice* logDevice, Injector* injector);
 		// TODO: attach()
 	private slots:
 		void startPlayback(QLocalSocket* socket);

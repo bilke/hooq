@@ -35,7 +35,7 @@ class HOOQ_INJECTOR_EXPORT RemoteConnection : public QObject
 	Q_OBJECT;
 	public:
 		RemoteConnection(QObject* parent);
-		void start(const QString& application, Injector* injector);
+		void start(const QString& application, const QStringList& arguments, Injector* injector);
 	signals:
 		void connected(QLocalSocket* socket);
 	private slots:

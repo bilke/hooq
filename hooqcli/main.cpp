@@ -96,11 +96,11 @@ int main(int argc, char** argv)
 
 	if(mode == Replay)
 	{
-		player.start(application, &log, &injector);
+		player.start(application, QStringList(), &log, &injector);
 	}
 	else
 	{
-		logger.start(application, &log, &injector);
+		logger.start(application, QStringList(), &log, &injector);
 	}
 
 	return app.exec();

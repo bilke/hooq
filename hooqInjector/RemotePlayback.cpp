@@ -40,12 +40,12 @@ RemotePlayback::RemotePlayback(QObject* parent)
 	);
 }
 
-void RemotePlayback::start(const QString& application, QIODevice* logDevice, Injector* injector)
+void RemotePlayback::start(const QString& application, const QStringList& arguments, QIODevice* logDevice, Injector* injector)
 {
 	Q_ASSERT(logDevice && logDevice->isOpen() && logDevice->isReadable());
 	m_log = logDevice;
 
-	m_server->start(application, injector);
+	m_server->start(application, arguments, injector);
 }
 
 void RemotePlayback::startPlayback(QLocalSocket* socket)

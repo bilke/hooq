@@ -289,7 +289,7 @@ void MainWindow::runTestScript(const QModelIndex& index)
 		m_interpreter,
 		SLOT(run(QLocalSocket*))
 	);
-	m_hooqPlayer->start(applicationPath(), m_hooqPlayInjector);
+	m_hooqPlayer->start(applicationPath(), m_arguments, m_hooqPlayInjector);
 }
 
 void MainWindow::logException(const QString& exception, const QStringList& backtrace)
@@ -321,7 +321,7 @@ void MainWindow::startRecording()
 	m_xmlDump->open();
 
 	m_hooqLogger = new Hooq::RemoteLogger();
-	m_hooqLogger->start(applicationPath(), m_xmlDump, m_hooqRecordInjector);
+	m_hooqLogger->start(applicationPath(), m_arguments, m_xmlDump, m_hooqRecordInjector);
 }
 
 void MainWindow::finishRecording()

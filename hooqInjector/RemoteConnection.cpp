@@ -35,7 +35,7 @@ RemoteConnection::RemoteConnection(QObject* parent)
 {
 }
 
-void RemoteConnection::start(const QString& application, Injector* injector)
+void RemoteConnection::start(const QString& application, const QStringList& arguments, Injector* injector)
 {
 	const QString socketName = Communication::serverName(application);
 
@@ -51,7 +51,7 @@ void RemoteConnection::start(const QString& application, Injector* injector)
 	QLocalServer::removeServer(socketName);
 	m_localServer->listen(socketName);
 
-	injector->startAndAttach(application);
+	injector->startAndAttach(application, arguments);
 }
 
 void RemoteConnection::acceptConnection()
