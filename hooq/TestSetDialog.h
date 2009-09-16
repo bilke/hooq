@@ -28,15 +28,16 @@ class TestSetDialog : public QDialog, private Ui::TestSetDialog
 	Q_OBJECT;
 	public:
 		TestSetDialog(QWidget* parent = 0);
+
 		QString name() const;
+		void setName(const QString&);
 		QString application() const;
+		void setApplication(const QString&);
 		QStringList arguments() const;
-		void setReadOnly(bool);
-		bool isReadOnly() const;
+		void setArguments(const QStringList&);
 	private slots:
 		void browseForApplication();
 		void addArgument();
 	private:
 		QStringListModel* m_model;
-		bool m_readOnly;
 };
