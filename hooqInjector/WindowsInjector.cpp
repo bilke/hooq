@@ -45,7 +45,7 @@ WindowsInjector::~WindowsInjector()
 {
 }
 
-void WindowsInjector::startAndAttach(const QString& application)
+void WindowsInjector::startAndAttach(const QString& application, const QStringList& arguments)
 {
 	delete m_process;
 	m_process = new QProcess(this);
@@ -73,7 +73,7 @@ void WindowsInjector::startAndAttach(const QString& application)
 		SIGNAL(finished(int))
 	);
 
-	m_process->start(application);
+	m_process->start(application, arguments);
 }
 
 void WindowsInjector::attachToSpawnedProcess()

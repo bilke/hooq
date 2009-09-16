@@ -28,7 +28,7 @@ class QTimer;
 namespace Hooq
 {
 
-/// Windows-based DLL injector for Linux/OSX
+/// Windows-based DLL injector
 class HOOQ_INJECTOR_EXPORT WindowsInjector : public Injector
 {
 	Q_OBJECT
@@ -36,7 +36,7 @@ class HOOQ_INJECTOR_EXPORT WindowsInjector : public Injector
 		WindowsInjector(QObject* parent = 0);
 		virtual ~WindowsInjector();
 
-		virtual void startAndAttach(const QString& application);
+		virtual void startAndAttach(const QString& application, const QStringList& arguments);
 		virtual void attach(Q_PID processId);
 	private slots:
 		void attachToSpawnedProcess();

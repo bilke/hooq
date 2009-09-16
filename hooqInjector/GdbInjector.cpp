@@ -38,8 +38,10 @@ GdbInjector::~GdbInjector()
 {
 }
 
-void GdbInjector::startAndAttach(const QString& application)
+void GdbInjector::startAndAttach(const QString& application, const QStringList& applicationArguments)
 {
+	m_applicationArguments = applicationArguments;
+
 	delete m_gdb;
 	m_gdb = new QProcess(this);
 	const QStringList arguments = QStringList()
@@ -77,12 +79,20 @@ void GdbInjector::startAndAttach(const QString& application)
 
 void GdbInjector::startProcess()
 {
+	QString argumentsString;
+	Q_FOREACH(QString argument, m_applicationArguments)
+	{
+		argument.replace('"', "\\\"");
+		argumentsString.append(QString(" \"%1\"").arg(argument));
+	}
+
 	Q_ASSERT(m_gdb->state() == QProcess::Running);
 	Q_ASSERT(m_gdb->isWritable());
 	m_gdbStream.setDevice(m_gdb);
 	m_gdbStream << "set auto-solib-add off" << endl; // avoid loading symbols for shared libraries
 	                                                 // that we do not need to interact with from GDB
 	m_gdbStream << "break _start" << endl; // C entry point - after main libraries have been loaded
+	m_gdbStream << "set args" << argumentsString << endl;
 	m_gdbStream << "run" << endl; // run until we hit it, and therefore Qt shared libraries are loaded
 	m_gdbStream << "sharedlibrary libdl" << endl; // load the libdl library so that we can call __dlopen()
 	m_gdbStream << "sharedlibrary libc" << endl;  // load the libc library so that we can call __dlopen()
