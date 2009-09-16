@@ -30,11 +30,25 @@ TestSetDialog::TestSetDialog(QWidget* parent)
 {
 	setupUi(this);
 
+	m_argumentsView->setModel(m_model);
+
 	connect(
 		m_browseButton,
 		SIGNAL(clicked()),
 		SLOT(browseForApplication())
 	);
+	connect(
+		m_addArgument,
+		SIGNAL(clicked()),
+		SLOT(addArgument())
+	);
+}
+
+void TestSetDialog::addArgument()
+{
+	m_model->insertRows(m_model->rowCount(), 1);
+	m_model->setData(m_model->index(m_model->rowCount() - 1, 0), m_newArgument->text());
+	m_newArgument->clear();
 }
 
 void TestSetDialog::browseForApplication()

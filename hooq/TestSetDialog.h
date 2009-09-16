@@ -35,6 +35,7 @@ class TestSetDialog : public QDialog, private Ui::TestSetDialog
 		bool isReadOnly() const;
 	private slots:
 		void browseForApplication();
+		void addArgument();
 	private:
 		QStringListModel* m_model;
 		bool m_readOnly;
