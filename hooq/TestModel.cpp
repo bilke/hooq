@@ -21,6 +21,7 @@
 
 #include "Locations.h"
 
+#include <QDebug>
 #include <QDir>
 #include <QSize>
 #include <QFileSystemWatcher>
@@ -85,6 +86,12 @@ void TestModel::setTestSet(const QString& testSet)
 	m_items = testSetDir.entryList(QStringList("*.qs"), QDir::Files, QDir::Name);
 	m_items.replaceInStrings(".qs", QString());
 	reset();
+}
+
+void TestModel::stopWatching(const QString& testSet)
+{
+	m_watcher->removePath(Locations::testSetLocation(testSet));
+	qDebug() << Q_FUNC_INFO << testSet << m_watcher->directories();
 }
 
 QVariant TestModel::data(const QModelIndex& index, int role) const

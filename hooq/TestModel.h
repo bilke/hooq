@@ -42,6 +42,8 @@ class TestModel : public QAbstractTableModel
 
 		QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const;
 		QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
+
+		void stopWatching(const QString& testSet);
 	public slots:
 		void setTestSet(const QString&);
 		void rescan();

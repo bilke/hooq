@@ -150,6 +150,11 @@ MainWindow::MainWindow(QWidget* parent)
 		SIGNAL(triggered()),
 		SLOT(editTestSet())
 	);
+	connect(
+		m_removeTestSet,
+		SIGNAL(triggered()),
+		SLOT(removeTestSet())
+	);
 
 	connect(
 		m_editor,
@@ -206,6 +211,8 @@ MainWindow::MainWindow(QWidget* parent)
 	ColumnClickMapper* mapper = new ColumnClickMapper(m_testList);
 	mapper->addMapping(1, this, SLOT(runTestScript(QModelIndex)));
 	mapper->addMapping(2, this, SLOT(editTestScript(QModelIndex)));
+
+	updateActionStates();
 }
 
 void MainWindow::about()
@@ -308,6 +315,41 @@ void MainWindow::logException(const QString& exception, const QStringList& backt
 	m_testResult = TestResult(m_testResult.name(), exception, backtrace);
 }
 
+void MainWindow::removeTestSet()
+{
+	const QString currentSet = m_testSetEdit->currentText();
+	if(
+		QMessageBox::warning(
+			this,
+			tr("Remove Test Set"),
+			tr("Are you sure you want to remove the test set '%1', and all tests in it?").arg(currentSet),
+			QMessageBox::Yes | QMessageBox::Cancel,
+			QMessageBox::Cancel
+		)
+		==
+		QMessageBox::Cancel
+	)
+	{
+		return;
+	}
+
+	m_testModel->stopWatching(currentSet);
+	const int index = m_testSetEdit->currentIndex();
+	m_testSetEdit->removeItem(index);
+
+	const QString path = Locations::testSetLocation(currentSet);
+	const QStringList files = QDir(path).entryList(QDir::Files | QDir::NoDotAndDotDot);
+	Q_FOREACH(const QString& file, files)
+	{
+		QFile::remove(path + "/" + file);
+	}
+	const bool success = QDir().rmdir(path);
+	Q_ASSERT(success);
+	Q_UNUSED(success);
+
+	setTestSet(m_testSetEdit->currentText());
+}
+
 void MainWindow::waitForEndOfTest()
 {
 	while(m_testRunning)
@@ -388,6 +430,7 @@ void MainWindow::updateActionStates()
 		QFile::exists(applicationPath())
 	);
 	m_editTestSet->setEnabled(!m_testModel->testSet().isEmpty());
+	m_removeTestSet->setEnabled(!m_testModel->testSet().isEmpty());
 }
 
 void MainWindow::editTestSet()

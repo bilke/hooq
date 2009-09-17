@@ -138,6 +138,7 @@
     </property>
     <addaction name="m_newTestSet"/>
     <addaction name="m_editTestSet"/>
+    <addaction name="m_removeTestSet"/>
     <addaction name="separator"/>
     <addaction name="m_quit"/>
    </widget>
@@ -223,12 +224,17 @@
   </action>
   <action name="m_newTestSet">
    <property name="text">
-    <string>New Test Set</string>
+    <string>New Test Set...</string>
    </property>
   </action>
   <action name="m_editTestSet">
    <property name="text">
-    <string>Edit Test Set</string>
+    <string>Edit Test Set...</string>
+   </property>
+  </action>
+  <action name="m_removeTestSet">
+   <property name="text">
+    <string>Remove Test Set</string>
    </property>
   </action>
  </widget>

@@ -50,24 +50,29 @@ class MainWindow : public QMainWindow, private Ui::MainWindow
 	private slots:
 		void about();
 		void logException(const QString& exception, const QStringList& backtrace);
-		void runEditorTest();
-		void runCurrentTest();
-		void editCurrentTest();
-		void deleteCurrentTest();
 
-		void setTestSet(const QString&);
-		void startRecording();
-		void finishRecording();
 		void updateActionStates();
 		void showTestContextMenu(const QPoint& position);
-		void runAllTests();
-		void testFinished();
+
+		void setTestSet(const QString&);
 
 		void addTestSet();
 		void editTestSet();
+		void removeTestSet();
 
-		bool editTestScript(const QModelIndex& index);
+		void runAllTests();
+		void runEditorTest();
+		void runCurrentTest();
 		void runTestScript(const QModelIndex& index);
+		void testFinished();
+
+		void editCurrentTest();
+		bool editTestScript(const QModelIndex& index);
+
+		void startRecording();
+		void finishRecording();
+
+		void deleteCurrentTest();
 	private:
 		enum VisibleAction
 		{
