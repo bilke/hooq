@@ -91,7 +91,6 @@ void TestModel::setTestSet(const QString& testSet)
 void TestModel::stopWatching(const QString& testSet)
 {
 	m_watcher->removePath(Locations::testSetLocation(testSet));
-	qDebug() << Q_FUNC_INFO << testSet << m_watcher->directories();
 }
 
 QVariant TestModel::data(const QModelIndex& index, int role) const

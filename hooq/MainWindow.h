@@ -73,6 +73,9 @@ class MainWindow : public QMainWindow, private Ui::MainWindow
 		void finishRecording();
 
 		void deleteCurrentTest();
+
+		void exportCurrentSet();
+		void importTestSet();
 	private:
 		enum VisibleAction
 		{

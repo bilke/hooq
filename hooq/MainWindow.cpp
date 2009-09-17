@@ -27,6 +27,7 @@
 #include "ScriptEditor.h"
 #include "TestModel.h"
 #include "TestResultsDialog.h"
+#include "TestSetBackup.h"
 #include "TestSetDialog.h"
 #include "PushButtonDelegate.h"
 #include "XmlToQtScript.h"
@@ -155,14 +156,22 @@ MainWindow::MainWindow(QWidget* parent)
 		SIGNAL(triggered()),
 		SLOT(removeTestSet())
 	);
-
+	connect(
+		m_exportSet,
+		SIGNAL(triggered()),
+		SLOT(exportCurrentSet())
+	);
+	connect(
+		m_importSet,
+		SIGNAL(triggered()),
+		SLOT(importTestSet())
+	);
 	connect(
 		m_editor,
 		SIGNAL(pickRequested()),
 		m_interpreter,
 		SLOT(pickObject())
 	);
-
 	connect(
 		m_editor,
 		SIGNAL(startRequested()),
@@ -213,6 +222,16 @@ MainWindow::MainWindow(QWidget* parent)
 	mapper->addMapping(2, this, SLOT(editTestScript(QModelIndex)));
 
 	updateActionStates();
+}
+
+void MainWindow::exportCurrentSet()
+{
+	TestSetBackup::backup(m_testSetEdit->currentText(), "/tmp/backup.hqt");
+}
+
+void MainWindow::importTestSet()
+{
+	qDebug() << Q_FUNC_INFO << TestSetBackup::restore("/tmp/backup.hqt");
 }
 
 void MainWindow::about()

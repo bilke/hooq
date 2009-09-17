@@ -38,6 +38,7 @@ HEADERS += \
 	TestResult.h \
 	TestResultsModel.h \
 	TestResultsDialog.h \
+	TestSetBackup.h \
 	TestSetDialog.h \ 
 	VariantMapModel.h \
 	XmlToQtScript.h \
@@ -69,6 +70,7 @@ SOURCES += \
 	TestResult.cpp \
 	TestResultsModel.cpp \
 	TestResultsDialog.cpp \
+	TestSetBackup.cpp \
 	TestSetDialog.cpp \ 
 	VariantMapModel.cpp \
 	XmlToQtScript.cpp \

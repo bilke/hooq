@@ -140,6 +140,9 @@
     <addaction name="m_editTestSet"/>
     <addaction name="m_removeTestSet"/>
     <addaction name="separator"/>
+    <addaction name="m_importSet"/>
+    <addaction name="m_exportSet"/>
+    <addaction name="separator"/>
     <addaction name="m_quit"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
@@ -235,6 +238,16 @@
   <action name="m_removeTestSet">
    <property name="text">
     <string>Remove Test Set</string>
+   </property>
+  </action>
+  <action name="m_exportSet">
+   <property name="text">
+    <string>Export...</string>
+   </property>
+  </action>
+  <action name="m_importSet">
+   <property name="text">
+    <string>Import...</string>
    </property>
   </action>
  </widget>
