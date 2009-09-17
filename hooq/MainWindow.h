@@ -58,11 +58,13 @@ class MainWindow : public QMainWindow, private Ui::MainWindow
 		void setTestSet(const QString&);
 		void startRecording();
 		void finishRecording();
-		void updateAddState();
-		void addTestSet();
+		void updateActionStates();
 		void showTestContextMenu(const QPoint& position);
 		void runAllTests();
 		void testFinished();
+
+		void addTestSet();
+		void editTestSet();
 
 		bool editTestScript(const QModelIndex& index);
 		void runTestScript(const QModelIndex& index);

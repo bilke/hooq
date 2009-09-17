@@ -71,6 +71,8 @@ void TestSetDialog::setName(const QString& name)
 {
 	m_name->setText(name);
 	Q_ASSERT(name == this->name());
+	// TODO: remove need for this - see MainWindow::editTestSet
+	m_name->setEnabled(false);
 }
 
 QString TestSetDialog::application() const

@@ -136,6 +136,9 @@
     <property name="title">
      <string>File</string>
     </property>
+    <addaction name="m_newTestSet"/>
+    <addaction name="m_editTestSet"/>
+    <addaction name="separator"/>
     <addaction name="m_quit"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
@@ -216,6 +219,16 @@
    </property>
    <property name="text">
     <string>Use Variables for Strings</string>
+   </property>
+  </action>
+  <action name="m_newTestSet">
+   <property name="text">
+    <string>New Test Set</string>
+   </property>
+  </action>
+  <action name="m_editTestSet">
+   <property name="text">
+    <string>Edit Test Set</string>
    </property>
   </action>
  </widget>

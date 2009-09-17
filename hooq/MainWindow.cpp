@@ -131,13 +131,24 @@ MainWindow::MainWindow(QWidget* parent)
 	connect(
 		m_testNameEdit,
 		SIGNAL(textChanged(QString)),
-		SLOT(updateAddState())
+		SLOT(updateActionStates())
 	);
 
 	connect(
 		m_addTestSetButton,
 		SIGNAL(clicked()),
 		SLOT(addTestSet())
+	);
+
+	connect(
+		m_newTestSet,
+		SIGNAL(triggered()),
+		SLOT(addTestSet())
+	);
+	connect(
+		m_editTestSet,
+		SIGNAL(triggered()),
+		SLOT(editTestSet())
 	);
 
 	connect(
@@ -365,7 +376,7 @@ void MainWindow::finishRecording()
 	m_testNameEdit->setText(QString());
 }
 
-void MainWindow::updateAddState()
+void MainWindow::updateActionStates()
 {
 	m_addTestButton->setEnabled(
 		(!m_testModel->testSet().isEmpty())
@@ -376,6 +387,23 @@ void MainWindow::updateAddState()
 		&&
 		QFile::exists(applicationPath())
 	);
+	m_editTestSet->setEnabled(!m_testModel->testSet().isEmpty());
+}
+
+void MainWindow::editTestSet()
+{
+	TestSetDialog dialog(this);
+	dialog.setName(m_testModel->testSet());
+	dialog.setApplication(applicationPath());
+	dialog.setArguments(m_arguments);
+	if(dialog.exec() == QDialog::Accepted)
+	{
+		// TODO: check unique
+		// TODO: change name - see TestSetDialog::setName
+		setApplicationPath(dialog.application());
+		m_arguments = dialog.arguments();
+		saveApplicationArguments(dialog.name(), m_arguments);
+	}
 }
 
 QString MainWindow::applicationPath() const
