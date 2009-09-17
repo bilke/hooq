@@ -21,6 +21,7 @@
 
 #include "ui_TestSetDialog.h"
 
+class QModelIndex;
 class QStringListModel;
 
 class TestSetDialog : public QDialog, private Ui::TestSetDialog
@@ -38,6 +39,7 @@ class TestSetDialog : public QDialog, private Ui::TestSetDialog
 	private slots:
 		void browseForApplication();
 		void addArgument();
+		void removeArgument(const QModelIndex&);
 	private:
 		QStringListModel* m_model;
 };

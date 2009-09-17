@@ -19,6 +19,8 @@
 */
 #include "TestSetDialog.h"
 
+#include "ModelIndexKeyEventObserver.h"
+
 #include <QDir>
 #include <QFileDialog>
 #include <QStringListModel>
@@ -41,6 +43,20 @@ TestSetDialog::TestSetDialog(QWidget* parent)
 		SIGNAL(clicked()),
 		SLOT(addArgument())
 	);
+
+	ModelIndexKeyEventObserver* deleteObserver = new ModelIndexKeyEventObserver(QKeySequence::Delete, m_argumentsView);
+	connect(
+		deleteObserver,
+		SIGNAL(released(QModelIndex)),
+		SLOT(removeArgument(QModelIndex))
+	);
+}
+
+void TestSetDialog::removeArgument(const QModelIndex& index)
+{
+	const bool success = m_model->removeRow(index.row(), index.parent());
+	Q_ASSERT(success);
+	Q_UNUSED(success); // for release builds with -Wunused
 }
 
 void TestSetDialog::addArgument()
