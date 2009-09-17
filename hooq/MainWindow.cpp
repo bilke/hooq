@@ -43,6 +43,7 @@
 #include <QDesktopServices>
 #include <QDir>
 #include <QFile>
+#include <QFileDialog>
 #include <QMessageBox>
 #include <QSettings>
 #include <QString>
@@ -226,12 +227,62 @@ MainWindow::MainWindow(QWidget* parent)
 
 void MainWindow::exportCurrentSet()
 {
-	TestSetBackup::backup(m_testSetEdit->currentText(), "/tmp/backup.hqt");
+	const QString filePath = QFileDialog::getSaveFileName(
+		this,
+		tr("Export Test Set"),
+		QString(),
+		tr("Hooq Tests (*.hqt)")
+	);
+	if(!filePath.isEmpty())
+	{
+		if(!TestSetBackup::backup(m_testSetEdit->currentText(), filePath))
+		{
+			QMessageBox::warning(
+				this,
+				tr("Export Failure"),
+				tr("The export attempt failed.")
+			);
+		}
+	}
 }
 
 void MainWindow::importTestSet()
 {
-	qDebug() << Q_FUNC_INFO << TestSetBackup::restore("/tmp/backup.hqt");
+	const QString filePath = QFileDialog::getOpenFileName(
+		this,
+		tr("Import Test Set"),
+		QString(),
+		tr("Hooq Tests (*.hqt)")
+	);
+	if(filePath.isEmpty())
+	{
+		return;
+	}
+	const QString testSet = TestSetBackup::restore(filePath);
+	if(testSet.isEmpty())
+	{
+		QMessageBox::information(this, tr("Import Test Set"), tr("The file you selected is not a valid Hooq test archive."));
+		return;
+	}
+
+	const int index = m_testSetEdit->findText(testSet);
+	if(index != -1)
+	{
+		m_testSetEdit->setCurrentIndex(index);
+		setTestSet(testSet);
+	}
+	else
+	{
+		m_testSetEdit->addItem(testSet);
+		m_testSetEdit->setCurrentIndex(m_testSetEdit->findText(testSet));
+		TestSetDialog dialog(this);
+		dialog.setName(testSet);
+		dialog.exec();
+		setTestSet(testSet);
+		setApplicationPath(dialog.application());
+		m_arguments = dialog.arguments();
+		saveApplicationArguments(testSet, m_arguments);
+	}
 }
 
 void MainWindow::about()
