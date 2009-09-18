@@ -14,6 +14,7 @@ Directories:
  - hooq: GUI application for day to day use - uses hooqInjector, and generates QtScript
  	files from the socket XML. When replaying, the QtScript scripts create the XML which
 	is sent back to the application.
+ - hooqbackup: CLI application for manipulating .hqt backup files
  - hooqcli: CLI application for testing - uses hooqInjector, and deals with the raw
  	XML that goes over the socket between hooqInjector and injectedHooq.
  - hooqInjector: library for injecting injectedHooq into another process.
