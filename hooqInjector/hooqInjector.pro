@@ -34,4 +34,8 @@ win32 {
 unix {
 	HEADERS += GdbInjector.h
 	SOURCES += GdbInjector.cpp
+
+	include("../install.pri")
+	target.path = /${DESTDIR}$$LIBDIR
+	INSTALLS += target 
 }

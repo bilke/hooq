@@ -9,3 +9,9 @@ QMAKE_RPATHDIR += $$(PWD)/../hooqInjector/
 
 # Input
 SOURCES += main.cpp
+
+unix {
+	include("../install.pri")
+	target.path = /${DESTDIR}$$BINDIR
+	INSTALLS += target 
+}

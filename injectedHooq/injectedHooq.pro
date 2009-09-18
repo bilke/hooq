@@ -35,4 +35,8 @@ win32 {
 
 unix {
 	SOURCES += EntryPoint.cpp
+
+	include("../install.pri")
+	target.path = /${DESTDIR}$$LIBDIR
+	INSTALLS += target 
 }

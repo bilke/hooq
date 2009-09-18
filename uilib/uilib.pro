@@ -21,3 +21,9 @@ SOURCES += \
 	ModelIndexKeyEventObserver.cpp \
 	PushButtonDelegate.cpp \
 	ReplaceDialog.cpp \
+
+unix {
+	include("../install.pri")
+	target.path = /${DESTDIR}$$LIBDIR
+	INSTALLS += target 
+}

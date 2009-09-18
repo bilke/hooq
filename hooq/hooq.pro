@@ -81,3 +81,8 @@ SOURCES += \
 	XmlToQtScript_StringVariablesPostProcessor.cpp \
 	main.cpp \
 
+unix {
+	include("../install.pri")
+	target.path = /${DESTDIR}$$BINDIR
+	INSTALLS += target 
+}
