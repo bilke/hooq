@@ -21,6 +21,7 @@
 
 #include <QCoreApplication>
 #include <QDebug>
+#include <QFile>
 #include <QProcess>
 
 #include <dlfcn.h> // no functions used, but need to pass RTLD_NOW to gdb
@@ -129,8 +130,18 @@ void GdbInjector::printGdbError()
 
 QString GdbInjector::libraryPath()
 {
-	// XXX FIXME XXX
-	return QCoreApplication::applicationDirPath() + "/../injectedHooq/libinjectedHooq.so.1.0.0";
+	const QStringList possibilities = QStringList()
+		<< QCoreApplication::applicationDirPath() + "/../injectedHooq/libinjectedHooq.so.1.0.0"
+		<< QCoreApplication::applicationDirPath() + "/../lib/libinjectedHooq.so.1.0.0"
+	;
+	Q_FOREACH(const QString& possibility, possibilities)
+	{
+		if(QFile::exists(possibility))
+		{
+			return possibility;
+		}
+	}
+	return QString();
 }
 
 

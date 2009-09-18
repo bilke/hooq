@@ -10,5 +10,8 @@ done
 	mv *so* lib
 	mv * bin
 	mv bin/lib lib
+	cd lib
+	# make symlinks
+	/sbin/ldconfig -n .
 )
 tar jcfv hooq-dist.tar.bz2 hooq-dist
