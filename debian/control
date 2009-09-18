@@ -1,0 +1,13 @@
+Source: hooq
+Section: unknown
+Priority: extra
+Maintainer: Fred Emmott <fred.emmott@mendeley.com>
+Build-Depends: debhelper (>= 7), libqt4-dev (>=4.4.0), libboost-dev
+Standards-Version: 3.7.3
+Homepage: http://gitorious.org/hooq/hooq/
+
+Package: hooq
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, libqtscriptbindings1(>=0.1.0)
+Description: Qt4 GUI testing application
+ Application for testing GUI applications written with Qt4.
