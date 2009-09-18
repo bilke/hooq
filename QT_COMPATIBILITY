@@ -1,0 +1,6 @@
+Hooq currently targets Qt 4.4, for compatibility with Lenny and Intrepid.
+
+Things to be careful for:
+ - Do not use QScriptValue::toBool() (new in 4.5) - instead, there's QScriptValue::toBoolean()
+ - Do not use QSharedPointer (new in 4.5) - instead, use boost::shared_ptr
+ - Do not use QScopedPointer (new in 4.6) - instead, use std::auto_ptr
