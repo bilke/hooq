@@ -133,6 +133,7 @@ QString GdbInjector::libraryPath()
 	const QStringList possibilities = QStringList()
 		<< QCoreApplication::applicationDirPath() + "/../injectedHooq/libinjectedHooq.so.1.0.0"
 		<< QCoreApplication::applicationDirPath() + "/../lib/libinjectedHooq.so.1.0.0"
+		<< QCoreApplication::applicationDirPath() + "/../lib64/libinjectedHooq.so.1.0.0"
 	;
 	Q_FOREACH(const QString& possibility, possibilities)
 	{
