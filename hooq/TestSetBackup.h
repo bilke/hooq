@@ -20,12 +20,15 @@
 #pragma once
 
 #include <QString>
+#include <QStringList>
 
 class TestSetBackup
 {
 	public:
-		static bool backup(const QString& testSet, const QString& file);
-		static QString restore(const QString& file);
+		static bool backup(const QString& testSet, const QString& file, const QString& rootDirectory);
+		static QString restore(const QString& file, const QString& rootDirectory);
+		static QString identify(const QString& file);
+		static QStringList list(const QString& file);
 	private:
 		static const char m_magic[];
 };

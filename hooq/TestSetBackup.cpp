@@ -19,8 +19,6 @@
 */
 #include "TestSetBackup.h"
 
-#include "Locations.h"
-
 #include <QDataStream>
 #include <QDebug>
 #include <QDir>
@@ -30,7 +28,7 @@
 
 const char TestSetBackup::m_magic[] = {'%', 'H', 'o', 'o', 'q', 0x00, 0x55, 0xaa, 0xff};
 
-bool TestSetBackup::backup(const QString& testSet, const QString& path)
+bool TestSetBackup::backup(const QString& testSet, const QString& path, const QString& rootDirectory)
 {
 	QFile file(path);
 	const bool fileOpen = file.open(QIODevice::WriteOnly | QFile::Truncate);
@@ -48,10 +46,10 @@ bool TestSetBackup::backup(const QString& testSet, const QString& path)
 		stream.setVersion(QDataStream::Qt_4_5);
 
 		stream << testSet;
-		const QString directoryPath = Locations::testSetLocation(testSet);
-		Q_FOREACH(const QString& file, QDir(directoryPath).entryList(QDir::Files | QDir::NoDotAndDotDot))
+		const QString directory(rootDirectory + "/" + testSet + "/");
+		Q_FOREACH(const QString& file, QDir(directory).entryList(QDir::Files | QDir::NoDotAndDotDot))
 		{
-			QFile testFile(directoryPath + "/" + file);
+			QFile testFile(directory + file);
 			const bool success = testFile.open(QIODevice::ReadOnly);
 			Q_ASSERT(success);
 			if(!success)
@@ -68,7 +66,81 @@ bool TestSetBackup::backup(const QString& testSet, const QString& path)
 	return true;
 }
 
-QString TestSetBackup::restore(const QString& path)
+QString TestSetBackup::identify(const QString& path)
+{
+	QFile file(path);
+	const bool fileOpen = file.open(QIODevice::ReadOnly);
+	Q_ASSERT(fileOpen);
+	if(file.size() < static_cast<qint64>(sizeof(m_magic)) || !fileOpen)
+	{
+		return QString();
+	}
+	if(file.read(sizeof(m_magic)) != QByteArray(m_magic, sizeof(m_magic)))
+	{
+		qDebug() << Q_FUNC_INFO << "Bad magic";
+		return QString();
+	}
+
+	const QByteArray uncompressed = qUncompress(file.readAll());
+
+	QDataStream stream(uncompressed);
+	stream.setVersion(QDataStream::Qt_4_5);
+	QString testSet;
+	stream >> testSet;
+
+	return testSet;
+}
+
+QStringList TestSetBackup::list(const QString& path)
+{
+	QFile file(path);
+	const bool fileOpen = file.open(QIODevice::ReadOnly);
+	Q_ASSERT(fileOpen);
+	if(file.size() < static_cast<qint64>(sizeof(m_magic)) || !fileOpen)
+	{
+		return QStringList();
+	}
+	if(file.read(sizeof(m_magic)) != QByteArray(m_magic, sizeof(m_magic)))
+	{
+		qDebug() << Q_FUNC_INFO << "Bad magic";
+		return QStringList();
+	}
+
+	QStringList tests;
+
+	const QByteArray uncompressed = qUncompress(file.readAll());
+
+	QDataStream stream(uncompressed);
+	stream.setVersion(QDataStream::Qt_4_5);
+	QString testSet;
+	stream >> testSet;
+
+	Q_ASSERT(!testSet.isEmpty());
+	if(testSet.isEmpty())
+	{
+		return QStringList();
+	}
+
+	while(!stream.atEnd())
+	{
+		QString testName;
+		stream >> testName;
+		Q_ASSERT(testName.endsWith(".qs"));
+		Q_ASSERT(!stream.atEnd());
+		if(stream.atEnd() || !testName.endsWith(".qs"))
+		{
+			return QStringList();
+		}
+		QByteArray data;
+		stream >> data;
+		Q_UNUSED(data);
+		tests.append(testName);
+	}
+
+	return tests;
+}
+
+QString TestSetBackup::restore(const QString& path, const QString& rootDirectory)
 {
 	QFile file(path);
 	const bool fileOpen = file.open(QIODevice::ReadOnly);
@@ -113,7 +185,7 @@ QString TestSetBackup::restore(const QString& path)
 		tests.insert(testName, data);
 	}
 
-	const QString directoryPath = Locations::testSetLocation(testSet) + "/";
+	const QString directoryPath = rootDirectory + "/" + testSet + "/";
 	QDir().mkpath(directoryPath);
 
 	for(QMap<QString, QByteArray>::ConstIterator it = tests.constBegin(); it != tests.constEnd(); ++it)

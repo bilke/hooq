@@ -235,7 +235,7 @@ void MainWindow::exportCurrentSet()
 	);
 	if(!filePath.isEmpty())
 	{
-		if(!TestSetBackup::backup(m_testSetEdit->currentText(), filePath))
+		if(!TestSetBackup::backup(m_testSetEdit->currentText(), filePath, Locations::testSetsLocation()))
 		{
 			QMessageBox::warning(
 				this,
@@ -258,7 +258,7 @@ void MainWindow::importTestSet()
 	{
 		return;
 	}
-	const QString testSet = TestSetBackup::restore(filePath);
+	const QString testSet = TestSetBackup::restore(filePath, Locations::testSetsLocation());
 	if(testSet.isEmpty())
 	{
 		QMessageBox::information(this, tr("Import Test Set"), tr("The file you selected is not a valid Hooq test archive."));
