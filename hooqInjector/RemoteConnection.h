@@ -41,6 +41,7 @@ class HOOQ_INJECTOR_EXPORT RemoteConnection : public QObject
 	private slots:
 		void acceptConnection();
 	private:
+		bool removeServer(const QString& name);
 		QLocalServer* m_localServer;
 };
 

@@ -22,10 +22,12 @@
 #include <QObject>
 #include <QPointer>
 #include <QQueue>
-#include <QSharedPointer>
 #include <QString>
 #include <QTextStream>
 #include <QXmlStreamReader>
+
+// Compatibility with Qt 4.4 is desirable (lenny, hardy)
+#include <boost/shared_ptr.hpp> // XXX FIXME XXX replace with QSharedPointer in 4.5
 
 class QWidget;
 
@@ -47,7 +49,7 @@ class Player: public QObject, private QXmlStreamReader
 		void readNext();
 		void processEvents();
 	private:
-		void debugPrintObjectTree(int nestingDepth = 0, QWidget* root = 0, QSharedPointer<QTextStream> stream = QSharedPointer<QTextStream>());
+		void debugPrintObjectTree(int nestingDepth = 0, QWidget* root = 0, boost::shared_ptr<QTextStream> stream = boost::shared_ptr<QTextStream>());
 		static Player* instance();
 		Player(QIODevice* device);
 		static QPointer<Player> m_instance;

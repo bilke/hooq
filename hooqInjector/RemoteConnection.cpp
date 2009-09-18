@@ -23,6 +23,8 @@
 
 #include "../common/Communication.h"
 
+#include <QDir>
+#include <QFile>
 #include <QLocalServer>
 #include <QLocalSocket>
 
@@ -48,10 +50,33 @@ void RemoteConnection::start(const QString& application, const QStringList& argu
 		SLOT(acceptConnection())
 	);
 
-	QLocalServer::removeServer(socketName);
+	removeServer(socketName);
 	m_localServer->listen(socketName);
 
 	injector->startAndAttach(application, arguments);
+}
+
+bool RemoteConnection::removeServer(const QString& name)
+{
+	// Copy & pasted from QLocalServer::removeServer in Qt 4.5, so that we (hopefully) build on Qt 4.4
+	QString fileName;
+	if(name.startsWith(QLatin1Char('/')))
+	{
+		fileName = name;
+	}
+	else
+	{
+		fileName = QDir::cleanPath(QDir::tempPath());
+		fileName += QLatin1Char('/') + name;
+	}
+	if(QFile::exists(fileName))
+	{
+		return QFile::remove(fileName);
+	}
+	else
+	{
+		return true;
+	}
 }
 
 void RemoteConnection::acceptConnection()

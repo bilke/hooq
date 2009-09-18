@@ -43,7 +43,7 @@ bool TestSetBackup::backup(const QString& testSet, const QString& path, const QS
 
 	{
 		QDataStream stream(&uncompressed, QIODevice::WriteOnly);
-		stream.setVersion(QDataStream::Qt_4_5);
+		stream.setVersion(QDataStream::Qt_4_4);
 
 		stream << testSet;
 		const QString directory(rootDirectory + "/" + testSet + "/");
@@ -84,7 +84,7 @@ QString TestSetBackup::identify(const QString& path)
 	const QByteArray uncompressed = qUncompress(file.readAll());
 
 	QDataStream stream(uncompressed);
-	stream.setVersion(QDataStream::Qt_4_5);
+	stream.setVersion(QDataStream::Qt_4_4);
 	QString testSet;
 	stream >> testSet;
 
@@ -111,7 +111,7 @@ QStringList TestSetBackup::list(const QString& path)
 	const QByteArray uncompressed = qUncompress(file.readAll());
 
 	QDataStream stream(uncompressed);
-	stream.setVersion(QDataStream::Qt_4_5);
+	stream.setVersion(QDataStream::Qt_4_4);
 	QString testSet;
 	stream >> testSet;
 
@@ -160,7 +160,7 @@ QString TestSetBackup::restore(const QString& path, const QString& rootDirectory
 	const QByteArray uncompressed = qUncompress(file.readAll());
 
 	QDataStream stream(uncompressed);
-	stream.setVersion(QDataStream::Qt_4_5);
+	stream.setVersion(QDataStream::Qt_4_4);
 	QString testSet;
 	stream >> testSet;
 

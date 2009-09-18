@@ -25,6 +25,7 @@
 #include "VariantMapModel.h"
 
 #include <QDebug>
+#include <QHeaderView>
 
 PropertyDialog::PropertyDialog(const ObjectInformation& info, QWidget* parent)
 : QDialog(parent)

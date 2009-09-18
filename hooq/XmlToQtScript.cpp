@@ -134,7 +134,7 @@ QString XmlToQtScript::parseHooq()
 					items.append(parseContextMenuEvent());
 					continue;
 				}
-				qDebug() << Q_FUNC_INFO << "skipping unknown element" << name();
+				qDebug() << Q_FUNC_INFO << "skipping unknown element" << name().toString();
 				skipElement();
 				break;
 			case EndElement:

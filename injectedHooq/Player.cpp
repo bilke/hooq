@@ -248,15 +248,15 @@ void Player::processEvents()
 	m_processingEvents = false;
 }
 
-void Player::debugPrintObjectTree(int nestingDepth, QWidget* root, QSharedPointer<QTextStream> streamPointer)
+void Player::debugPrintObjectTree(int nestingDepth, QWidget* root, boost::shared_ptr<QTextStream> streamPointer)
 {
 	QFile file;
-	if(streamPointer.isNull())
+	if(!streamPointer)
 	{
 		file.setFileName("/tmp/hooq-object-tree");
 		qDebug() << "Dumping object tree to" << file.fileName();
 		file.open(QIODevice::WriteOnly | QFile::Truncate);
-		streamPointer = QSharedPointer<QTextStream>(new QTextStream(&file));
+		streamPointer = boost::shared_ptr<QTextStream>(new QTextStream(&file));
 	}
 	QTextStream& stream = *streamPointer;
 

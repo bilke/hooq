@@ -33,7 +33,7 @@ ScriptInterface::ScriptInterface()
 QScriptValue ScriptInterface::scriptAssert(QScriptContext* context, QScriptEngine* engine)
 {
 	Q_UNUSED(engine);
-	const bool success = context->argument(0).toBool();
+	const bool success = context->argument(0).toBoolean();
 	if(!success)
 	{
 		return context->throwError(tr("Assertion failed."));
