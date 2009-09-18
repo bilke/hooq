@@ -1,5 +1,5 @@
 TEMPLATE = lib
-TARGET = 
+TARGET = hooqui
 DEPENDPATH += .
 INCLUDEPATH += .
 

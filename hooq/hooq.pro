@@ -6,16 +6,17 @@ INCLUDEPATH += . ../hooqInjector/ ../uilib/ $$OUT_PWD/../uilib/
 include(../qscripthighlighter/qscripthighlighter.pri)
 
 QMAKE_RPATHDIR += \
+	./ \
 	$$(PWD)/../hooqInjector/ \
 	$$(PWD)/../uilib/ \
 
 unix:LIBS += \
 	-L../hooqInjector -lhooqInjector \
-	-L../uilib -luilib \
+	-L../uilib -lhooqui \
 
 win32:LIBS += \
 	"..\hooqInjector\debug\hooqInjector.lib" \
-	"..\uilib\debug\uilib.lib" \
+	"..\uilib\debug\hooqui.lib" \
 
 QT += script network
 
