@@ -1,0 +1,15 @@
+#!/bin/sh
+set -e
+echo CONFIGURE IS BEING RAN
+export PATH=/opt/qt4-mendeley/bin:$PATH
+echo "BINDIR=/usr/bin" > install.pri
+case $(uname -m) in
+	"x86_64")
+		echo "LIBDIR=/usr/lib64" >> install.pri
+		;;
+	*)
+		echo "LIBDIR=/usr/lib" >> install.pri
+esac
+if ! qmake; then
+	qmake-qt4
+fi
