@@ -27,7 +27,7 @@
 #include <QDebug>
 #include <QFile>
 #include <QKeySequence>
-#include <QLocalSocket>
+#include <QTcpSocket>
 #include <QPoint>
 #include <QScriptEngine>
 #include <QStringList>
@@ -179,8 +179,8 @@ void Interpreter::setAck(bool ack)
 void Interpreter::waitForAck()
 {
 	setAck(false);
-	QLocalSocket* socket = static_cast<QLocalSocket*>(device());
-	while(socket->state() == QLocalSocket::ConnectedState && !ack())
+	QTcpSocket* socket = static_cast<QTcpSocket*>(device());
+	while(socket->state() == QTcpSocket::ConnectedState && !ack())
 	{
 		QApplication::processEvents();
 	}
@@ -353,7 +353,7 @@ void Interpreter::processSocketData()
 	}
 }
 
-void Interpreter::run(QLocalSocket* socket)
+void Interpreter::run(QTcpSocket* socket)
 {
 	m_pendingAcks = 0;
 	connect(

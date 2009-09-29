@@ -27,7 +27,7 @@
 
 
 class QIODevice;
-class QLocalSocket;
+class QTcpSocket;
 
 namespace Hooq
 {
@@ -44,11 +44,11 @@ class HOOQ_INJECTOR_EXPORT RemoteLogger : public QObject
 		// TODO: attach()
 	private slots:
 		void logData();
-		void startLogging(QLocalSocket* socket);
+		void startLogging(QTcpSocket* socket);
 	private:
 		QIODevice* m_log;
 		RemoteConnection* m_server;
-		QLocalSocket* m_socket;
+		QTcpSocket* m_socket;
 };
 
 } // namespace

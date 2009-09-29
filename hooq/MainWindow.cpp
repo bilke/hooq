@@ -374,9 +374,9 @@ void MainWindow::runTestScript(const QModelIndex& index)
 	m_hooqPlayer = new Hooq::RemoteConnection(this);
 	connect(
 		m_hooqPlayer,
-		SIGNAL(connected(QLocalSocket*)),
+		SIGNAL(connected(QTcpSocket*)),
 		m_interpreter,
-		SLOT(run(QLocalSocket*))
+		SLOT(run(QTcpSocket*))
 	);
 	m_hooqPlayer->start(applicationPath(), m_arguments, m_hooqPlayInjector);
 }

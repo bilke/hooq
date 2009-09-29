@@ -25,14 +25,9 @@
 namespace Hooq
 {
 
-QString Communication::serverName()
+quint16 Communication::serverPort()
 {
-	return serverName(QCoreApplication::applicationFilePath());
-}
-
-QString Communication::serverName(const QString& application)
-{
-	return QString("Hooq_%1").arg(QLatin1String(QFileInfo(application).canonicalFilePath().toLatin1().toHex()));
+	return *reinterpret_cast<const quint16*>("Hq");
 }
 
 };

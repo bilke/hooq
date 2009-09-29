@@ -23,8 +23,8 @@
 
 #include <QObject>
 
-class QLocalServer;
-class QLocalSocket;
+class QTcpServer;
+class QTcpSocket;
 
 namespace Hooq
 {
@@ -37,12 +37,11 @@ class HOOQ_INJECTOR_EXPORT RemoteConnection : public QObject
 		RemoteConnection(QObject* parent);
 		void start(const QString& application, const QStringList& arguments, Injector* injector);
 	signals:
-		void connected(QLocalSocket* socket);
+		void connected(QTcpSocket* socket);
 	private slots:
 		void acceptConnection();
 	private:
-		bool removeServer(const QString& name);
-		QLocalServer* m_localServer;
+		QTcpServer* m_localServer;
 };
 
 } // namespace

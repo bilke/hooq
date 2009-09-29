@@ -21,7 +21,7 @@
 
 #include <QObject>
 
-class QLocalSocket;
+class QTcpSocket;
 
 namespace Hooq
 {
@@ -41,7 +41,7 @@ class Marshall : public QObject
 		static Marshall* m_instance;
 
 		static void flushSocket();
-		static QLocalSocket* m_socket;
+		static QTcpSocket* m_socket;
 };
 
 } // namespace

@@ -27,7 +27,7 @@ class RemoteObjectPrototype;
 
 class QKeySequence;
 class QPoint;
-class QLocalSocket;
+class QTcpSocket;
 class QScriptEngine;
  
 class Interpreter : public QObject, private QXmlStreamWriter
@@ -42,7 +42,7 @@ class Interpreter : public QObject, private QXmlStreamWriter
 		void objectPicked(const ObjectInformation&);
 		void finished();
 	public slots:
-		void run(QLocalSocket* socket);
+		void run(QTcpSocket* socket);
 		void processSocketData();
 		void pickObject();
 	private slots:

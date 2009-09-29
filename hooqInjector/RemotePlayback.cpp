@@ -22,7 +22,7 @@
 #include "RemoteConnection.h"
 
 #include <QDebug>
-#include <QLocalSocket>
+#include <QTcpSocket>
 
 namespace Hooq
 {
@@ -35,8 +35,8 @@ RemotePlayback::RemotePlayback(QObject* parent)
 {
 	connect(
 		m_server,
-		SIGNAL(connected(QLocalSocket*)),
-		SLOT(startPlayback(QLocalSocket*))
+		SIGNAL(connected(QTcpSocket*)),
+		SLOT(startPlayback(QTcpSocket*))
 	);
 }
 
@@ -48,11 +48,11 @@ void RemotePlayback::start(const QString& application, const QStringList& argume
 	m_server->start(application, arguments, injector);
 }
 
-void RemotePlayback::startPlayback(QLocalSocket* socket)
+void RemotePlayback::startPlayback(QTcpSocket* socket)
 {
 	delete m_socket;
 	m_socket = socket;
-	Q_ASSERT(m_socket->state() == QLocalSocket::ConnectedState && m_socket->isWritable() && m_socket->isOpen());
+	Q_ASSERT(m_socket->state() == QTcpSocket::ConnectedState && m_socket->isWritable() && m_socket->isOpen());
 	m_socket->write("PLAY\n");
 	m_socket->write(m_log->readAll());
 	m_socket->flush();

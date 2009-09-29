@@ -25,7 +25,7 @@
 #include <QString>
 
 class QIODevice;
-class QLocalSocket;
+class QTcpSocket;
 
 namespace Hooq
 {
@@ -40,11 +40,11 @@ class HOOQ_INJECTOR_EXPORT RemotePlayback : public QObject
 		void start(const QString& application, const QStringList& arguments, QIODevice* logDevice, Injector* injector);
 		// TODO: attach()
 	private slots:
-		void startPlayback(QLocalSocket* socket);
+		void startPlayback(QTcpSocket* socket);
 	private:
 		QIODevice* m_log;
 		RemoteConnection* m_server;
-		QLocalSocket* m_socket;
+		QTcpSocket* m_socket;
 };
 
 } // namespace

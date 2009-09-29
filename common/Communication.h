@@ -27,8 +27,7 @@ namespace Hooq
 class Communication
 {
 	public:
-		static QString serverName();
-		static QString serverName(const QString& application);
+		static quint16 serverPort();
 };
 
 } // namespace

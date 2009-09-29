@@ -25,7 +25,8 @@
 #include "../common/Communication.h"
 
 #include <QCoreApplication>
-#include <QLocalSocket>
+#include <QHostAddress>
+#include <QTcpSocket>
 
 #include <QFile>
 #include <QTextStream>
@@ -45,15 +46,15 @@ Marshall* Marshall::instance()
 	return m_instance;
 }
 
-QLocalSocket* Marshall::m_socket;
+QTcpSocket* Marshall::m_socket;
 
 Marshall::Marshall()
 : QObject()
 {
-	m_socket = new QLocalSocket();
-	m_socket->connectToServer(Communication::serverName());
+	m_socket = new QTcpSocket();
+	m_socket->connectToHost(QHostAddress::LocalHost, Communication::serverPort());
 	m_socket->waitForConnected(1000);
-	Q_ASSERT(m_socket->state() == QLocalSocket::ConnectedState && m_socket->isReadable());
+	Q_ASSERT(m_socket->state() == QTcpSocket::ConnectedState && m_socket->isReadable());
 	connect(
 		m_socket,
 		SIGNAL(readyRead()),

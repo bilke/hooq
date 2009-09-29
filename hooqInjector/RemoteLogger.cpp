@@ -22,7 +22,7 @@
 #include "RemoteConnection.h"
 
 #include <QDebug>
-#include <QLocalSocket>
+#include <QTcpSocket>
 
 namespace Hooq
 {
@@ -35,8 +35,8 @@ RemoteLogger::RemoteLogger(QObject* parent)
 {
 	connect(
 		m_server,
-		SIGNAL(connected(QLocalSocket*)),
-		SLOT(startLogging(QLocalSocket*))
+		SIGNAL(connected(QTcpSocket*)),
+		SLOT(startLogging(QTcpSocket*))
 	);
 }
 
@@ -53,7 +53,7 @@ void RemoteLogger::logData()
 	m_log->write(data);
 }
 
-void RemoteLogger::startLogging(QLocalSocket* socket)
+void RemoteLogger::startLogging(QTcpSocket* socket)
 {
 	m_socket = socket;
 	connect(
