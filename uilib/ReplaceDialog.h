@@ -19,11 +19,13 @@
 */
 #pragma once
 
+#include "UilibExport.h"
+
 #include "ui_ReplaceDialog.h"
 
 #include <QTextDocument>
 
-class ReplaceDialog : public QDialog, private Ui::ReplaceDialog
+class HOOQ_UILIB_EXPORT ReplaceDialog : public QDialog, private Ui::ReplaceDialog
 {
 	Q_OBJECT;
 	public:

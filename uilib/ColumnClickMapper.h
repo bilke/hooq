@@ -19,6 +19,8 @@
 */
 #pragma once
 
+#include "UilibExport.h"
+
 #include <QMultiHash>
 #include <QObject>
 
@@ -30,7 +32,7 @@ class QModelIndex;
  * This means you can easily, for example, map column 1 to "play", and column 2 to "edit",
  * without needing a separate dispatcher slot.
  */
-class ColumnClickMapper : public QObject
+class HOOQ_UILIB_EXPORT ColumnClickMapper : public QObject
 {
 	Q_OBJECT
 	public:

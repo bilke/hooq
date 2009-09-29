@@ -48,6 +48,7 @@ WindowsInjector::~WindowsInjector()
 void WindowsInjector::startAndAttach(const QString& application, const QStringList& arguments)
 {
 	delete m_process;
+	QDir::setCurrent(QFileInfo(application).canonicalPath());
 	m_process = new QProcess(this);
 
 	m_attachTimer = new QTimer(this);
@@ -97,7 +98,7 @@ void WindowsInjector::attach(Q_PID processId)
 
 QString WindowsInjector::libraryPath()
 {
-	return QDir::toNativeSeparators(QFileInfo("injectedHooq.dll").canonicalFilePath());
+	return QDir::toNativeSeparators(QFileInfo(QCoreApplication::applicationDirPath(), "injectedHooq.dll").canonicalFilePath());
 }
 
 

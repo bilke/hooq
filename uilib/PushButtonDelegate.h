@@ -19,6 +19,8 @@
 */
 #pragma once
 
+#include "UilibExport.h"
+
 #include <QStyledItemDelegate>
 
 #include <QHash>
@@ -37,7 +39,7 @@ class QStyleOptionButton;
  * the enabled state of the buttons via setEnabledRole() - if enabledRole() is -1, all buttons
  * will always be enabled.
  */
-class PushButtonDelegate: public QStyledItemDelegate
+class HOOQ_UILIB_EXPORT PushButtonDelegate: public QStyledItemDelegate
 {
 	Q_OBJECT;
 	public:

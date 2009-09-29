@@ -3,6 +3,8 @@ TARGET = hooqui
 DEPENDPATH += .
 INCLUDEPATH += .
 
+DEFINES += HOOQ_UILIB_BUILD
+
 HEADERS += \
 	CodeEditor.h \
 	CodeEditor_Margin.h \

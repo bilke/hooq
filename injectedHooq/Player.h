@@ -26,8 +26,19 @@
 #include <QTextStream>
 #include <QXmlStreamReader>
 
-// Compatibility with Qt 4.4 is desirable (lenny, hardy)
-#include <boost/shared_ptr.hpp> // XXX FIXME XXX replace with QSharedPointer in 4.5
+// Compatibility with Qt 4.4 is currently desirable (lenny, hardy)
+// We don't actually want a boost dependency on Windows though, where
+// whoever's using Hooq is likely to have full control of the Qt version
+// used.
+#if QT_VERSION >= 0x040500
+# include <QSharedPointer>
+# define INJECTEDHOOQ_WITH_QSHAREDPOINTER
+  typedef QSharedPointer<QTextStream> TextStreamPointer;
+#else
+# include <boost/shared_ptr.hpp>
+# define INJECTEDHOOQ_WITH_BOOST_SHARED_PTR
+  typdef boost::shared_ptr<QTextStream> TextStreamPointer;
+#endif
 
 class QWidget;
 
@@ -49,7 +60,7 @@ class Player: public QObject, private QXmlStreamReader
 		void readNext();
 		void processEvents();
 	private:
-		void debugPrintObjectTree(int nestingDepth = 0, QWidget* root = 0, boost::shared_ptr<QTextStream> stream = boost::shared_ptr<QTextStream>());
+		void debugPrintObjectTree(int nestingDepth = 0, QWidget* root = 0, TextStreamPointer stream = TextStreamPointer());
 		static Player* instance();
 		Player(QIODevice* device);
 		static QPointer<Player> m_instance;

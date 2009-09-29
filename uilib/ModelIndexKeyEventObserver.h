@@ -19,6 +19,8 @@
 */
 #pragma once
 
+#include "UilibExport.h"
+
 #include <QKeySequence>
 #include <QObject>
 
@@ -30,7 +32,7 @@ class QModelIndex;
  * For example, this lets you easily hook up a QAbstractItemView to a deleteItem(QModelIndex)
  * slot.
  */
-class ModelIndexKeyEventObserver : public QObject
+class HOOQ_UILIB_EXPORT ModelIndexKeyEventObserver : public QObject
 {
 	Q_OBJECT
 	public:

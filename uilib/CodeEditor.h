@@ -20,10 +20,12 @@
 */
 #pragma once
 
+#include "UilibExport.h"
+
 #include <QPlainTextEdit>
 #include <QSet>
 
-class CodeEditor : public QPlainTextEdit
+class HOOQ_UILIB_EXPORT CodeEditor : public QPlainTextEdit
 {
 	Q_OBJECT;
 	public:
