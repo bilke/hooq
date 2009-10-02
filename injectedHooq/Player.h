@@ -37,7 +37,7 @@
 #else
 # include <boost/shared_ptr.hpp>
 # define INJECTEDHOOQ_WITH_BOOST_SHARED_PTR
-  typdef boost::shared_ptr<QTextStream> TextStreamPointer;
+  typedef boost::shared_ptr<QTextStream> TextStreamPointer;
 #endif
 
 class QWidget;
