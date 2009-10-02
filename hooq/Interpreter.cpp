@@ -29,6 +29,8 @@
 #include <QKeySequence>
 #include <QTcpSocket>
 #include <QPoint>
+#include <QScriptContext>
+#include <QScriptContextInfo>
 #include <QScriptEngine>
 #include <QStringList>
 
@@ -176,7 +178,23 @@ void Interpreter::setAck(bool ack)
 	Q_ASSERT(m_pendingAcks >= 0);
 }
 
-void Interpreter::waitForAck()
+int Interpreter::lineNumber(QScriptContext* bottomContext)
+{
+	// The first valid line number in a backtrace
+	QScriptContext* context = bottomContext;
+	while(context)
+	{
+		QScriptContextInfo info(context);
+		if(info.lineNumber() != -1)
+		{
+			return info.lineNumber();
+		}
+		context = context->parentContext();
+	}
+	return -1;
+}
+
+bool Interpreter::waitForAck()
 {
 	setAck(false);
 	QTcpSocket* socket = static_cast<QTcpSocket*>(device());
@@ -184,6 +202,23 @@ void Interpreter::waitForAck()
 	{
 		QApplication::processEvents();
 	}
+	if(!ack())
+	{
+		// We have an error
+		const int line = lineNumber(m_engine->currentContext());
+		m_engine->abortEvaluation();
+		if(line != -1)
+		{
+			qDebug() << "Missing ACK at script line" << line;
+			emit executionFailed(line);
+		}
+		else
+		{
+			qDebug() << "Missing ACK, couldn't find location in script";
+		}
+		return false;
+	}
+	return true;
 }
 
 void Interpreter::waitForDumpedObject()

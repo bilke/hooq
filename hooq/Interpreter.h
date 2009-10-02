@@ -28,6 +28,7 @@ class RemoteObjectPrototype;
 class QKeySequence;
 class QPoint;
 class QTcpSocket;
+class QScriptContext;
 class QScriptEngine;
  
 class Interpreter : public QObject, private QXmlStreamWriter
@@ -38,9 +39,11 @@ class Interpreter : public QObject, private QXmlStreamWriter
 		~Interpreter();
 		QScriptEngine* engine() const;
 		void setScriptPath(const QString& scriptPath);
+		static int lineNumber(QScriptContext* context);
 	signals:
 		void objectPicked(const ObjectInformation&);
 		void finished();
+		void executionFailed(int lineNumber);
 	public slots:
 		void run(QTcpSocket* socket);
 		void processSocketData();
@@ -63,7 +66,7 @@ class Interpreter : public QObject, private QXmlStreamWriter
 		bool importExtension(const QString& extension);
 
 		bool ack() const;
-		void waitForAck();
+		bool waitForAck();
 		void waitForDumpedObject();
 
 		void setAck(bool ack = true);
