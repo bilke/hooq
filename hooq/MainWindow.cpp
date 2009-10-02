@@ -192,6 +192,12 @@ MainWindow::MainWindow(QWidget* parent)
 		m_editor,
 		SLOT(objectPicked(ObjectInformation))
 	);
+	connect(
+		m_interpreter,
+		SIGNAL(executionFailed(int)),
+		m_editor,
+		SLOT(handleApplicationExit(int))
+	);
 
 	connect(
 		m_interpreter,

@@ -71,6 +71,7 @@ class ScriptEditor : public QMainWindow, public QScriptEngineAgent
 		bool open(const QString& filePath);
 		void objectPicked(const ObjectInformation&);
 		void reset(int features = AllFeatures);
+		void handleApplicationExit(int lineNumber);
 	signals:
 		void startRequested();
 		void pickRequested();

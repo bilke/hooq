@@ -330,6 +330,24 @@ void ScriptEditor::exceptionThrow(qint64 scriptId, const QScriptValue& exception
 	}
 }
 
+void ScriptEditor::handleApplicationExit(int lineNumber)
+{
+	Q_ASSERT(lineNumber != -1);
+	const QString text = tr("Application unexpectedly exit.");
+	if(mode() == Interactive)
+	{
+		m_errorLabel->setText(text);
+		m_errorWidget->show();
+		m_editor->highlightLine(lineNumber);
+		m_editor->ensureVisible(lineNumber);
+		show();
+		raise();
+	}
+	updateActionStates();
+	emit exceptionThrown(text, engine()->currentContext()->backtrace());
+
+}
+
 void ScriptEditor::pauseOnLine(int lineNumber)
 {
 	updateActionStates();
