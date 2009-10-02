@@ -32,12 +32,12 @@ namespace Hooq
 			enum Type
 			{
 				// PathEvent not listed here, as it's abstract
-				Ack, // No-operation event, just send the frontend an ack
-				Dump,
-				Focus,
-				Object,
-				Pick,
-				Sleep
+				Ack,    ///< No-operation event, just send the frontend an ack
+				Dump,   ///< Request for all the Q_PROPERTYs of a given QObject
+				Focus,  ///< A focus request for a given QObject
+				Object, ///< A QEvent to be sent to a QObject
+				Pick,   ///< Request for the user to click on a QObject, then treat as the target of a Dump event
+				Sleep   ///< Wait a certain amount of time
 			};
 			virtual Type type() const = 0;
 	};
