@@ -84,7 +84,7 @@ void CodeEditor::ensureVisible(int lineNumber)
 	QTextCursor cursor(document());
 	cursor.setPosition(document()->findBlockByNumber(lineNumber - 1).position());
 	setTextCursor(cursor);
-	ensureCursorVisible();
+	centerCursor();
 }
 
 void CodeEditor::toggleBreakpoint(int lineNumber)
