@@ -78,6 +78,7 @@ SOURCES += \
 	XmlToQtScript_MouseMovePostProcessor.cpp \
 	XmlToQtScript_ObjectVariablesPostProcessor.cpp \
 	XmlToQtScript_PostProcessor.cpp \
+	XmlToQtScript_SimplifyMouseMovementsPostProcessor.cpp \
 	XmlToQtScript_SimplifyStringsPostProcessor.cpp \
 	XmlToQtScript_StringVariablesPostProcessor.cpp \
 	main.cpp \

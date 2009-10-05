@@ -30,10 +30,11 @@ class XmlToQtScript : private QXmlStreamReader
 		enum Option
 		{
 			NoOptions = 0,
-			SkipMouseMovements = 1 << 0,
-			SimplifyStrings    = 1 << 1,
-			ObjectVariables    = 1 << 2,
-			StringVariables    = 1 << 3
+			SkipMouseMovements     = 1 << 0,
+			SimplifyStrings        = 1 << 1,
+			ObjectVariables        = 1 << 2,
+			StringVariables        = 1 << 3,
+			SimplifyMouseMovements = 1 << 4
 		};
 		Q_DECLARE_FLAGS(Options, Option);
 

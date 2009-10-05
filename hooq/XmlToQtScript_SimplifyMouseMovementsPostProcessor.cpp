@@ -20,6 +20,7 @@
 #include "XmlToQtScript_SimplifyMouseMovementsPostProcessor.h"
 
 #include <QDebug>
+#include <QPoint>
 #include <QString>
 #include <QVariant>
 
@@ -37,7 +38,7 @@ void XmlToQtScript::SimplifyMouseMovementsPostProcessor::process(Item* iterator,
 			parameters.value("x").toInt(),
 			parameters.value("y").toInt()
 		);
-		int duration == 0;
+		int duration = 0;
 		Q_FOREVER
 		{
 			Item msec;

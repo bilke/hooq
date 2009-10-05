@@ -20,6 +20,7 @@
 #include "XmlToQtScript.h"
 #include "XmlToQtScript_MouseMovePostProcessor.h"
 #include "XmlToQtScript_ObjectVariablesPostProcessor.h"
+#include "XmlToQtScript_SimplifyMouseMovementsPostProcessor.h"
 #include "XmlToQtScript_SimplifyStringsPostProcessor.h"
 #include "XmlToQtScript_StringVariablesPostProcessor.h"
 
@@ -156,6 +157,10 @@ QString XmlToQtScript::itemString(const QList<Item>& items) const
 	if(m_options & SkipMouseMovements)
 	{
 		postProcessors.append(new StripMouseMovementsPostProcessor());
+	}
+	if(m_options & SimplifyMouseMovements)
+	{
+		postProcessors.append(new SimplifyMouseMovementsPostProcessor());
 	}
 	if(m_options & SimplifyStrings)
 	{
