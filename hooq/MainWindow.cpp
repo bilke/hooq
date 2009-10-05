@@ -472,6 +472,10 @@ void MainWindow::finishRecording()
 	{
 		options |= XmlToQtScript::SkipMouseMovements;
 	}
+	if(m_simplifyMouseMovements->isChecked())
+	{
+		options |= XmlToQtScript::SimplifyMouseMovements;
+	}
 	if(m_simplifyStrings->isChecked())
 	{
 		options |= XmlToQtScript::SimplifyStrings;
