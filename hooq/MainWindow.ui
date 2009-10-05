@@ -157,9 +157,12 @@
      <string>Options</string>
     </property>
     <addaction name="m_ignoreMouseMovements"/>
+    <addaction name="m_simplifyMouseMovements"/>
+    <addaction name="separator"/>
     <addaction name="m_simplifyStrings"/>
-    <addaction name="m_objectVariables"/>
     <addaction name="m_stringVariables"/>
+    <addaction name="separator"/>
+    <addaction name="m_objectVariables"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuOptions"/>
@@ -248,6 +251,20 @@
   <action name="m_importSet">
    <property name="text">
     <string>Import...</string>
+   </property>
+  </action>
+  <action name="m_simplifyMouseMovements">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Simplify Mouse Movements</string>
    </property>
   </action>
  </widget>
