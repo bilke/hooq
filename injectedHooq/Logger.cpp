@@ -130,7 +130,7 @@ void Logger::hook(QObject* receiver, QEvent* event)
 			outputEvent(receiver, "contextMenu", contextMenuEventAttributes(static_cast<QContextMenuEvent*>(event)));
 			break;
 		case QEvent::FocusIn:
-			outputEvent(focusObject(receiver), "focusChanged", focusEventAttributes(static_cast<QFocusEvent*>(event)));
+			outputEvent(focusObject(receiver), "focusChanged", focusEventAttributes(static_cast<QFocusEvent*>(event)), receiver);
 			break;
 		case QEvent::KeyPress:
 			outputEvent(receiver, "keyPress", keyEventAttributes(static_cast<QKeyEvent*>(event)));
@@ -162,7 +162,7 @@ void Logger::hook(QObject* receiver, QEvent* event)
 	}
 }
 
-void Logger::outputEvent(QObject* receiver, const char* event, const QXmlStreamAttributes& attributes)
+void Logger::outputEvent(QObject* receiver, const char* event, const QXmlStreamAttributes& attributes, QObject* originalReceiver)
 {
 	if(!receiver)
 	{
@@ -176,6 +176,10 @@ void Logger::outputEvent(QObject* receiver, const char* event, const QXmlStreamA
 	m_writer.writeStartElement(event);
 	m_writer.writeAttributes(attributes);
 	m_writer.writeAttribute("target", ObjectHookName::objectPath(receiver));
+	if(originalReceiver && receiver != originalReceiver)
+	{
+		m_writer.writeAttribute("originalTarget", ObjectHookName::objectPath(originalReceiver));
+	}
 	m_writer.writeEndElement(); //event;
 }
 
