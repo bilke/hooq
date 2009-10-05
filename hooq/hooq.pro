@@ -45,6 +45,7 @@ HEADERS += \
 	XmlToQtScript_MouseMovePostProcessor.h \
 	XmlToQtScript_ObjectVariablesPostProcessor.h \
 	XmlToQtScript_PostProcessor.h \
+	XmlToQtScript_SimplifyMouseMovementsPostProcessor.h \
 	XmlToQtScript_SimplifyStringsPostProcessor.h \
 	XmlToQtScript_StringVariablesPostProcessor.h \
 

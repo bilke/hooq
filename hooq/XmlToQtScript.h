@@ -85,6 +85,7 @@ class XmlToQtScript : private QXmlStreamReader
 		class StringVariablesPostProcessor;
 		class StripMouseMovementsPostProcessor;
 		class ObjectVariablesPostProcessor;
+		class SimplifyMouseMovementsPostProcessor;
 };
 
 Q_DECLARE_METATYPE(XmlToQtScript::Variable);
