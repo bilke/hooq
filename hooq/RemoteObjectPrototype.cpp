@@ -54,6 +54,7 @@ QString RemoteObjectPrototype::path() const
 
 void RemoteObjectPrototype::raiseMouseEvent(const QVariantMap& parameters, MouseSignal signal)
 {
+//	qDebug() << "Raising mouse event with parameters" << parameters;
 	emit (this->*signal)(
 		path(),
 		QPoint(
@@ -73,7 +74,56 @@ void RemoteObjectPrototype::doubleClickMouseButton(const QVariantMap& parameters
 
 void RemoteObjectPrototype::moveMouse(const QVariantMap& parameters)
 {
-	raiseMouseEvent(parameters, &RemoteObjectPrototype::mouseMoveEvent);
+	if(!parameters.contains("duration"))
+	{
+		raiseMouseEvent(parameters, &RemoteObjectPrototype::mouseMoveEvent);
+	}
+	else
+	{
+		// simplified mouse event; extra parameters:
+		const int duration = parameters.value("duration").toInt();
+		const QPoint origin = QPoint(
+			parameters.value("originX").toInt(),
+			parameters.value("originY").toInt()
+		);
+		const QPoint destination = QPoint(
+			parameters.value("destinationX").toInt(),
+			parameters.value("destinationY").toInt()
+		);
+
+		// make new parameters object
+		QVariantMap stepParameters = parameters;
+		stepParameters.remove("duration");
+		stepParameters.remove("originX");
+		stepParameters.remove("originY");
+		stepParameters.remove("destinationX");
+		stepParameters.remove("destinationY");
+
+		// Some calculations
+		const QPoint diff = destination - origin;
+		const int length = diff.manhattanLength();
+		const int interval = duration / length;
+		const QPointF step = QPointF(
+			static_cast<qreal>(diff.x()) / length,
+			static_cast<qreal>(diff.y()) / length
+		);
+		/*
+		qDebug() << "Origin:" << origin;
+		qDebug() << "Destination:" << destination;
+		qDebug() << "Diff: " << diff;
+		qDebug() << "Length:" << length;
+		qDebug() << "Step:" << step;
+		qDebug() << "interval:" << interval;
+		*/
+		for(int i = 0; i <= length; ++i)
+		{
+			const QPoint position = (origin + (step * i)).toPoint();
+			stepParameters["x"] = position.x();
+			stepParameters["y"] = position.y();
+			raiseMouseEvent(stepParameters, &RemoteObjectPrototype::mouseMoveEvent);
+			sleepRequested(interval);
+		}
+	}
 }
 
 void RemoteObjectPrototype::pressMouseButton(const QVariantMap& parameters)

@@ -39,11 +39,17 @@ void XmlToQtScript::SimplifyMouseMovementsPostProcessor::process(Item* iterator,
 			parameters.value("y").toInt()
 		);
 		int duration = 0;
-		Q_FOREVER
+		while(!in->isEmpty())
 		{
 			Item msec;
 			msec = in->takeFirst(); // msec << pointing at
 			duration += msec.parameters.toInt();
+
+			if(in->isEmpty())
+			{
+				*iterator = msec;
+				break;
+			}
 
 			*iterator = in->takeFirst(); // ? Unknown
 			if(iterator->method != "moveMouse" || iterator->target != target)
