@@ -209,6 +209,7 @@ void ScriptEditor::closeEvent(QCloseEvent* event)
 		event->ignore();
 		return;
 	}
+	m_filePath.clear();
 	QWidget::closeEvent(event);
 }
 
