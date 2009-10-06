@@ -163,6 +163,8 @@
     <addaction name="m_stringVariables"/>
     <addaction name="separator"/>
     <addaction name="m_objectVariables"/>
+    <addaction name="separator"/>
+    <addaction name="m_includeXml"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuOptions"/>
@@ -265,6 +267,14 @@
    </property>
    <property name="text">
     <string>Simplify Mouse Movements</string>
+   </property>
+  </action>
+  <action name="m_includeXml">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Include raw XML as comment</string>
    </property>
   </action>
  </widget>

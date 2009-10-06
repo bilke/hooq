@@ -466,6 +466,14 @@ void MainWindow::finishRecording()
 	script.open(QIODevice::WriteOnly | QFile::Truncate);
 	Q_ASSERT(script.isOpen() && script.isWritable());
 
+	if(m_includeXml->isChecked())
+	{
+		script.write("/*\n");
+		script.write(m_xmlDump->readAll());
+		script.write("*/\n");
+		m_xmlDump->seek(0);
+	}
+
 	XmlToQtScript::Options options = XmlToQtScript::NoOptions;
 
 	if(m_ignoreMouseMovements->isChecked())
