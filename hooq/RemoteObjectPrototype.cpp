@@ -102,6 +102,10 @@ void RemoteObjectPrototype::moveMouse(const QVariantMap& parameters)
 		// Some calculations
 		const QPoint diff = destination - origin;
 		const int length = diff.manhattanLength();
+		if(length == 0)
+		{
+			return;
+		}
 		const int interval = duration / length;
 		const QPointF step = QPointF(
 			static_cast<qreal>(diff.x()) / length,
