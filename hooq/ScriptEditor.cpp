@@ -371,10 +371,17 @@ void ScriptEditor::positionChange(qint64 scriptId, int lineNumber, int columnNum
 
 void ScriptEditor::pause()
 {
-	setPaused();
-	while(isPaused())
+	if(mode() == Interactive)
 	{
-		QCoreApplication::processEvents();
+		setPaused();
+		while(isPaused())
+		{
+			QCoreApplication::processEvents();
+		}
+	}
+	else
+	{
+		engine()->abortEvaluation();
 	}
 }
 
