@@ -34,7 +34,8 @@ class XmlToQtScript : private QXmlStreamReader
 			SimplifyStrings        = 1 << 1,
 			ObjectVariables        = 1 << 2,
 			StringVariables        = 1 << 3,
-			SimplifyMouseMovements = 1 << 4
+			SimplifyMouseMovements = 1 << 4,
+			FilterQtInternals      = 1 << 5
 		};
 		Q_DECLARE_FLAGS(Options, Option);
 
@@ -46,6 +47,7 @@ class XmlToQtScript : private QXmlStreamReader
 			Item();
 			Item(const QString& method, const QVariant& parameters);
 			Item(const QVariant& target, const QString& targetClass, const QString& method, const QVariant& parameters);
+			bool isValid() const;
 			QVariant target; // string or Variable
 			QString targetClass;
 			QString method;
@@ -89,6 +91,7 @@ class XmlToQtScript : private QXmlStreamReader
 		class StripMouseMovementsPostProcessor;
 		class ObjectVariablesPostProcessor;
 		class SimplifyMouseMovementsPostProcessor;
+		class FilterQtInternalsPostProcessor;
 };
 
 Q_DECLARE_METATYPE(XmlToQtScript::Variable);

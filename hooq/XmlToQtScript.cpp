@@ -18,6 +18,7 @@
 	51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 #include "XmlToQtScript.h"
+#include "XmlToQtScript_FilterQtInternalsPostProcessor.h"
 #include "XmlToQtScript_MouseMovePostProcessor.h"
 #include "XmlToQtScript_ObjectVariablesPostProcessor.h"
 #include "XmlToQtScript_SimplifyMouseMovementsPostProcessor.h"
@@ -154,6 +155,10 @@ QString XmlToQtScript::itemString(const QList<Item>& items) const
 	QList<Item> out;
 
 	QList<XmlToQtScript::PostProcessor*> postProcessors;
+	if(m_options & FilterQtInternals)
+	{
+		postProcessors.append(new FilterQtInternalsPostProcessor());
+	}
 	if(m_options & SkipMouseMovements)
 	{
 		postProcessors.append(new StripMouseMovementsPostProcessor());
@@ -182,7 +187,10 @@ QString XmlToQtScript::itemString(const QList<Item>& items) const
 		{
 			Item item = in.takeFirst();
 			postProcessor->process(&item, &in, &out);
-			out.append(item);
+			if(item.isValid())
+			{
+				out.append(item);
+			}
 		}
 		in = out;
 	}
@@ -308,6 +316,11 @@ XmlToQtScript::Item::Item()
 {
 }
 
+bool XmlToQtScript::Item::isValid() const
+{
+	return !method.isEmpty();
+}
+
 XmlToQtScript::Item XmlToQtScript::parseMsec()
 {
 	return Item("msleep", readElementText().toInt());
@@ -328,13 +341,15 @@ XmlToQtScript::Item XmlToQtScript::parseFocusEvent()
 	Q_ASSERT(!call.isEmpty());
 
 	const QString target = attributes().value("target").toString();
+	const QString targetClass = attributes().value("targetClass").toString();
+
 	QVariantMap parameters;
 	parameters["reason"] = QVariant::fromValue(static_cast<Qt::FocusReason>(attributes().value("reason").toString().toInt()));
 
 	// skip to end of element
 	readElementText();
 
-	return Item(target, attributes().value("targetClass").toString(), call, parameters);
+	return Item(target, targetClass, call, parameters);
 }
 
 XmlToQtScript::Item XmlToQtScript::parseKeyEvent()
@@ -351,6 +366,7 @@ XmlToQtScript::Item XmlToQtScript::parseKeyEvent()
 	Q_ASSERT(!call.isEmpty());
 
 	const QString target = attributes().value("target").toString();
+	const QString targetClass = attributes().value("targetClass").toString();
 
 	QVariantMap parameters;
 
@@ -365,7 +381,7 @@ XmlToQtScript::Item XmlToQtScript::parseKeyEvent()
 
 	return Item(
 		target,
-		attributes().value("targetClass").toString(),
+		targetClass,
 		call,
 		parameters
 	);
@@ -393,6 +409,7 @@ XmlToQtScript::Item XmlToQtScript::parseMouseEvent()
 	Q_ASSERT(!call.isEmpty());
 
 	const QString target = attributes().value("target").toString();
+	const QString targetClass = attributes().value("targetClass").toString();
 
 	QVariantMap parameters;
 
@@ -407,7 +424,7 @@ XmlToQtScript::Item XmlToQtScript::parseMouseEvent()
 
 	return Item(
 		target,
-		attributes().value("targetClass").toString(),
+		targetClass,
 		call,
 		parameters
 	);
@@ -418,6 +435,7 @@ XmlToQtScript::Item XmlToQtScript::parseContextMenuEvent()
 	const QString call("contextMenu");
 
 	const QString target = attributes().value("target").toString();
+	const QString targetClass = attributes().value("targetClass").toString();
 
 	QVariantMap parameters;
 	parameters["x"] = attributes().value("x").toString().toInt();
@@ -431,7 +449,7 @@ XmlToQtScript::Item XmlToQtScript::parseContextMenuEvent()
 
 	return Item(
 		target,
-		attributes().value("targetClass").toString(),
+		targetClass,
 		call,
 		parameters
 	);
@@ -504,6 +522,7 @@ XmlToQtScript::Item XmlToQtScript::parseWheelEvent()
 	const QString call = "mouseWheel";
 
 	const QString target = attributes().value("target").toString();
+	const QString targetClass = attributes().value("targetClass").toString();
 
 	QVariantMap parameters;
 
@@ -519,7 +538,7 @@ XmlToQtScript::Item XmlToQtScript::parseWheelEvent()
 
 	return Item(
 		target,
-		attributes().value("targetClass").toString(),
+		targetClass,
 		call,
 		parameters
 	);
@@ -530,6 +549,7 @@ XmlToQtScript::Item XmlToQtScript::parseShortcutEvent()
 	const QString call = "shortcut";
 
 	const QString target = attributes().value("target").toString();
+	const QString targetClass = attributes().value("targetClass").toString();
 
 	QVariantMap parameters;
 
@@ -542,7 +562,7 @@ XmlToQtScript::Item XmlToQtScript::parseShortcutEvent()
 
 	return Item(
 		target,
-		attributes().value("targetClass").toString(),
+		targetClass,
 		call,
 		parameters
 	);

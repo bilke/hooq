@@ -476,6 +476,10 @@ void MainWindow::finishRecording()
 
 	XmlToQtScript::Options options = XmlToQtScript::NoOptions;
 
+	if(m_ignoreQtInternalWidgets->isChecked())
+	{
+		options |= XmlToQtScript::FilterQtInternals;
+	}
 	if(m_ignoreMouseMovements->isChecked())
 	{
 		options |= XmlToQtScript::SkipMouseMovements;

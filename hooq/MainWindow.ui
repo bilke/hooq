@@ -165,6 +165,7 @@
     <addaction name="m_objectVariables"/>
     <addaction name="separator"/>
     <addaction name="m_includeXml"/>
+    <addaction name="m_ignoreQtInternalWidgets"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuOptions"/>
@@ -274,7 +275,18 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Include raw XML as comment</string>
+    <string>Include Raw XML as Comment</string>
+   </property>
+  </action>
+  <action name="m_ignoreQtInternalWidgets">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Ignore Qt Internal Widgets</string>
    </property>
   </action>
  </widget>
