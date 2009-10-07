@@ -62,7 +62,7 @@ void XmlToQtScript::ObjectVariablesPostProcessor::process(Item* iterator, QList<
 			}
 		}
 		m_variables.insert(target, name);
-		out->append(Item(QVariant(), QString("var %1 = objectFromPath").arg(name), target));
+		out->append(Item(QString("var %1 = objectFromPath").arg(name), target));
 	}
 	iterator->target = QVariant::fromValue(Variable(m_variables.value(target)));
 }

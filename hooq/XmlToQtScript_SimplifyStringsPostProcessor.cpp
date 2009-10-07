@@ -35,6 +35,7 @@ void XmlToQtScript::SimplifyStringsPostProcessor::process(Item* iterator, QList<
 	if(iterator->method == "pressKey")
 	{
 		const QVariant target = iterator->target;
+		const QString targetClass = iterator->targetClass;
 		QVariantMap parameters = iterator->parameters.toMap();
 		Qt::KeyboardModifiers modifiers = parameters["modifiers"].value<Qt::KeyboardModifiers>();
 		QString string;
@@ -93,6 +94,7 @@ void XmlToQtScript::SimplifyStringsPostProcessor::process(Item* iterator, QList<
 			out->append(
 				Item(
 					target,
+					targetClass,
 					"sendText",
 					string
 				)

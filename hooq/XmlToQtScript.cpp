@@ -290,9 +290,16 @@ QString XmlToQtScript::parametersString(const QVariant& parameters)
 	return QString();
 }
 
-XmlToQtScript::Item::Item(const QVariant& _target, const QString& _method, const QVariant& _parameters)
+XmlToQtScript::Item::Item(const QVariant& _target, const QString& _targetClass, const QString& _method, const QVariant& _parameters)
 : target(_target)
+, targetClass(_targetClass)
 , method(_method)
+, parameters(_parameters)
+{
+}
+
+XmlToQtScript::Item::Item(const QString& _method, const QVariant& _parameters)
+: method(_method)
 , parameters(_parameters)
 {
 }
@@ -303,7 +310,7 @@ XmlToQtScript::Item::Item()
 
 XmlToQtScript::Item XmlToQtScript::parseMsec()
 {
-	return Item(QString(), "msleep", readElementText().toInt());
+	return Item("msleep", readElementText().toInt());
 }
 
 QString XmlToQtScript::escapeString(const QString& _string)
@@ -327,7 +334,7 @@ XmlToQtScript::Item XmlToQtScript::parseFocusEvent()
 	// skip to end of element
 	readElementText();
 
-	return Item(target, call, parameters);
+	return Item(target, attributes().value("targetClass").toString(), call, parameters);
 }
 
 XmlToQtScript::Item XmlToQtScript::parseKeyEvent()
@@ -358,6 +365,7 @@ XmlToQtScript::Item XmlToQtScript::parseKeyEvent()
 
 	return Item(
 		target,
+		attributes().value("targetClass").toString(),
 		call,
 		parameters
 	);
@@ -399,6 +407,7 @@ XmlToQtScript::Item XmlToQtScript::parseMouseEvent()
 
 	return Item(
 		target,
+		attributes().value("targetClass").toString(),
 		call,
 		parameters
 	);
@@ -422,6 +431,7 @@ XmlToQtScript::Item XmlToQtScript::parseContextMenuEvent()
 
 	return Item(
 		target,
+		attributes().value("targetClass").toString(),
 		call,
 		parameters
 	);
@@ -509,6 +519,7 @@ XmlToQtScript::Item XmlToQtScript::parseWheelEvent()
 
 	return Item(
 		target,
+		attributes().value("targetClass").toString(),
 		call,
 		parameters
 	);
@@ -531,6 +542,7 @@ XmlToQtScript::Item XmlToQtScript::parseShortcutEvent()
 
 	return Item(
 		target,
+		attributes().value("targetClass").toString(),
 		call,
 		parameters
 	);

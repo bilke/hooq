@@ -33,6 +33,7 @@ void XmlToQtScript::SimplifyMouseMovementsPostProcessor::process(Item* iterator,
 	if(iterator->method == "moveMouse")
 	{
 		const QVariant target = iterator->target;
+		const QString targetClass = iterator->targetClass;
 		QVariantMap parameters = iterator->parameters.toMap();
 		const QPoint origin = QPoint(
 			parameters.value("x").toInt(),
@@ -74,6 +75,7 @@ void XmlToQtScript::SimplifyMouseMovementsPostProcessor::process(Item* iterator,
 		out->append(
 			Item(
 				target,
+				targetClass,
 				"moveMouse",
 				parameters
 			)

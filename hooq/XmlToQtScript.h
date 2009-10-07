@@ -44,8 +44,10 @@ class XmlToQtScript : private QXmlStreamReader
 		struct Item
 		{
 			Item();
-			Item(const QVariant& target, const QString& method, const QVariant& parameters);
+			Item(const QString& method, const QVariant& parameters);
+			Item(const QVariant& target, const QString& targetClass, const QString& method, const QVariant& parameters);
 			QVariant target; // string or Variable
+			QString targetClass;
 			QString method;
 			QVariant parameters; // Either a scalar, or QVariantMap
 		};

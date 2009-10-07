@@ -44,7 +44,7 @@ void XmlToQtScript::StringVariablesPostProcessor::process(Item* iterator, QList<
 		{
 			if(!out->at(i).method.startsWith("var string"))
 			{
-				out->insert(i, Item(QVariant(), QString("var string%1 = \"%2\"").arg(position).arg(XmlToQtScript::escapeString(value)), QVariant()));
+				out->insert(i, Item(QString("var string%1 = \"%2\"").arg(position).arg(XmlToQtScript::escapeString(value)), QVariant()));
 				break;
 			}
 		}
