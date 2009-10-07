@@ -103,8 +103,7 @@ bool Logger::hook(void** data)
 	QObject* receiver = reinterpret_cast<QObject*>(data[0]);
 	QEvent* event = reinterpret_cast<QEvent*>(data[1]);
 	// returnType* returnValue = reinterpret_cast<returnType*>(data[2])
-	instance()->hook(receiver, event);
-	return false;
+	return instance()->eventFilter(receiver, event);
 }
 
 QObject* Logger::focusObject(QObject* receiver)
@@ -122,7 +121,7 @@ QObject* Logger::focusObject(QObject* receiver)
 	return widget;
 }
 
-void Logger::hook(QObject* receiver, QEvent* event)
+bool Logger::eventFilter(QObject* receiver, QEvent* event)
 {
 	switch(event->type())
 	{
@@ -160,6 +159,7 @@ void Logger::hook(QObject* receiver, QEvent* event)
 			break;
 
 	}
+	return false;
 }
 
 void Logger::outputEvent(QObject* receiver, const char* event, const QXmlStreamAttributes& attributes, QObject* originalReceiver)

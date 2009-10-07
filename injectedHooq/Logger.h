@@ -55,7 +55,7 @@ class Logger : public QObject
 
 		/// The main hook.
 		static bool hook(void** data);
-		void hook(QObject* receiver, QEvent* event);
+		bool eventFilter(QObject* receiver, QEvent* event);
 
 		QXmlStreamWriter m_writer;
 		QTime m_timer;
