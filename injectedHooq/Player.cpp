@@ -52,10 +52,10 @@ bool Player::hook(void** data)
 	QObject* receiver = reinterpret_cast<QObject*>(data[0]);
 	QEvent* event = reinterpret_cast<QEvent*>(data[1]);
 	// returnType* returnValue = reinterpret_cast<returnType*>(data[2])
-	return instance()->hook(receiver, event);
+	return instance()->eventFilter(receiver, event);
 }
 
-bool Player::hook(QObject* receiver, QEvent* event)
+bool Player::eventFilter(QObject* receiver, QEvent* event)
 {
 	if(event->type() == QEvent::MouseButtonPress)
 	{

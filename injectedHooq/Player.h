@@ -70,7 +70,7 @@ class Player: public QObject, private QXmlStreamReader
 
 		/// The main hook.
 		static bool hook(void** data);
-		bool hook(QObject* receiver, QEvent* event);
+		bool eventFilter(QObject* receiver, QEvent* event);
 
 		void handleElement();
 		QObject* findObject(const QString& path);
