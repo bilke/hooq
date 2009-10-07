@@ -20,6 +20,10 @@ void XmlToQtScript::FilterQtInternalsPostProcessor::process(Item* iterator, QLis
 	{
 //		qDebug() << Q_FUNC_INFO << "Skipping" << iterator->target << iterator->targetClass << iterator->method << iterator->parameters;
 		*iterator = Item();
+		if(in->first().method == "msec")
+		{
+			in->takeFirst();
+		}
 	}
 	/*
 	else if(!iterator->target.isNull())
