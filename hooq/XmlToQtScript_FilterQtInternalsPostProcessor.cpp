@@ -23,7 +23,6 @@
 
 XmlToQtScript::FilterQtInternalsPostProcessor::FilterQtInternalsPostProcessor()
 {
-	qDebug() << Q_FUNC_INFO;
 	m_internalClasses
 		<< "QShapedPixmapWidget" // Internal to qdnd_x11.{cpp,h} - shows the drag pixmap.
 	;
