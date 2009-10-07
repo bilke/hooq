@@ -19,6 +19,7 @@
 */
 #include "ScriptBacktraceModel.h"
 
+#include <QDebug>
 #include <QScriptContext>
 #include <QScriptContextInfo>
 

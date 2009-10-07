@@ -44,7 +44,7 @@ class ScriptBacktraceModel : public QAbstractTableModel
 			FileNameColumn
 		};
 		QStringList m_functions;
-		QString m_fileNames;
+		QStringList m_fileNames;
 		QList<int> m_columns;
 		QList<int> m_lineNumbers;
 

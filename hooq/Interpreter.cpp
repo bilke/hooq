@@ -25,7 +25,9 @@
 
 #include <QApplication>
 #include <QDebug>
+#include <QDir>
 #include <QFile>
+#include <QFileInfo>
 #include <QKeySequence>
 #include <QTcpSocket>
 #include <QPoint>
@@ -354,10 +356,11 @@ void Interpreter::writeWheelEvent(const QString& path, const QPoint& position, i
 
 void Interpreter::setScriptPath(const QString& scriptPath)
 {
-	m_scriptPath = scriptPath;
 	QFile file(scriptPath);
 	file.open(QIODevice::ReadOnly);
 	Q_ASSERT(file.isOpen() && file.isReadable());
+	QFileInfo info(file);
+	m_scriptPath = QString("%1/%2").arg(info.dir().dirName()).arg(info.fileName());
 	m_script = QString::fromUtf8(file.readAll());
 	file.close();
 }
