@@ -345,6 +345,12 @@ void ScriptEditor::pauseOnLine(int lineNumber)
 	m_editor->clearLineHighlight();
 }
 
+void ScriptEditor::pause(const QString& error)
+{
+	raiseError(error);
+	pause();
+}
+
 void ScriptEditor::positionChange(qint64 scriptId, int lineNumber, int columnNumber)
 {
 	reset(RuntimeFeatures);

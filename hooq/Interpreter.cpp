@@ -387,6 +387,11 @@ void Interpreter::processSocketData()
 			m_dumpedObject = new ObjectInformation(ObjectInformation::fromXml(device()));
 			continue;
 		}
+		if(line.startsWith("NOTFOUND"))
+		{
+			emit error(tr("Object not found: %1").arg(line));
+			continue;
+		}
 		qDebug() << Q_FUNC_INFO << "Unknown response:" << line;
 	}
 }
