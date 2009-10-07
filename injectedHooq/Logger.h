@@ -20,12 +20,14 @@
 #pragma once
 
 #include <QObject>
+#include <QPoint>
 #include <QPointer>
 #include <QString>
 #include <QTime>
 #include <QXmlStreamWriter>
 
 class QContextMenuEvent;
+class QDropEvent;
 class QFocusEvent;
 class QKeyEvent;
 class QMouseEvent;
@@ -59,24 +61,15 @@ class Logger : public QObject
 
 		QXmlStreamWriter m_writer;
 		QTime m_timer;
+		QPoint m_dragOriginPoint;
+		QObject* m_dragOriginWidget;
 
 		void outputEvent(QObject* receiver, const char* event, const QXmlStreamAttributes& attributes, QObject* originalReceiver = 0);
-
-		/** Get a name for an object.
-		 * This will be, in order of preference:
-		 * - the objects' name, if it has one
-		 * - the classname + ":n", where 'n' is the position within the children of the same class with the same parent
-		 * - the classname + ":0" if the object has no parent
-		 */
-		static QString objectName(QObject* object);
+		void outputDragAndDropEvent(QObject* receiver, QDropEvent* event);
 
 		static QString safeText(const QString&);
 
-		/** Get a dotted (DNS-style) object path.
-		 * @see objectName
-		 */
-		static QString objectPath(QObject* object);
-
+		/// Return a list of parameters for a shortcut event.
 		static QXmlStreamAttributes shortcutEventAttributes(QShortcutEvent* event);
 		/// Return a list of parameters for a key event.
 		static QXmlStreamAttributes keyEventAttributes(QKeyEvent* event);

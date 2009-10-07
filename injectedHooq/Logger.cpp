@@ -27,6 +27,7 @@
 #include <QCoreApplication>
 #include <QContextMenuEvent>
 #include <QDebug>
+#include <QDragMoveEvent>
 #include <QEvent>
 #include <QFocusEvent>
 #include <QKeyEvent>
@@ -55,6 +56,7 @@ Logger* Logger::instance()
 }
 
 Logger::Logger(QIODevice* device)
+: QObject()
 {
 	disconnect(device, 0, 0, 0);
 
@@ -128,6 +130,9 @@ bool Logger::eventFilter(QObject* receiver, QEvent* event)
 		case QEvent::ContextMenu:
 			outputEvent(receiver, "contextMenu", contextMenuEventAttributes(static_cast<QContextMenuEvent*>(event)));
 			break;
+		case QEvent::Drop:
+			outputDragAndDropEvent(receiver, static_cast<QDropEvent*>(event));
+			break;
 		case QEvent::FocusIn:
 			outputEvent(focusObject(receiver), "focusChanged", focusEventAttributes(static_cast<QFocusEvent*>(event)), receiver);
 			break;
@@ -141,6 +146,8 @@ bool Logger::eventFilter(QObject* receiver, QEvent* event)
 			outputEvent(receiver, "mouseMove", mouseEventAttributes(static_cast<QMouseEvent*>(event)));
 			break;
 		case QEvent::MouseButtonPress:
+			m_dragOriginWidget = receiver;
+			m_dragOriginPoint = static_cast<QMouseEvent*>(event)->pos();
 			outputEvent(receiver, "mouseButtonPress", mouseEventAttributes(static_cast<QMouseEvent*>(event)));
 			break;
 		case QEvent::MouseButtonRelease:
@@ -182,6 +189,27 @@ void Logger::outputEvent(QObject* receiver, const char* event, const QXmlStreamA
 		m_writer.writeAttribute("originalTarget", ObjectHookName::objectPath(originalReceiver));
 	}
 	m_writer.writeEndElement(); //event;
+}
+
+void Logger::outputDragAndDropEvent(QObject* receiver, QDropEvent* event)
+{
+	Q_ASSERT(receiver);
+
+	m_writer.writeTextElement("msec", QString::number(m_timer.restart()));
+	
+	m_writer.writeStartElement("dragAndDrop");
+
+	m_writer.writeAttribute("source", ObjectHookName::objectPath(m_dragOriginWidget));
+	m_writer.writeAttribute("sourceX", QString::number(m_dragOriginPoint.x()));
+	m_writer.writeAttribute("sourceY", QString::number(m_dragOriginPoint.y()));
+
+	m_writer.writeAttribute("target", ObjectHookName::objectPath(receiver));
+	m_writer.writeAttribute("targetX", QString::number(event->pos().x()));
+	m_writer.writeAttribute("targetY", QString::number(event->pos().y()));
+
+	m_dragOriginWidget = 0;
+	m_dragOriginPoint = QPoint();
+	m_writer.writeEndElement(); //dragAndDrop;
 }
 
 QString Logger::safeText(const QString& string)
