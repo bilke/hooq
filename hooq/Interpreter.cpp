@@ -389,7 +389,7 @@ void Interpreter::processSocketData()
 		}
 		if(line.startsWith("NOTFOUND"))
 		{
-			emit error(tr("Object not found: %1").arg(line));
+			emit objectNotFound(line.mid(line.indexOf(' ') + 1));
 			continue;
 		}
 		qDebug() << Q_FUNC_INFO << "Unknown response:" << line;

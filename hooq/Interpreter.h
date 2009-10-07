@@ -44,7 +44,7 @@ class Interpreter : public QObject, private QXmlStreamWriter
 		void objectPicked(const ObjectInformation&);
 		void finished();
 		void executionFailed(int lineNumber);
-		void error(const QString& description);
+		void objectNotFound(const QString& path);
 	public slots:
 		void run(QTcpSocket* socket);
 		void processSocketData();

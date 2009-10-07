@@ -194,6 +194,12 @@ MainWindow::MainWindow(QWidget* parent)
 	);
 	connect(
 		m_interpreter,
+		SIGNAL(objectNotFound(QString)),
+		m_editor,
+		SLOT(objectNotFound(QString))
+	);
+	connect(
+		m_interpreter,
 		SIGNAL(executionFailed(int)),
 		m_editor,
 		SLOT(handleApplicationExit(int))

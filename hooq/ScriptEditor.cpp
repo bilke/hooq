@@ -345,6 +345,11 @@ void ScriptEditor::pauseOnLine(int lineNumber)
 	m_editor->clearLineHighlight();
 }
 
+void ScriptEditor::objectNotFound(const QString& path)
+{
+	pause(tr("Object not found: '<span style='font-family: monospace'>%1</span>'").arg(path));
+}
+
 void ScriptEditor::pause(const QString& error)
 {
 	raiseError(error);
