@@ -176,6 +176,7 @@ void Logger::outputEvent(QObject* receiver, const char* event, const QXmlStreamA
 	m_writer.writeStartElement(event);
 	m_writer.writeAttributes(attributes);
 	m_writer.writeAttribute("target", ObjectHookName::objectPath(receiver));
+	m_writer.writeAttribute("targetClass", receiver->metaObject()->className());
 	if(originalReceiver && receiver != originalReceiver)
 	{
 		m_writer.writeAttribute("originalTarget", ObjectHookName::objectPath(originalReceiver));
