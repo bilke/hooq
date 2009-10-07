@@ -302,6 +302,10 @@ void Player::postSleepEvent()
 	m_eventQueue.enqueue(new SleepEvent(readElementText().toInt()));
 }
 
+void Player::postDragAndDrop()
+{
+}
+
 void Player::handleElement()
 {
 	// "Magic" events
@@ -316,6 +320,10 @@ void Player::handleElement()
 	if(name() == "pick")
 	{
 		postPickEvent();
+	}
+	if(name() == "dragAndDrop")
+	{
+		postDragAndDrop();
 	}
 
 	// QEvents

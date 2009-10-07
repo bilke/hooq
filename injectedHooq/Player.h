@@ -80,6 +80,8 @@ class Player: public QObject, private QXmlStreamReader
 		void postPickEvent();
 		void postSleepEvent();
 
+		void postDragAndDrop();
+
 		void postFocusEvent();
 		void postKeyEvent(int type);
 		void postMouseEvent(int type);
