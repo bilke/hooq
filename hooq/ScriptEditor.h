@@ -100,6 +100,7 @@ class ScriptEditor : public QMainWindow, public QScriptEngineAgent
 		QString escapeValue(const QVariant& value);
 		void pause();
 		void setPaused(bool paused = true);
+		void raiseError(const QString& text);
 
 		QDockWidget* m_backtraceDockWidget;
 		BacktraceWidget* m_backtraceWidget;

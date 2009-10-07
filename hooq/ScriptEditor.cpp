@@ -21,6 +21,7 @@
 
 #include "BacktraceWidget.h"
 #include "CodeEditor.h"
+#include "Interpreter.h"
 #include "ObjectInformation.h"
 #include "PropertyDialog.h"
 #include "ReplaceDialog.h"
@@ -304,49 +305,35 @@ void ScriptEditor::exceptionThrow(qint64 scriptId, const QScriptValue& exception
 	Q_UNUSED(scriptId);
 	if(!hasHandler)
 	{
-		QScriptContext* context = engine()->currentContext();
-		while(context && QScriptContextInfo(context).lineNumber() == -1)
-		{
-			context = context->parentContext();
-		}
-		Q_ASSERT(context);
-
-		if(mode() == Interactive)
-		{
-			m_errorLabel->setText(
-				tr("Uncaught exception: %1").arg(exception.toString())
-			);
-
-			m_errorWidget->show();
-			m_backtraceWidget->setContext(context);
-			addDockWidget(Qt::BottomDockWidgetArea, m_backtraceDockWidget);
-			const int lineNumber = QScriptContextInfo(context).lineNumber();
-			m_editor->highlightLine(lineNumber);
-			m_editor->ensureVisible(lineNumber);
-			show();
-			raise();
-		}
-		updateActionStates();
-		emit exceptionThrown(engine()->uncaughtException().toString(), engine()->uncaughtExceptionBacktrace());
+		raiseError(tr("Uncaught exception: %1").arg(exception.toString()));
 	}
 }
 
 void ScriptEditor::handleApplicationExit(int lineNumber)
 {
 	Q_ASSERT(lineNumber != -1);
-	const QString text = tr("Application unexpectedly exit.");
+	raiseError(tr("Application unexpectedly exit."));
+
+}
+
+void ScriptEditor::raiseError(const QString& text)
+{
+	QScriptContext* context = engine()->currentContext();
 	if(mode() == Interactive)
 	{
+		const int lineNumber = Interpreter::lineNumber(engine()->currentContext());
 		m_errorLabel->setText(text);
 		m_errorWidget->show();
+		m_backtraceWidget->setContext(context);
+		addDockWidget(Qt::BottomDockWidgetArea, m_backtraceDockWidget);
+		m_backtraceDockWidget->show();
 		m_editor->highlightLine(lineNumber);
 		m_editor->ensureVisible(lineNumber);
 		show();
 		raise();
 	}
 	updateActionStates();
-	emit exceptionThrown(text, engine()->currentContext()->backtrace());
-
+	emit exceptionThrown(text, context->backtrace());
 }
 
 void ScriptEditor::pauseOnLine(int lineNumber)
