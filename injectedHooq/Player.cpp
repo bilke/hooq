@@ -132,6 +132,13 @@ void Player::ack()
 	device()->write("ACK\n");
 }
 
+void Player::notifyNotFound(PathEvent* event)
+{
+	device()->write("NOTFOUND ");
+	device()->write(event->objectPath().toLatin1());
+	device()->write("\n", 1);
+}
+
 Player::Player(QIODevice* device)
 : QObject()
 , m_processingEvents(false)
@@ -209,8 +216,7 @@ void Player::processEvents()
 				else
 				{
 					qDebug() << "Couldn't find focus widget from" << e->objectPath() << "- QObject:" << o;
-					Q_ASSERT(o);
-					Q_ASSERT(w);
+					notifyNotFound(e);
 				}
 				break;
 			}
@@ -225,8 +231,7 @@ void Player::processEvents()
 				else
 				{
 					qDebug() << "Couldn't find receiver from path" << e->objectPath();
-					debugPrintObjectTree();
-					Q_ASSERT(o);
+					notifyNotFound(e);
 				}
 				break;
 			}

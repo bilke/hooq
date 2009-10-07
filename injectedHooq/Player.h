@@ -45,6 +45,7 @@ class QWidget;
 namespace Hooq
 {
 class Event;
+class PathEvent;
 
 class Player: public QObject, private QXmlStreamReader
 {
@@ -88,6 +89,7 @@ class Player: public QObject, private QXmlStreamReader
 		void sleep(int msec);
 
 		void ack();
+		void notifyNotFound(PathEvent* event);
 
 		bool m_processingEvents;
 
