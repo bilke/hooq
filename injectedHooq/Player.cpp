@@ -45,6 +45,8 @@ namespace Hooq
 
 Player::~Player()
 {
+	// Remove our hook
+	QInternal::unregisterCallback(QInternal::EventNotifyCallback, hook);
 }
 
 bool Player::hook(void** data)
@@ -57,46 +59,47 @@ bool Player::hook(void** data)
 
 bool Player::eventFilter(QObject* receiver, QEvent* event)
 {
-	if(event->type() == QEvent::MouseButtonPress)
+	if(m_mode == Pick)
 	{
-		return true;
-	}
-	if(event->type() == QEvent::MouseButtonRelease)
-	{
-		Q_ASSERT(device()->isWritable());
-		device()->write("PICKED\n");
-		QWidget* widget = qobject_cast<QWidget*>(receiver);
-		if(widget && widget->focusProxy())
+		if(event->type() == QEvent::MouseButtonPress)
 		{
-			XmlPropertyDumper::dump(widget->focusProxy(), device());
+			return true;
 		}
-		else
+		if(event->type() == QEvent::MouseButtonRelease)
 		{
-			XmlPropertyDumper::dump(receiver, device());
+			Q_ASSERT(device()->isWritable());
+			device()->write("PICKED\n");
+			QWidget* widget = qobject_cast<QWidget*>(receiver);
+			if(widget && widget->focusProxy())
+			{
+				XmlPropertyDumper::dump(widget->focusProxy(), device());
+			}
+			else
+			{
+				XmlPropertyDumper::dump(receiver, device());
+			}
+			endPick();
+			return true;
 		}
-		endPick();
-		return true;
 	}
 	return false;
 }
 
 void Player::startPick()
 {
+	m_mode = Pick;
 	m_pickWidget->show();
 	m_pickWidget->raise();
 	// Crosshair
 	QApplication::setOverrideCursor(QCursor(Qt::CrossCursor));
-	// Start listening for events
-	QInternal::registerCallback(QInternal::EventNotifyCallback, hook);
 }
 
 void Player::endPick()
 {
+	m_mode = Playback;
 	m_pickWidget->hide();
 	// Remove our crosshair
 	QApplication::restoreOverrideCursor();
-	// Remove our hook
-	QInternal::unregisterCallback(QInternal::EventNotifyCallback, hook);
 	// Continue with our queue
 	m_processingEvents = false;
 	processEvents();
@@ -145,6 +148,7 @@ void Player::notifyNotFound(PathEvent* event)
 Player::Player(QIODevice* device)
 : QObject()
 , m_processingEvents(false)
+, m_mode(Playback)
 {
 	disconnect(device, 0, 0, 0);
 	m_pickWidget = new QLabel(tr("Click on a widget to retrieve its properties."));
@@ -155,6 +159,9 @@ Player::Player(QIODevice* device)
 		SIGNAL(readyRead()),
 		SLOT(readNext())
 	);
+
+	// Start listening for events
+	QInternal::registerCallback(QInternal::EventNotifyCallback, hook);
 }
 
 void Player::run()

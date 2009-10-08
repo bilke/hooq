@@ -61,6 +61,11 @@ class Player: public QObject, private QXmlStreamReader
 		void readNext();
 		void processEvents();
 	private:
+		enum Mode
+		{
+			Playback,
+			Pick
+		};
 		void debugPrintObjectTree(int nestingDepth = 0, QWidget* root = 0, TextStreamPointer stream = TextStreamPointer());
 		static Player* instance();
 		Player(QIODevice* device);
@@ -99,6 +104,7 @@ class Player: public QObject, private QXmlStreamReader
 
 		QWidget* m_pickWidget;
 		bool m_ackNext;
+		Mode m_mode;
 };
 
 } // namespace
