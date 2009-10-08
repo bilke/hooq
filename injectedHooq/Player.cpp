@@ -241,7 +241,7 @@ void Player::processEvents()
 				QObject* o = findObject(e->objectPath());
 				if(o)
 				{
-					QCoreApplication::postEvent(o, e->qtEvent());
+					qApp->postEvent(o, e->qtEvent());
 				}
 				else
 				{
@@ -327,7 +327,16 @@ void Player::postDragAndDrop()
 	readElementText();
 	qDebug() << "Read drag and drop event" << sourcePath << sourcePoint << targetPath << targetPoint;
 	// 1. Start the drag
-	// 1.1. Click
+	// 1.1 Give focus
+	m_eventQueue.enqueue(
+		Event::addTag("dnd_sourceFocus", Event::withoutAck(
+			new FocusEvent(
+				sourcePath,
+				Qt::OtherFocusReason
+			)
+		))
+	);
+	// 1.2. Click
 	m_eventQueue.enqueue(
 		Event::addTag("dnd_click", Event::withoutAck(
 			new ObjectEvent(
@@ -342,9 +351,9 @@ void Player::postDragAndDrop()
 			)
 		))
 	);
-	// 1.2. Wait for drag time interval
+	// 1.3. Wait for drag time interval
 	m_eventQueue.enqueue(Event::addTag("dnd_waitBeforeDrag", Event::withoutAck(new SleepEvent(qApp->startDragTime()))));
-	// 1.3. Give it a little nudge (QAbstractItemView requires two passes through mouseMoveEvent to start the drag)
+	// 1.4. Give it a little nudge (QAbstractItemView requires two passes through mouseMoveEvent to start the drag)
 	m_eventQueue.enqueue(
 		Event::addTag("dnd_nudge", Event::withoutAck(
 			new ObjectEvent(
@@ -359,7 +368,9 @@ void Player::postDragAndDrop()
 			)
 		))
 	);
-	// 1.4. Drag it for the minimum distance
+	// 1.3. (reprise) Wait for drag time interval
+	m_eventQueue.enqueue(Event::addTag("dnd_waitBeforeDrag", Event::withoutAck(new SleepEvent(qApp->startDragTime()))));
+	// 1.5. Drag it for the minimum distance
 	m_eventQueue.enqueue(
 		Event::addTag("dnd_initialDrag", Event::withoutAck(
 			new ObjectEvent(
