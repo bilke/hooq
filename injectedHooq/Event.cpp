@@ -47,6 +47,23 @@ Event::Event()
 {
 }
 
+Event* Event::withoutAck(Event* event)
+{
+	event->setAck(false);
+	return event;
+}
+
+QString Event::tag() const
+{
+	return m_tag;
+}
+
+Event* Event::addTag(const QString& tag, Event* event)
+{
+	event->m_tag = tag;
+	return event;
+}
+
 QString PathEvent::objectPath() const
 {
 	return m_objectPath;

@@ -43,8 +43,14 @@ namespace Hooq
 			virtual Type type() const = 0;
 			bool ack() const;
 			void setAck(bool);
+
+			QString tag() const;
+
+			static Event* withoutAck(Event* event);
+			static Event* addTag(const QString& tag, Event* event);
 		private:
 			bool m_ack;
+			QString m_tag;
 	};
 
 	template<class Derived, class Base> class TypedEvent : public Base

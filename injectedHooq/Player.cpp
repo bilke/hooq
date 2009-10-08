@@ -192,6 +192,10 @@ void Player::processEvents()
 	while(!m_eventQueue.isEmpty())
 	{
 		std::auto_ptr<Event> event(m_eventQueue.dequeue());
+		if(!event->tag().isNull())
+		{
+			qDebug() << "Processing event" << event->tag();
+		}
 		m_ackNext = event->ack();
 		// "break;" for ack, "continue;" for no-ack, "return;" to leave the event loop - be sure to re-enter it later
 		switch(event->type())
@@ -308,6 +312,96 @@ void Player::postSleepEvent()
 
 void Player::postDragAndDrop()
 {
+	// Make sure that any events you queue up have setAck(false) called, except for the last, otherwise the GUI gets sent multiple ACKs for one command
+	const QString sourcePath = attributes().value("source").toString();
+	const QPoint sourcePoint = QPoint(attributes().value("sourceX").toString().toInt(), attributes().value("sourceY").toString().toInt());
+	const QString targetPath = attributes().value("target").toString();
+	const QPoint targetPoint = QPoint(attributes().value("targetX").toString().toInt(), attributes().value("targetY").toString().toInt());
+	readElementText();
+	qDebug() << "Read drag and drop event" << sourcePath << sourcePoint << targetPath << targetPoint;
+	// 1. Start the drag
+	// 1.1. Click
+	m_eventQueue.enqueue(
+		Event::addTag("dnd_click", Event::withoutAck(
+			new ObjectEvent(
+				sourcePath,
+				new QMouseEvent(
+					QEvent::MouseButtonPress,
+					sourcePoint,
+					Qt::LeftButton,
+					Qt::LeftButton,
+					Qt::NoModifier
+				)
+			)
+		))
+	);
+	// 1.2. Wait for drag time interval
+	m_eventQueue.enqueue(Event::addTag("dnd_waitBeforeDrag", Event::withoutAck(new SleepEvent(qApp->startDragTime()))));
+	// 1.3. Give it a little nudge (QAbstractItemView requires two passes through mouseMoveEvent to start the drag)
+	m_eventQueue.enqueue(
+		Event::addTag("dnd_nudge", Event::withoutAck(
+			new ObjectEvent(
+				sourcePath,
+				new QMouseEvent(
+					QEvent::MouseMove,
+					sourcePoint + QPoint(1, 1),
+					Qt::NoButton,
+					Qt::LeftButton,
+					Qt::NoModifier
+				)
+			)
+		))
+	);
+	// 1.4. Drag it for the minimum distance
+	m_eventQueue.enqueue(
+		Event::addTag("dnd_initialDrag", Event::withoutAck(
+			new ObjectEvent(
+				sourcePath,
+				new QMouseEvent(
+					QEvent::MouseMove,
+					sourcePoint + QPoint(0, qApp->startDragDistance()),
+					Qt::NoButton,
+					Qt::LeftButton,
+					Qt::NoModifier
+				)
+			)
+		))
+	);
+	// 2. Now we've started the drag (hopefully), drop it
+	///@todo Check that a drag has actually started
+	// 2.1. Move the mouse first, just to be friendly
+	m_eventQueue.enqueue(
+		Event::addTag("dnd_mainDrag", Event::withoutAck(
+			new ObjectEvent(
+				targetPath,
+				new QMouseEvent(
+					QEvent::MouseMove,
+					targetPoint,
+					Qt::NoButton,
+					Qt::LeftButton,
+					Qt::NoModifier
+				)
+			)
+		))
+	);
+	// 2.2. Now, release the hounds^Wmouse button
+	m_eventQueue.enqueue(
+		Event::addTag("dnd_drop", Event::withoutAck(
+			new ObjectEvent(
+				targetPath,
+				new QMouseEvent(
+					QEvent::MouseButtonRelease,
+					targetPoint,
+					Qt::LeftButton,
+					Qt::NoButton,
+					Qt::NoModifier
+				)
+			)
+		))
+	);
+
+	// ACK the DnD as a whole
+	m_eventQueue.enqueue(new AckEvent());
 }
 
 void Player::handleElement()
