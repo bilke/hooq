@@ -38,7 +38,8 @@ namespace Hooq
 				Focus,  ///< A focus request for a given QObject
 				Object, ///< A QEvent to be sent to a QObject
 				Pick,   ///< Request for the user to click on a QObject, then treat as the target of a Dump event
-				Sleep   ///< Wait a certain amount of time
+				Sleep,  ///< Wait a certain amount of time
+				Flush   ///< Call qApp->processEvents - be careful with this, may block Hooq
 			};
 			virtual Type type() const = 0;
 			bool ack() const;
@@ -68,6 +69,12 @@ namespace Hooq
 	{
 		public:
 			static const Event::Type EVENT_TYPE = Ack;
+	};
+
+	class FlushEvent : public TypedEvent<FlushEvent,Event>
+	{
+		public:
+			static const Event::Type EVENT_TYPE = Flush;
 	};
 
 	/// Abstract base class for events that reference an object.

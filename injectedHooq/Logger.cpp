@@ -146,15 +146,9 @@ bool Logger::eventFilter(QObject* receiver, QEvent* event)
 			outputEvent(receiver, "mouseMove", mouseEventAttributes(static_cast<QMouseEvent*>(event)));
 			break;
 		case QEvent::MouseButtonPress:
-			{
-				QWidget* receiverWidget = qobject_cast<QWidget*>(receiver);
-				QWidget* focusWidget = qobject_cast<QWidget*>(focusObject(receiver));
-				Q_ASSERT(receiverWidget);
-				Q_ASSERT(focusWidget);
-				m_dragOriginWidget = focusWidget;
-				m_dragOriginPoint = focusWidget->mapFromGlobal(receiverWidget->mapToGlobal(static_cast<QMouseEvent*>(event)->pos()));
-				outputEvent(receiver, "mouseButtonPress", mouseEventAttributes(static_cast<QMouseEvent*>(event)));
-			}
+			m_dragOriginWidget = receiver;
+			m_dragOriginPoint = static_cast<QMouseEvent*>(event)->pos();
+			outputEvent(receiver, "mouseButtonPress", mouseEventAttributes(static_cast<QMouseEvent*>(event)));
 			break;
 		case QEvent::MouseButtonRelease:
 			outputEvent(receiver, "mouseButtonRelease", mouseEventAttributes(static_cast<QMouseEvent*>(event)));

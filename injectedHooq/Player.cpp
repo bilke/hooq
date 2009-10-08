@@ -219,6 +219,12 @@ void Player::processEvents()
 				XmlPropertyDumper::dump(o, device());
 				continue;
 			}
+			case Event::Flush:
+			{
+				qDebug() << "Calling processEvents";
+				QApplication::processEvents();
+				continue;
+			}
 			case Event::Focus:
 			{
 				FocusEvent* e = Hooq::event_cast<FocusEvent*>(event.get());
@@ -241,6 +247,16 @@ void Player::processEvents()
 				QObject* o = findObject(e->objectPath());
 				if(o)
 				{
+					if(e->qtEvent()->type() == QEvent::MouseButtonPress)
+					{
+						QMouseEvent* m = static_cast<QMouseEvent*>(e->qtEvent());
+						qDebug() << "Posting button press to" << o << m->pos() << m->button() << m->buttons();
+					}
+					if(e->qtEvent()->type() == QEvent::MouseMove)
+					{
+						QMouseEvent* m = static_cast<QMouseEvent*>(e->qtEvent());
+						qDebug() << "Posting move event to" << o << m->pos() << m->button() << m->buttons();
+					}
 					qApp->postEvent(o, e->qtEvent());
 				}
 				else
@@ -326,6 +342,8 @@ void Player::postDragAndDrop()
 	const QPoint targetPoint = QPoint(attributes().value("targetX").toString().toInt(), attributes().value("targetY").toString().toInt());
 	readElementText();
 	qDebug() << "Read drag and drop event" << sourcePath << sourcePoint << targetPath << targetPoint;
+	// These explicit flushes are an alternative to zero-second sleeps
+	m_eventQueue.enqueue(Event::withoutAck(new FlushEvent()));
 	// 1. Start the drag
 	// 1.1 Give focus
 	m_eventQueue.enqueue(
@@ -337,6 +355,7 @@ void Player::postDragAndDrop()
 		))
 	);
 	// 1.2. Click
+	m_eventQueue.enqueue(Event::withoutAck(new FlushEvent()));
 	m_eventQueue.enqueue(
 		Event::addTag("dnd_click", Event::withoutAck(
 			new ObjectEvent(
@@ -388,6 +407,7 @@ void Player::postDragAndDrop()
 	// 2. Now we've started the drag (hopefully), drop it
 	///@todo Check that a drag has actually started
 	// 2.1. Move the mouse first, just to be friendly
+	m_eventQueue.enqueue(Event::withoutAck(new FlushEvent()));
 	m_eventQueue.enqueue(
 		Event::addTag("dnd_mainDrag", Event::withoutAck(
 			new ObjectEvent(
@@ -403,6 +423,7 @@ void Player::postDragAndDrop()
 		))
 	);
 	// 2.2. Now, release the hounds^Wmouse button
+	m_eventQueue.enqueue(Event::withoutAck(new FlushEvent()));
 	m_eventQueue.enqueue(
 		Event::addTag("dnd_drop", Event::withoutAck(
 			new ObjectEvent(
@@ -419,6 +440,7 @@ void Player::postDragAndDrop()
 	);
 
 	// ACK the DnD as a whole
+	m_eventQueue.enqueue(Event::withoutAck(new FlushEvent()));
 	m_eventQueue.enqueue(new AckEvent());
 }
 
