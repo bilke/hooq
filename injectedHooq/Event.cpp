@@ -28,7 +28,22 @@ PathEvent::PathEvent(const QString& objectPath)
 {
 }
 
+bool Event::ack() const
+{
+	return m_ack;
+}
+
+void Event::setAck(bool ack)
+{
+	m_ack = ack;
+}
+
 Event::~Event()
+{
+}
+
+Event::Event()
+: m_ack(true)
 {
 }
 

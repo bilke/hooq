@@ -98,6 +98,7 @@ class Player: public QObject, private QXmlStreamReader
 		QQueue<Event*> m_eventQueue;
 
 		QWidget* m_pickWidget;
+		bool m_ackNext;
 };
 
 } // namespace

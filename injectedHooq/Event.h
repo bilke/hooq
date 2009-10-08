@@ -28,6 +28,7 @@ namespace Hooq
 	class Event
 	{
 		public:
+			Event();
 			virtual ~Event();
 			enum Type
 			{
@@ -40,6 +41,10 @@ namespace Hooq
 				Sleep   ///< Wait a certain amount of time
 			};
 			virtual Type type() const = 0;
+			bool ack() const;
+			void setAck(bool);
+		private:
+			bool m_ack;
 	};
 
 	template<class Derived, class Base> class TypedEvent : public Base

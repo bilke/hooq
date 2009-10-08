@@ -129,7 +129,10 @@ void Player::waitFinished()
 
 void Player::ack()
 {
-	device()->write("ACK\n");
+	if(m_ackNext)
+	{
+		device()->write("ACK\n");
+	}
 }
 
 void Player::notifyNotFound(PathEvent* event)
@@ -189,6 +192,7 @@ void Player::processEvents()
 	while(!m_eventQueue.isEmpty())
 	{
 		std::auto_ptr<Event> event(m_eventQueue.dequeue());
+		m_ackNext = event->ack();
 		// "break;" for ack, "continue;" for no-ack, "return;" to leave the event loop - be sure to re-enter it later
 		switch(event->type())
 		{
