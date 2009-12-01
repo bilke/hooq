@@ -13,9 +13,17 @@ namespace Hooq
 	class CanaryEvent : public QEvent
 	{
 		public:
-			CanaryEvent();
+			/** Create a CanaryEvent.
+			 *
+			 * @p ignoreFlag is a variable that will be set to true while this object exists.
+			 *    *ignoreFlag must be false when this object is created, and will be reset to
+			 *    false when the application is destroyed (after the processing of the Qt event loop)
+			 */
+			CanaryEvent(bool* ignoreFlag);
 			virtual ~CanaryEvent();
+			static int staticType();
 		private:
 			static int m_type;
+			bool* m_ignoreFlag;
 	};
 };

@@ -57,6 +57,7 @@ class Logger : public QObject
 		static bool hook(void** data);
 		bool eventFilter(QObject* receiver, QEvent* event);
 
+		bool m_ignoreEvents;
 		QXmlStreamWriter m_writer;
 		QTime m_timer;
 

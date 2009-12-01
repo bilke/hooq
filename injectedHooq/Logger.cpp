@@ -19,6 +19,8 @@
 */
 #include "Logger.h"
 
+#include "CanaryEvent.h"
+
 #include "../common/Communication.h"
 #include "../common/ObjectHookName.h"
 
@@ -55,6 +57,8 @@ Logger* Logger::instance()
 }
 
 Logger::Logger(QIODevice* device)
+: QObject()
+, m_ignoreEvents(false)
 {
 	disconnect(device, 0, 0, 0);
 
@@ -123,6 +127,14 @@ QObject* Logger::focusObject(QObject* receiver)
 
 bool Logger::eventFilter(QObject* receiver, QEvent* event)
 {
+	// Check that we don't receive a canary when we've not put one in the queue
+	Q_ASSERT(event->type() != CanaryEvent::staticType() || m_ignoreEvents);
+
+	if(m_ignoreEvents)
+	{
+		return false;
+	}
+
 	switch(event->type())
 	{
 		case QEvent::ContextMenu:
@@ -159,6 +171,7 @@ bool Logger::eventFilter(QObject* receiver, QEvent* event)
 			break;
 
 	}
+	QCoreApplication::postEvent(this, new CanaryEvent(&m_ignoreEvents));
 	return false;
 }
 
