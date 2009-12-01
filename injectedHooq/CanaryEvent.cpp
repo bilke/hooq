@@ -15,7 +15,7 @@ namespace Hooq
 
 	CanaryEvent::~CanaryEvent()
 	{
-		Q_ASSERT(*ignoreFlag == true);
+		Q_ASSERT(*m_ignoreFlag == true);
 		*m_ignoreFlag = false;
 	}
 
