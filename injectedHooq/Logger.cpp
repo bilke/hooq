@@ -138,7 +138,7 @@ bool Logger::eventFilter(QObject* receiver, QEvent* event)
 	switch(event->type())
 	{
 		case QEvent::Close:
-			outputEvent(receiver, "windowClose");
+			outputEvent(receiver, "windowClosed");
 			break;
 		case QEvent::ContextMenu:
 			outputEvent(receiver, "contextMenu", contextMenuEventAttributes(static_cast<QContextMenuEvent*>(event)));

@@ -331,7 +331,7 @@ void Player::handleElement()
 	}
 
 	// QEvents
-	if(name() == "windowClose")
+	if(name() == "windowClosed")
 	{
 		postCloseEvent();
 	}
