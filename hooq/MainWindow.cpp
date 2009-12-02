@@ -445,6 +445,8 @@ void MainWindow::testFinished()
 void MainWindow::startRecording()
 {
 	delete m_hooqLogger;
+	delete m_hooqPlayer;
+	m_hooqPlayer = 0;
 	delete m_xmlDump;
 
 	m_xmlDump = new QTemporaryFile();
