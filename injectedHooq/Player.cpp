@@ -230,6 +230,7 @@ void Player::processEvents()
 					Q_ASSERT(o);
 					Q_ASSERT(w);
 				}
+				break;
 			}
 			case Event::Object:
 			{
