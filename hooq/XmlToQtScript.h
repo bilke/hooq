@@ -63,6 +63,7 @@ class XmlToQtScript : private QXmlStreamReader
 
 		Item parseMsec();
 
+		Item parseCloseEvent();
 		Item parseFocusEvent();
 		Item parseKeyEvent();
 		Item parseMouseEvent();
