@@ -66,6 +66,11 @@ MainWindow::MainWindow(QWidget* parent)
 , m_testResultsWindow(new TestResultsDialog(this))
 , m_xmlDump(0)
 {
+	if(!m_interpreter->haveRequiredQtScriptExtensions())
+	{
+		QMessageBox::critical(0, tr("Couldn't load required QtScript extensions"), tr("Please install qtscriptgenerator for the version of Qt you are currently using. While recording in Hooq may work, playback will not be possible."));
+	}
+
 	m_editor = new ScriptEditor(m_interpreter->engine());
 	setupUi(this);
 	setStatusBar(0);

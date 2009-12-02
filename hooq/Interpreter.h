@@ -38,6 +38,7 @@ class Interpreter : public QObject, private QXmlStreamWriter
 		Interpreter(QObject* parent);
 		~Interpreter();
 		QScriptEngine* engine() const;
+		bool haveRequiredQtScriptExtensions() const;
 		void setScriptPath(const QString& scriptPath);
 		static int lineNumber(QScriptContext* context);
 	signals:
@@ -77,6 +78,7 @@ class Interpreter : public QObject, private QXmlStreamWriter
 		ObjectInformation* m_dumpedObject;
 		int m_pendingAcks;
 
+		bool m_haveRequiredQtScriptExtensions;
 		QScriptEngine* m_engine;
 		QString m_script;
 		QString m_scriptPath;

@@ -40,8 +40,7 @@ Interpreter::Interpreter(QObject* parent)
 , m_pendingAcks(0)
 , m_engine(new QScriptEngine(this))
 {
-	importExtension("qt.core");
-	importExtension("qt.gui");
+	m_haveRequiredQtScriptExtensions = importExtension("qt.core") && importExtension("qt.gui");
 
 	m_engine->globalObject().setProperty(
 		"msleep",
@@ -75,6 +74,11 @@ Interpreter::Interpreter(QObject* parent)
 		SIGNAL(newRemoteObject(RemoteObjectPrototype*)),
 		SLOT(connectRemoteObject(RemoteObjectPrototype*))
 	);
+}
+
+bool Interpreter::haveRequiredQtScriptExtensions() const
+{
+	return m_haveRequiredQtScriptExtensions;
 }
 
 QScriptEngine* Interpreter::engine() const
