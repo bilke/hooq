@@ -130,6 +130,11 @@ void Interpreter::connectRemoteObject(RemoteObjectPrototype* object)
 	);
 	connect(
 		object,
+		SIGNAL(closeEvent(QString)),
+		SLOT(writeCloseEvent(QString))
+	);
+	connect(
+		object,
 		SIGNAL(setFocusEvent(QString, Qt::FocusReason)),
 		SLOT(writeSetFocusEvent(QString, Qt::FocusReason))
 	);
@@ -250,6 +255,14 @@ void Interpreter::writeSetFocusEvent(const QString& path, Qt::FocusReason reason
 	writeStartElement("focusChanged");
 	writeAttribute("target", path);
 	writeAttribute("reason", QString::number(reason));
+	writeEndElement();
+	waitForAck();
+}
+
+void Interpreter::writeCloseEvent(const QString& path)
+{
+	writeStartElement("windowClosed");
+	writeAttribute("target", path);
 	writeEndElement();
 	waitForAck();
 }

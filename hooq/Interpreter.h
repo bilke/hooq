@@ -50,6 +50,7 @@ class Interpreter : public QObject, private QXmlStreamWriter
 		void pickObject();
 	private slots:
 		void connectRemoteObject(RemoteObjectPrototype*);
+		void writeCloseEvent(const QString& path);
 		void writeContextMenuEvent(const QString& path, const QPoint& position, const QPoint& globalPosition, Qt::KeyboardModifiers modifiers);
 		void writeSetFocusEvent(const QString& path, Qt::FocusReason reason);
 		void writeKeyPressEvent(const QString& path, int key, Qt::KeyboardModifiers modifiers, const QString& text, bool autorepeat, ushort count);

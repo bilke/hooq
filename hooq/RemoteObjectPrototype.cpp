@@ -173,6 +173,11 @@ void RemoteObjectPrototype::pressKey(const QVariantMap& parameters)
 	raiseKeyEvent(parameters, &RemoteObjectPrototype::keyPressEvent);
 }
 
+void RemoteObjectPrototype::close()
+{
+	emit closeEvent(path());
+}
+
 void RemoteObjectPrototype::setFocus(const QVariantMap& parameters)
 {
 	emit setFocusEvent(
