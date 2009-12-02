@@ -61,7 +61,7 @@ class Logger : public QObject
 		QXmlStreamWriter m_writer;
 		QTime m_timer;
 
-		void outputEvent(QObject* receiver, const char* event, const QXmlStreamAttributes& attributes, QObject* originalReceiver = 0);
+		void outputEvent(QObject* receiver, const char* event, const QXmlStreamAttributes& attributes = QXmlStreamAttributes(), QObject* originalReceiver = 0);
 
 		/** Get a name for an object.
 		 * This will be, in order of preference:
