@@ -131,7 +131,7 @@ bool Logger::eventFilter(QObject* receiver, QEvent* event)
 	// Check that we don't receive a canary when we've not put one in the queue
 	Q_ASSERT(event->type() != CanaryEvent::staticType() || m_ignoreEvents);
 
-	if(m_ignoreEvents)
+	if(m_ignoreEvents && event->type() != QEvent::Drop)
 	{
 		return false;
 	}
@@ -146,7 +146,7 @@ bool Logger::eventFilter(QObject* receiver, QEvent* event)
 			break;
 		case QEvent::Drop:
 			outputDragAndDropEvent(receiver, static_cast<QDropEvent*>(event));
-			break;
+			return false;
 		case QEvent::FocusIn:
 			outputEvent(focusObject(receiver), "focusChanged", focusEventAttributes(static_cast<QFocusEvent*>(event)), receiver);
 			break;
