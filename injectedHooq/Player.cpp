@@ -388,16 +388,14 @@ void Player::postDragAndDrop()
 			)
 		))
 	);
-	// 1.3. Wait for drag time interval
-	m_eventQueue.enqueue(Event::addTag("dnd_waitBeforeDrag", Event::withoutAck(new SleepEvent(qApp->startDragTime()))));
-	// 1.4. Give it a little nudge (QAbstractItemView requires two passes through mouseMoveEvent to start the drag)
+	// 1.3. Give it a little nudge (QAbstractItemView requires two passes through mouseMoveEvent to start the drag)
 	m_eventQueue.enqueue(
 		Event::addTag("dnd_nudge", Event::withoutAck(
 			new ObjectEvent(
 				sourcePath,
 				new QMouseEvent(
 					QEvent::MouseMove,
-					sourcePoint + QPoint(1, 1),
+					sourcePoint + QPoint(0, 1),
 					Qt::NoButton,
 					Qt::LeftButton,
 					Qt::NoModifier
@@ -405,8 +403,8 @@ void Player::postDragAndDrop()
 			)
 		))
 	);
-	// 1.3. (reprise) Wait for drag time interval
-	m_eventQueue.enqueue(Event::addTag("dnd_waitBeforeDrag", Event::withoutAck(new SleepEvent(qApp->startDragTime()))));
+	// 1.2. (reprise) Wait for drag time interval
+	m_eventQueue.enqueue(Event::addTag("dnd_waitBeforeDrag", Event::withoutAck(new SleepEvent(qApp->startDragTime() + 1)))); // +1 here is just in case someone else has a similar issue to the QAbstractItemView one below
 	// 1.5. Drag it for the minimum distance
 	m_eventQueue.enqueue(
 		Event::addTag("dnd_initialDrag", Event::withoutAck(
@@ -414,7 +412,7 @@ void Player::postDragAndDrop()
 				sourcePath,
 				new QMouseEvent(
 					QEvent::MouseMove,
-					sourcePoint + QPoint(0, qApp->startDragDistance()),
+					sourcePoint + QPoint(0, qApp->startDragDistance() + 1), // QAbstractItemView needs the +1, at least in 4.6.0
 					Qt::NoButton,
 					Qt::LeftButton,
 					Qt::NoModifier
@@ -422,6 +420,8 @@ void Player::postDragAndDrop()
 			)
 		))
 	);
+	/*
+	m_eventQueue.enqueue(Event::addTag("dnd_waitBeforeDrag", Event::withoutAck(new SleepEvent(qApp->startDragTime() * 2))));
 	// 2. Now we've started the drag (hopefully), drop it
 	///@todo Check that a drag has actually started
 	// 2.1. Move the mouse first, just to be friendly
@@ -456,6 +456,7 @@ void Player::postDragAndDrop()
 			)
 		))
 	);
+	*/
 
 	// ACK the DnD as a whole
 	m_eventQueue.enqueue(Event::withoutAck(new FlushEvent()));
