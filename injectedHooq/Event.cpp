@@ -73,10 +73,6 @@ PathEvent::~PathEvent()
 {
 }
 
-FocusEvent::~FocusEvent()
-{
-}
-
 ObjectEvent::~ObjectEvent()
 {
 }
@@ -111,8 +107,12 @@ QEvent* ObjectEvent::qtEvent() const
 	return m_qtEvent;
 }
 
+FocusEvent::~FocusEvent()
+{
+}
+
 FocusEvent::FocusEvent(const QString& objectPath, Qt::FocusReason reason)
-: TypedEvent<FocusEvent,PathEvent>(objectPath)
+: TypedEvent<FocusEvent, PathEvent>(objectPath)
 , m_reason(reason)
 {
 }
@@ -120,6 +120,15 @@ FocusEvent::FocusEvent(const QString& objectPath, Qt::FocusReason reason)
 Qt::FocusReason FocusEvent::reason() const
 {
 	return m_reason;
+}
+
+CloseEvent::CloseEvent(const QString& objectPath)
+: TypedEvent<CloseEvent, PathEvent>(objectPath)
+{
+}
+
+CloseEvent::~CloseEvent()
+{
 }
 
 };

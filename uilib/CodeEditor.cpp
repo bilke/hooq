@@ -72,7 +72,10 @@ void CodeEditor::highlightLine(int lineNumber)
 	const QTextBlock end = document()->findBlockByNumber(lineNumber);
 
 	selection.cursor.setPosition(begin.position());
-	selection.cursor.setPosition(end.position(), QTextCursor::KeepAnchor);
+	selection.cursor.setPosition(
+		end.isValid() ? end.position() : document()->characterCount() - 1,
+		QTextCursor::KeepAnchor
+	);
 	selections.append(selection);
 
 	setExtraSelections(selections);

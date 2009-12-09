@@ -33,6 +33,7 @@ class RemoteObjectPrototype : public QObject, public QScriptable
 		
 		QString path() const;
 	public slots:
+		void close();
 		void moveMouse(const QVariantMap& parameters);
 		void pressMouseButton(const QVariantMap& parameters);
 		void releaseMouseButton(const QVariantMap& parameters);
@@ -46,6 +47,7 @@ class RemoteObjectPrototype : public QObject, public QScriptable
 		QVariant property(const QString& name);
 		void sendText(const QString& text);
 	signals:
+		void closeEvent(const QString& path);
 		void sleepRequested(int msec);
 		void setFocusEvent(const QString& path, Qt::FocusReason reason);
 		void propertyRequested(const QString& path, const QString& name, QVariant* result);

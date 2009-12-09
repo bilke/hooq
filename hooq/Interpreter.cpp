@@ -42,8 +42,7 @@ Interpreter::Interpreter(QObject* parent)
 , m_pendingAcks(0)
 , m_engine(new QScriptEngine(this))
 {
-	importExtension("qt.core");
-	importExtension("qt.gui");
+	m_haveRequiredQtScriptExtensions = importExtension("qt.core") && importExtension("qt.gui");
 
 	m_engine->globalObject().setProperty(
 		"msleep",
@@ -77,6 +76,11 @@ Interpreter::Interpreter(QObject* parent)
 		SIGNAL(newRemoteObject(RemoteObjectPrototype*)),
 		SLOT(connectRemoteObject(RemoteObjectPrototype*))
 	);
+}
+
+bool Interpreter::haveRequiredQtScriptExtensions() const
+{
+	return m_haveRequiredQtScriptExtensions;
 }
 
 QScriptEngine* Interpreter::engine() const
@@ -129,6 +133,11 @@ void Interpreter::connectRemoteObject(RemoteObjectPrototype* object)
 		object,
 		SIGNAL(wheelEvent(QString, QPoint, int, Qt::MouseButtons, Qt::KeyboardModifiers, Qt::Orientation)),
 		SLOT(writeWheelEvent(QString, QPoint, int, Qt::MouseButtons, Qt::KeyboardModifiers, Qt::Orientation))
+	);
+	connect(
+		object,
+		SIGNAL(closeEvent(QString)),
+		SLOT(writeCloseEvent(QString))
 	);
 	connect(
 		object,
@@ -252,6 +261,14 @@ void Interpreter::writeSetFocusEvent(const QString& path, Qt::FocusReason reason
 	writeStartElement("focusChanged");
 	writeAttribute("target", path);
 	writeAttribute("reason", QString::number(reason));
+	writeEndElement();
+	waitForAck();
+}
+
+void Interpreter::writeCloseEvent(const QString& path)
+{
+	writeStartElement("windowClosed");
+	writeAttribute("target", path);
 	writeEndElement();
 	waitForAck();
 }

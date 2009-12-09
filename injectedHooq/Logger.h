@@ -59,13 +59,22 @@ class Logger : public QObject
 		static bool hook(void** data);
 		bool eventFilter(QObject* receiver, QEvent* event);
 
+		bool m_ignoreEvents;
 		QXmlStreamWriter m_writer;
 		QTime m_timer;
 		QPoint m_dragOriginPoint;
 		QObject* m_dragOriginWidget;
 
-		void outputEvent(QObject* receiver, const char* event, const QXmlStreamAttributes& attributes, QObject* originalReceiver = 0);
 		void outputDragAndDropEvent(QObject* receiver, QDropEvent* event);
+		void outputEvent(QObject* receiver, const char* event, const QXmlStreamAttributes& attributes = QXmlStreamAttributes(), QObject* originalReceiver = 0);
+
+		/** Get a name for an object.
+		 * This will be, in order of preference:
+		 * - the objects' name, if it has one
+		 * - the classname + ":n", where 'n' is the position within the children of the same class with the same parent
+		 * - the classname + ":0" if the object has no parent
+		 */
+		static QString objectName(QObject* object);
 
 		static QString safeText(const QString&);
 

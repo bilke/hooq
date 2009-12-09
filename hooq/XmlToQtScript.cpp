@@ -106,6 +106,11 @@ QString XmlToQtScript::parseHooq()
 					items.append(parseMsec());
 					continue;
 				}
+				if(name() == "windowClosed")
+				{
+					items.append(parseCloseEvent());
+					continue;
+				}
 				if(name() == "focusChanged")
 				{
 					items.append(parseFocusEvent());
@@ -257,6 +262,8 @@ QString XmlToQtScript::parametersString(const QVariant& parameters)
 				}
 				return "{" + out.join(", ") + "}";
 			}
+		case QVariant::Invalid:
+			return QString();
 		case QVariant::UserType:
 			if(parameters.canConvert<Qt::FocusReason>())
 			{
@@ -345,6 +352,22 @@ XmlToQtScript::Item XmlToQtScript::parseFocusEvent()
 
 	QVariantMap parameters;
 	parameters["reason"] = QVariant::fromValue(static_cast<Qt::FocusReason>(attributes().value("reason").toString().toInt()));
+
+	// skip to end of element
+	readElementText();
+
+	return Item(target, targetClass, call, parameters);
+}
+
+XmlToQtScript::Item XmlToQtScript::parseCloseEvent()
+{
+	const QString call("close");
+	Q_ASSERT(!call.isEmpty());
+
+	const QString target = attributes().value("target").toString();
+	const QString targetClass = attributes().value("targetClass").toString();
+
+	const QVariant parameters; // none at the moment
 
 	// skip to end of element
 	readElementText();

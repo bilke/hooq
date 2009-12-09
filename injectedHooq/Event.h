@@ -39,7 +39,8 @@ namespace Hooq
 				Object, ///< A QEvent to be sent to a QObject
 				Pick,   ///< Request for the user to click on a QObject, then treat as the target of a Dump event
 				Sleep,  ///< Wait a certain amount of time
-				Flush   ///< Call qApp->processEvents - be careful with this, may block Hooq
+				Flush,  ///< Call qApp->processEvents - be careful with this, may block Hooq
+				Close   ///< Close a widget
 			};
 			virtual Type type() const = 0;
 			bool ack() const;
@@ -105,6 +106,13 @@ namespace Hooq
 			Qt::FocusReason reason() const;
 		private:
 			Qt::FocusReason m_reason;
+	};
+	class CloseEvent: public TypedEvent<CloseEvent, PathEvent>
+	{
+		public:
+			static const Event::Type EVENT_TYPE = Close;
+			CloseEvent(const QString& objectPath);
+			virtual ~CloseEvent();
 	};
 
 	class ObjectEvent : public TypedEvent<ObjectEvent, PathEvent>

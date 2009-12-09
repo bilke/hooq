@@ -14,6 +14,7 @@ QT += network
 HEADERS += \
 	../common/ObjectHookName.h \
 	../common/Communication.h \
+	CanaryEvent.h \
 	Event.h \
 	Logger.h \
 	Marshall.h \
@@ -23,6 +24,7 @@ HEADERS += \
 SOURCES += \
 	../common/ObjectHookName.cpp \
 	../common/Communication.cpp \
+	CanaryEvent.cpp \
 	Event.cpp \
 	Logger.cpp \
 	Marshall.cpp \

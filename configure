@@ -1,6 +1,5 @@
 #!/bin/sh
 set -e
-echo CONFIGURE IS BEING RAN
 export PATH=/opt/qt4-mendeley/bin:$PATH
 echo "BINDIR=/usr/bin" > install.pri
 case $(uname -m) in
@@ -10,6 +9,7 @@ case $(uname -m) in
 	*)
 		echo "LIBDIR=/usr/lib" >> install.pri
 esac
-if ! qmake; then
-	qmake-qt4
+DIRECTORY=$(dirname "$0")
+if ! qmake "${DIRECTORY}"/*.pro ; then
+	qmake-qt4 "${DIRECTORY}"/*.pro
 fi

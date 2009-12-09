@@ -241,6 +241,24 @@ void Player::processEvents()
 				}
 				break;
 			}
+			case Event::Close:
+			{
+				CloseEvent* e = Hooq::event_cast<CloseEvent*>(event.get());
+				Q_ASSERT(e);
+				QObject* o = findObject(e->objectPath());
+				QWidget* w = qobject_cast<QWidget*>(o);
+				if(w)
+				{
+					w->close();
+				}
+				else
+				{
+					qDebug() << "Couldn't find widget to close from" << e->objectPath() << "- QObject:" << o;
+					Q_ASSERT(o);
+					Q_ASSERT(w);
+				}
+				break;
+			}
 			case Event::Object:
 			{
 				ObjectEvent* e = Hooq::event_cast<ObjectEvent*>(event.get());
@@ -465,6 +483,10 @@ void Player::handleElement()
 	}
 
 	// QEvents
+	if(name() == "windowClosed")
+	{
+		postCloseEvent();
+	}
 	if(name() == "contextMenu")
 	{
 		postContextMenuEvent();
@@ -516,6 +538,11 @@ void Player::postShortcutEvent()
 	);
 
 	m_eventQueue.enqueue(new ObjectEvent(attributes().value("target").toString(), event));
+}
+
+void Player::postCloseEvent()
+{
+	m_eventQueue.enqueue(new CloseEvent(attributes().value("target").toString()));
 }
 
 void Player::postContextMenuEvent()
