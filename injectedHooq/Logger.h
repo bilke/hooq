@@ -19,6 +19,7 @@
 */
 #pragma once
 
+#include <QBuffer>
 #include <QObject>
 #include <QPoint>
 #include <QPointer>
@@ -48,6 +49,11 @@ class Logger : public QObject
 	private slots:
 		void readInput();
 	private:
+		void startDragAndDropBuffer();
+		void stopDragAndDropBuffer();
+		void flushDragAndDropBuffer();
+		void clearDragAndDropBuffer();
+
 		static QObject* focusObject(QObject* object);
 		static Logger* instance();
 		Logger(QIODevice* device);
@@ -64,6 +70,8 @@ class Logger : public QObject
 		QTime m_timer;
 		QPoint m_dragOriginPoint;
 		QObject* m_dragOriginWidget;
+		QBuffer m_dragAndDropBuffer;
+		QIODevice* m_device;
 
 		void outputDragAndDropEvent(QObject* receiver, QDropEvent* event);
 		void outputEvent(QObject* receiver, const char* event, const QXmlStreamAttributes& attributes = QXmlStreamAttributes(), QObject* originalReceiver = 0);

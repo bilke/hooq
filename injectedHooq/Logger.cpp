@@ -60,6 +60,7 @@ Logger* Logger::instance()
 Logger::Logger(QIODevice* device)
 : QObject()
 , m_ignoreEvents(false)
+, m_device(device)
 {
 	disconnect(device, 0, 0, 0);
 
@@ -124,6 +125,29 @@ QObject* Logger::focusObject(QObject* receiver)
 		return widget->focusProxy();
 	}
 	return widget;
+}
+
+void Logger::clearDragAndDropBuffer()
+{
+	m_dragAndDropBuffer.close();
+	m_dragAndDropBuffer.setData(QByteArray());
+	m_dragAndDropBuffer.open(QIODevice::writeOnly);
+}
+
+void Logger::startDragAndDropBuffer()
+{
+	clearDragAndDropBuffer();
+	m_writer.setDevice(&m_dragAndDropBuffer);
+}
+
+void Logger::flushDragAndDropBuffer()
+{
+}
+
+void Logger::stopDragAndDropBuffer()
+{
+	clearAndDragAndDropBuffer();
+	m_dragAndDropBuffer.close();
 }
 
 bool Logger::eventFilter(QObject* receiver, QEvent* event)
