@@ -20,6 +20,7 @@
 #pragma once
 
 #include <QBuffer>
+#include <QEvent>
 #include <QObject>
 #include <QPoint>
 #include <QPointer>
@@ -72,6 +73,7 @@ class Logger : public QObject
 		QObject* m_dragOriginWidget;
 		QBuffer m_dragAndDropBuffer;
 		QIODevice* m_device;
+		QEvent::Type m_lastEvent;
 
 		void outputDragAndDropEvent(QObject* receiver, QDropEvent* event);
 		void outputEvent(QObject* receiver, const char* event, const QXmlStreamAttributes& attributes = QXmlStreamAttributes(), QObject* originalReceiver = 0);

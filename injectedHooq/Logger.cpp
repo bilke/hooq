@@ -162,7 +162,14 @@ bool Logger::eventFilter(QObject* receiver, QEvent* event)
 	{
 		return false;
 	}
-
+	if(m_lastEvent == QEvent::MouseButtonRelease)
+	{
+		if(event->type() != QEvent::Drop)
+		{
+			flushDragAndDropBuffer();
+		}
+		stopDragAndDropBuffer();
+	}
 	switch(event->type())
 	{
 		case QEvent::Close:
@@ -187,6 +194,7 @@ bool Logger::eventFilter(QObject* receiver, QEvent* event)
 			outputEvent(receiver, "mouseMove", mouseEventAttributes(static_cast<QMouseEvent*>(event)));
 			break;
 		case QEvent::MouseButtonPress:
+			startDragAndDropBuffer();
 			m_dragOriginWidget = receiver;
 			m_dragOriginPoint = static_cast<QMouseEvent*>(event)->pos();
 			outputEvent(receiver, "mouseButtonPress", mouseEventAttributes(static_cast<QMouseEvent*>(event)));
@@ -207,6 +215,7 @@ bool Logger::eventFilter(QObject* receiver, QEvent* event)
 			break;
 
 	}
+	m_lastEvent = event->type();
 	QCoreApplication::postEvent(this, new CanaryEvent(&m_ignoreEvents));
 	return false;
 }
