@@ -131,7 +131,7 @@ void Logger::clearDragAndDropBuffer()
 {
 	m_dragAndDropBuffer.close();
 	m_dragAndDropBuffer.setData(QByteArray());
-	m_dragAndDropBuffer.open(QIODevice::writeOnly);
+	m_dragAndDropBuffer.open(QIODevice::WriteOnly);
 }
 
 void Logger::startDragAndDropBuffer()
@@ -142,11 +142,14 @@ void Logger::startDragAndDropBuffer()
 
 void Logger::flushDragAndDropBuffer()
 {
+	m_device->write(m_dragAndDropBuffer.data());
+	clearDragAndDropBuffer();
 }
 
 void Logger::stopDragAndDropBuffer()
 {
-	clearAndDragAndDropBuffer();
+	m_writer.setDevice(m_device);
+	clearDragAndDropBuffer();
 	m_dragAndDropBuffer.close();
 }
 
