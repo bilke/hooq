@@ -22,6 +22,7 @@
 #include <QDebug>
 #include <QKeySequence>
 #include <QPoint>
+#include <QScriptEngine>
 
 Q_DECLARE_METATYPE(Qt::FocusReason);
 Q_DECLARE_METATYPE(Qt::Key);
@@ -47,9 +48,31 @@ QVariant RemoteObjectPrototype::property(const QString& name)
 	return value;
 }
 
+QScriptValue RemoteObjectPrototype::drag(const QVariantMap& parameters)
+{
+	Q_ASSERT(parameters.contains("x"));
+	Q_ASSERT(parameters.contains("y"));
+	QScriptValue value = engine()->newObject();
+	value.setProperty("path", path());
+	value.setProperty("x", parameters.value("x").toInt());
+	value.setProperty("y", parameters.value("y").toInt());
+	return value;
+}
+
 QString RemoteObjectPrototype::path() const
 {
 	return m_path;
+}
+
+void RemoteObjectPrototype::drop(const QScriptValue& parameters)
+{
+	const QScriptValue source = parameters.property("dragged");
+	const QString sourcePath = source.property("path").toString();
+	const QPoint sourcePoint = QPoint(source.property("x").toInt32(), source.property("y").toInt32());
+
+	const QString targetPath = path();
+	const QPoint targetPoint = QPoint(parameters.property("x").toInt32(), parameters.property("y").toInt32());
+	qDebug() << "DnD event:" << sourcePath << sourcePoint << targetPath << targetPoint;
 }
 
 void RemoteObjectPrototype::raiseMouseEvent(const QVariantMap& parameters, MouseSignal signal)

@@ -19,6 +19,7 @@
 */
 #pragma once
 
+#include <QScriptValue>
 #include <QScriptable>
 #include <QVariant>
 
@@ -45,6 +46,8 @@ class RemoteObjectPrototype : public QObject, public QScriptable
 		void contextMenu(const QVariantMap& parameters);
 		void setFocus(const QVariantMap& parameters);
 		QVariant property(const QString& name);
+		QScriptValue drag(const QVariantMap& parameters);
+		void drop(const QScriptValue& parameters);
 		void sendText(const QString& text);
 	signals:
 		void closeEvent(const QString& path);
