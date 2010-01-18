@@ -1,6 +1,6 @@
 /*
 	Hooq: Qt4 UI recording, playback, and testing toolkit.
-	Copyright (C) 2009  Mendeley Limited <copyright@mendeley.com>
+	Copyright (C) 2010  Mendeley Limited <copyright@mendeley.com>
 	Copyright (C) 2009  Frederick Emmott <mail@fredemmott.co.uk>
 
 	This program is free software; you can redistribute it and/or modify
@@ -158,6 +158,11 @@ void Interpreter::connectRemoteObject(RemoteObjectPrototype* object)
 		object,
 		SIGNAL(shortcutEvent(QString, QKeySequence, int, bool)),
 		SLOT(writeShortcutEvent(QString, QKeySequence, int, bool))
+	);
+	connect(
+		object,
+		SIGNAL(dragAndDropEvent(QString,QPoint,QString,QPoint)),
+		SLOT(writeDragAndDropEvent(QString,QPoint,QString,QPoint))
 	);
 	connect(
 		object,
@@ -367,6 +372,19 @@ void Interpreter::writeWheelEvent(const QString& path, const QPoint& position, i
 	writeAttribute("modifiers", QString::number(modifiers));
 	writeAttribute("orientation", QString::number(orientation));
 	writeAttribute("target", path);
+	writeEndElement();
+	waitForAck();
+}
+
+void Interpreter::writeDragAndDropEvent(const QString& sourcePath, const QPoint& sourcePoint, const QString& targetPath, const QPoint& targetPoint)
+{
+	writeStartElement("dragAndDrop");
+	writeAttribute("source", sourcePath);
+	writeAttribute("sourceX", QString::number(sourcePoint.x()));
+	writeAttribute("sourceY", QString::number(sourcePoint.y()));
+	writeAttribute("target", targetPath);
+	writeAttribute("targetX", QString::number(targetPoint.x()));
+	writeAttribute("targetY", QString::number(targetPoint.y()));
 	writeEndElement();
 	waitForAck();
 }

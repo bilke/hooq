@@ -1,6 +1,6 @@
 /*
 	Hooq: Qt4 UI recording, playback, and testing toolkit.
-	Copyright (C) 2009  Mendeley Limited <copyright@mendeley.com>
+	Copyright (C) 2010  Mendeley Limited <copyright@mendeley.com>
 	Copyright (C) 2009  Frederick Emmott <mail@fredemmott.co.uk>
 
 	This program is free software; you can redistribute it and/or modify
@@ -72,7 +72,8 @@ void RemoteObjectPrototype::drop(const QScriptValue& parameters)
 
 	const QString targetPath = path();
 	const QPoint targetPoint = QPoint(parameters.property("x").toInt32(), parameters.property("y").toInt32());
-	qDebug() << "DnD event:" << sourcePath << sourcePoint << targetPath << targetPoint;
+	//qDebug() << "DnD event:" << sourcePath << sourcePoint << targetPath << targetPoint;
+	emit dragAndDropEvent(sourcePath, sourcePoint, targetPath, targetPoint);
 }
 
 void RemoteObjectPrototype::raiseMouseEvent(const QVariantMap& parameters, MouseSignal signal)

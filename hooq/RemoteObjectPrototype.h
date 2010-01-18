@@ -1,6 +1,6 @@
 /*
 	Hooq: Qt4 UI recording, playback, and testing toolkit.
-	Copyright (C) 2009  Mendeley Limited <copyright@mendeley.com>
+	Copyright (C) 2010  Mendeley Limited <copyright@mendeley.com>
 	Copyright (C) 2009  Frederick Emmott <mail@fredemmott.co.uk>
 
 	This program is free software; you can redistribute it and/or modify
@@ -63,6 +63,7 @@ class RemoteObjectPrototype : public QObject, public QScriptable
 		void keyReleaseEvent(const QString& path, int key, Qt::KeyboardModifiers modifiers, const QString& text, bool autorepeat, ushort count);
 		void shortcutEvent(const QString& path, const QKeySequence& sequence, int id, bool ambiguous);
 		void contextMenuEvent(const QString& path, const QPoint& position, const QPoint& globalPosition, Qt::KeyboardModifiers modifiers);
+		void dragAndDropEvent(const QString& sourcePath, const QPoint& sourcePosition, const QString& targetPath, const QPoint& targetPosition);
 	private:
 		static Qt::Key keyForChar(const QChar& character);
 		/// KeySignal typedef - pointer to either the keyPressEvent or keyReleaseEvent signals

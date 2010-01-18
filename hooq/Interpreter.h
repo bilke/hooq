@@ -1,6 +1,6 @@
 /*
 	Hooq: Qt4 UI recording, playback, and testing toolkit.
-	Copyright (C) 2009  Mendeley Limited <copyright@mendeley.com>
+	Copyright (C) 2010  Mendeley Limited <copyright@mendeley.com>
 	Copyright (C) 2009  Frederick Emmott <mail@fredemmott.co.uk>
 
 	This program is free software; you can redistribute it and/or modify
@@ -64,6 +64,7 @@ class Interpreter : public QObject, private QXmlStreamWriter
 		void writeShortcutEvent(const QString& path, const QKeySequence& sequence, int id, bool ambiguous);
 		void writeSleep(int msec);
 		void writeWheelEvent(const QString& path, const QPoint& position, int delta, Qt::MouseButtons buttons, Qt::KeyboardModifiers modifiers, Qt::Orientation orientation);
+		void writeDragAndDropEvent(const QString& sourcePath, const QPoint& sourcePosition, const QString& targetPath, const QPoint& targetPosition);
 		void fetchProperty(const QString& path, const QString& name, QVariant* value);
 	private:
 		bool importExtension(const QString& extension);
