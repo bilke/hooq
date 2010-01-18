@@ -102,7 +102,6 @@ QString XmlToQtScript::parseHooq()
 		switch(tokenType())
 		{
 			case StartElement:
-				qDebug() << "Reading token" << name();
 				if(name() == "msec")
 				{
 					items.append(parseMsec());
@@ -148,18 +147,16 @@ QString XmlToQtScript::parseHooq()
 					items.append(parseDragAndDropEvent());
 					continue;
 				}
-				qDebug() << Q_FUNC_INFO << "skipping unknown element" << name().toString();
 				skipElement();
 				break;
 			case EndElement:
-				qDebug() << "Reading end element with" << items.count() << "items";
 				return itemString(items);
 			default:
 				break;
 		}
 	}
-	qDebug() << "Reached EOF!";
-	return QString();
+	qDebug() << "Unexpected EOF in XML";
+	return QString("/* Unexpected EOF in XML */\n" + itemString(items));
 }
 
 QString XmlToQtScript::itemString(const QList<Item>& items) const
