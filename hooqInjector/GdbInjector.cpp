@@ -100,7 +100,12 @@ void GdbInjector::startProcess()
 	m_gdbStream << "sharedlibrary libQtCore" << endl; // load QtCore for breaking on QCoreApplication::exec()
 	m_gdbStream << "break QCoreApplication::exec()" << endl; // now, we can set this breakpoint...
 	m_gdbStream << "continue" << endl;
+
+	// Newer systems
+	m_gdbStream << QString("call dlopen(\"%1\", %2)").arg(libraryPath()).arg(QString::number(RTLD_NOW)) << endl; // load our library
+	// Older systems
 	m_gdbStream << QString("call __dlopen(\"%1\", %2)").arg(libraryPath()).arg(QString::number(RTLD_NOW)) << endl; // load our library
+
 	m_gdbStream << "sharedlibrary injectedHooq" << endl; // load the hooq injector library so that we can call startHooq()
 	m_gdbStream << "call startHooq()" << endl; // install our plugin (which required QCoreApplication setup)
 	m_gdbStream << "continue" << endl; // run the app
