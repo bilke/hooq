@@ -1,6 +1,6 @@
 /*
 	Hooq: Qt4 UI recording, playback, and testing toolkit.
-	Copyright (C) 2009  Mendeley Limited <copyright@mendeley.com>
+	Copyright (C) 2010  Mendeley Limited <copyright@mendeley.com>
 	Copyright (C) 2009  Frederick Emmott <mail@fredemmott.co.uk>
 
 	This program is free software; you can redistribute it and/or modify
@@ -23,9 +23,8 @@ XmlToQtScript::StripMouseMovementsPostProcessor::StripMouseMovementsPostProcesso
 {
 }
 
-void XmlToQtScript::StripMouseMovementsPostProcessor::process(Item* iterator, QList<Item>* in, QList<Item>* out)
+void XmlToQtScript::StripMouseMovementsPostProcessor::process(Item* iterator, QList<Item>* in)
 {
-	Q_UNUSED(out);
 	if(iterator->method == "moveMouse")
 	{
 		if(!in->isEmpty())
@@ -34,7 +33,7 @@ void XmlToQtScript::StripMouseMovementsPostProcessor::process(Item* iterator, QL
 			*iterator = in->takeFirst(); // SKIP
 			Q_ASSERT(!in->isEmpty()); // MouseMove+msleep should *REALLY* not be the last thing
 			*iterator = in->takeFirst();
-			process(iterator, in, out);
+			process(iterator, in);
 		}
 		else
 		{

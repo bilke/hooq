@@ -1,6 +1,6 @@
 /*
 	Hooq: Qt4 UI recording, playback, and testing toolkit.
-	Copyright (C) 2009  Mendeley Limited <copyright@mendeley.com>
+	Copyright (C) 2010  Mendeley Limited <copyright@mendeley.com>
 	Copyright (C) 2009  Frederick Emmott <mail@fredemmott.co.uk>
 
 	This program is free software; you can redistribute it and/or modify
@@ -20,9 +20,19 @@
 #include "XmlToQtScript_PostProcessor.h"
 
 XmlToQtScript::PostProcessor::PostProcessor()
+: m_inserter(0)
+{
+}
+XmlToQtScript::PostProcessor::PostProcessor(XmlToQtScript::Item::Inserter* inserter)
+: m_inserter(inserter)
 {
 }
 
 XmlToQtScript::PostProcessor::~PostProcessor()
 {
+}
+
+void XmlToQtScript::PostProcessor::insertItem(const Item& item, Position position)
+{
+	Q_ASSERT(m_inserter);
 }

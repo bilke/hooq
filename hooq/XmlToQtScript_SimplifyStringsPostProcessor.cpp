@@ -1,6 +1,6 @@
 /*
 	Hooq: Qt4 UI recording, playback, and testing toolkit.
-	Copyright (C) 2009  Mendeley Limited <copyright@mendeley.com>
+	Copyright (C) 2010  Mendeley Limited <copyright@mendeley.com>
 	Copyright (C) 2009  Frederick Emmott <mail@fredemmott.co.uk>
 
 	This program is free software; you can redistribute it and/or modify
@@ -26,11 +26,12 @@
 Q_DECLARE_METATYPE(Qt::Key);
 Q_DECLARE_METATYPE(Qt::KeyboardModifiers);
 
-XmlToQtScript::SimplifyStringsPostProcessor::SimplifyStringsPostProcessor()
+XmlToQtScript::SimplifyStringsPostProcessor::SimplifyStringsPostProcessor(XmlToQtScript::Item::Inserter* inserter)
+: PostProcessor(inserter)
 {
 }
 
-void XmlToQtScript::SimplifyStringsPostProcessor::process(Item* iterator, QList<Item>* in, QList<Item>* out)
+void XmlToQtScript::SimplifyStringsPostProcessor::process(Item* iterator, QList<Item>* in)
 {
 	if(iterator->method == "pressKey")
 	{
@@ -91,15 +92,16 @@ void XmlToQtScript::SimplifyStringsPostProcessor::process(Item* iterator, QList<
 		}
 		if(!string.isEmpty())
 		{
-			out->append(
+			insertItem(
 				Item(
 					target,
 					targetClass,
 					"sendText",
 					string
-				)
+				),
+				AfterCurrentItem
 			);
-			out->append(msec);
+			insertItem(msec, AfterCurrentItem);
 		}
 	}
 }

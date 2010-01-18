@@ -1,6 +1,6 @@
 /*
 	Hooq: Qt4 UI recording, playback, and testing toolkit.
-	Copyright (C) 2009  Mendeley Limited <copyright@mendeley.com>
+	Copyright (C) 2010  Mendeley Limited <copyright@mendeley.com>
 	Copyright (C) 2009  Frederick Emmott <mail@fredemmott.co.uk>
 
 	This program is free software; you can redistribute it and/or modify
@@ -24,11 +24,12 @@
 #include <QString>
 #include <QVariant>
 
-XmlToQtScript::SimplifyMouseMovementsPostProcessor::SimplifyMouseMovementsPostProcessor()
+XmlToQtScript::SimplifyMouseMovementsPostProcessor::SimplifyMouseMovementsPostProcessor(XmlToQtScript::Item::Inserter* inserter)
+: PostProcessor(inserter)
 {
 }
 
-void XmlToQtScript::SimplifyMouseMovementsPostProcessor::process(Item* iterator, QList<Item>* in, QList<Item>* out)
+void XmlToQtScript::SimplifyMouseMovementsPostProcessor::process(Item* iterator, QList<Item>* in)
 {
 	if(iterator->method == "moveMouse")
 	{
@@ -72,13 +73,14 @@ void XmlToQtScript::SimplifyMouseMovementsPostProcessor::process(Item* iterator,
 		parameters.insert("destinationX", destination.x());
 		parameters.insert("destinationY", destination.y());
 		parameters.insert("duration", duration);
-		out->append(
+		insertItem(
 			Item(
 				target,
 				targetClass,
 				"moveMouse",
 				parameters
-			)
+			),
+			BeforeCurrentItem
 		);
 	}
 }

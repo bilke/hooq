@@ -1,6 +1,6 @@
 /*
 	Hooq: Qt4 UI recording, playback, and testing toolkit.
-	Copyright (C) 2009  Mendeley Limited <copyright@mendeley.com>
+	Copyright (C) 2010  Mendeley Limited <copyright@mendeley.com>
 	Copyright (C) 2009  Frederick Emmott <mail@fredemmott.co.uk>
 
 	This program is free software; you can redistribute it and/or modify
@@ -22,11 +22,12 @@
 #include <QSet>
 #include <QStringList>
 
-XmlToQtScript::StringVariablesPostProcessor::StringVariablesPostProcessor()
+XmlToQtScript::StringVariablesPostProcessor::StringVariablesPostProcessor(XmlToQtScript::Item::Inserter* inserter)
+: PostProcessor(inserter)
 {
 }
 
-void XmlToQtScript::StringVariablesPostProcessor::process(Item* iterator, QList<Item>* in, QList<Item>* out)
+void XmlToQtScript::StringVariablesPostProcessor::process(Item* iterator, QList<Item>* in)
 {
 	Q_UNUSED(in);
 	if(iterator->method != "sendText")
@@ -40,14 +41,10 @@ void XmlToQtScript::StringVariablesPostProcessor::process(Item* iterator, QList<
 	{
 		const int position = m_variables.count();
 		m_variables.append(value);
-		for(int i = 0; i < out->count(); ++i)
-		{
-			if(!out->at(i).method.startsWith("var string"))
-			{
-				out->insert(i, Item(QString("var string%1 = \"%2\"").arg(position).arg(XmlToQtScript::escapeString(value)), QVariant()));
-				break;
-			}
-		}
+		insertItem(
+			Item(QString("var string%1 = \"%2\"").arg(position).arg(XmlToQtScript::escapeString(value)), QVariant()),
+			Beginning
+		);
 	}
 	Q_ASSERT(m_variables.contains(value));
 	iterator->parameters = QVariant::fromValue(Variable(QString("string%1").arg(m_variables.indexOf(value))));

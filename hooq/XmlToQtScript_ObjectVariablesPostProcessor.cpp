@@ -1,6 +1,6 @@
 /*
 	Hooq: Qt4 UI recording, playback, and testing toolkit.
-	Copyright (C) 2009  Mendeley Limited <copyright@mendeley.com>
+	Copyright (C) 2010  Mendeley Limited <copyright@mendeley.com>
 	Copyright (C) 2009  Frederick Emmott <mail@fredemmott.co.uk>
 
 	This program is free software; you can redistribute it and/or modify
@@ -22,11 +22,12 @@
 #include <QSet>
 #include <QStringList>
 
-XmlToQtScript::ObjectVariablesPostProcessor::ObjectVariablesPostProcessor()
+XmlToQtScript::ObjectVariablesPostProcessor::ObjectVariablesPostProcessor(XmlToQtScript::Item::Inserter* inserter)
+: PostProcessor(inserter)
 {
 }
 
-void XmlToQtScript::ObjectVariablesPostProcessor::process(Item* iterator, QList<Item>* in, QList<Item>* out)
+void XmlToQtScript::ObjectVariablesPostProcessor::process(Item* iterator, QList<Item>* in)
 {
 	Q_UNUSED(in);
 	if(iterator->target.isNull())
@@ -62,7 +63,10 @@ void XmlToQtScript::ObjectVariablesPostProcessor::process(Item* iterator, QList<
 			}
 		}
 		m_variables.insert(target, name);
-		out->append(Item(QString("var %1 = objectFromPath").arg(name), target));
+		insertItem(
+			Item(QString("var %1 = objectFromPath").arg(name), target),
+			BeforeCurrentItem
+		);
 	}
 	iterator->target = QVariant::fromValue(Variable(m_variables.value(target)));
 }

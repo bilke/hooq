@@ -1,6 +1,6 @@
 /*
 	Hooq: Qt4 UI recording, playback, and testing toolkit.
-	Copyright (C) 2009  Mendeley Limited <copyright@mendeley.com>
+	Copyright (C) 2010  Mendeley Limited <copyright@mendeley.com>
 	Copyright (C) 2009  Frederick Emmott <mail@fredemmott.co.uk>
 
 	This program is free software; you can redistribute it and/or modify
@@ -25,5 +25,5 @@ class XmlToQtScript::StripMouseMovementsPostProcessor : public PostProcessor
 {
 	public:
 		StripMouseMovementsPostProcessor();
-		void process(Item* iterator, QList<Item>* in, QList<Item>* out);
+		void process(Item* iterator, QList<Item>* in);
 };

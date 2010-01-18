@@ -1,6 +1,6 @@
 /*
 	Hooq: Qt4 UI recording, playback, and testing toolkit.
-	Copyright (C) 2009  Mendeley Limited <copyright@mendeley.com>
+	Copyright (C) 2010  Mendeley Limited <copyright@mendeley.com>
 	Copyright (C) 2009  Frederick Emmott <mail@fredemmott.co.uk>
 
 	This program is free software; you can redistribute it and/or modify
@@ -175,19 +175,19 @@ QString XmlToQtScript::itemString(const QList<Item>& items) const
 	}
 	if(m_options & SimplifyMouseMovements)
 	{
-		postProcessors.append(new SimplifyMouseMovementsPostProcessor());
+		postProcessors.append(new SimplifyMouseMovementsPostProcessor(0));
 	}
 	if(m_options & SimplifyStrings)
 	{
-		postProcessors.append(new SimplifyStringsPostProcessor());
+		postProcessors.append(new SimplifyStringsPostProcessor(0));
 	}
 	if(m_options & ObjectVariables)
 	{
-		postProcessors.append(new ObjectVariablesPostProcessor());
+		postProcessors.append(new ObjectVariablesPostProcessor(0));
 	}
 	if(m_options & StringVariables)
 	{
-		postProcessors.append(new StringVariablesPostProcessor());
+		postProcessors.append(new StringVariablesPostProcessor(0));
 	}
 
 	Q_FOREACH(PostProcessor* postProcessor, postProcessors)
@@ -196,7 +196,7 @@ QString XmlToQtScript::itemString(const QList<Item>& items) const
 		while(!in.isEmpty())
 		{
 			Item item = in.takeFirst();
-			postProcessor->process(&item, &in, &out);
+			postProcessor->process(&item, &in);
 			if(item.isValid())
 			{
 				out.append(item);
@@ -304,7 +304,7 @@ QString XmlToQtScript::parametersString(const QVariant& parameters) const
 			}
 			if(parameters.canConvert<Item>())
 			{
-				return itemString(QList<Item>() << parameters.value<Item>());
+				return serialize(QList<Item>() << parameters.value<Item>());
 			}
 			qDebug() << "Unhandled usertype:" << parameters.userType() << parameters.typeName();
 			break;

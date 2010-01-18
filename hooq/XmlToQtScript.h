@@ -1,6 +1,6 @@
 /*
 	Hooq: Qt4 UI recording, playback, and testing toolkit.
-	Copyright (C) 2009  Mendeley Limited <copyright@mendeley.com>
+	Copyright (C) 2010  Mendeley Limited <copyright@mendeley.com>
 	Copyright (C) 2009  Frederick Emmott <mail@fredemmott.co.uk>
 
 	This program is free software; you can redistribute it and/or modify
@@ -29,6 +29,7 @@ class XmlToQtScript : private QXmlStreamReader
 		struct Variable	{ public: Variable(); Variable(const QString& name); QString name; };
 		struct Item
 		{
+			class Inserter;
 			Item();
 			Item(const QString& method, const QVariant& parameters);
 			Item(const QVariant& target, const QString& targetClass, const QString& method, const QVariant& parameters);

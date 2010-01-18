@@ -1,11 +1,8 @@
-/*
-	Hooq: Qt4 UI recording, playback, and testing toolkit.
-	Copyright (C) 2009  Mendeley Limited <copyright@mendeley.com>
+/* Hooq: Qt4 UI recording, playback, and testing toolkit.
+	Copyright (C) 2010  Mendeley Limited <copyright@mendeley.com>
 	Copyright (C) 2009  Frederick Emmott <mail@fredemmott.co.uk>
 
-	This program is free software; you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation; either version 2 of the License, or
+	This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or
 	(at your option) any later version.
 
 	This program is distributed in the hope that it will be useful,
@@ -25,7 +22,19 @@ class XmlToQtScript::PostProcessor
 {
 	public:
 		virtual ~PostProcessor();
-		virtual void process(Item* iterator, QList<Item>* in, QList<Item>* out) = 0;
+		virtual void process(Item* iterator, QList<Item>* in) = 0;
 	protected:
-		PostProcessor();
+		PostProcessor(XmlToQtScript::Item::Inserter* inserter);
+		PostProcessor(); // only if you are /not/ inserting any items
+
+		/// Where to insert a new Item
+		enum Position
+		{
+			Beginning,         ///< At the top of the entire script
+			BeforeCurrentItem, ///< Just before the current item, in the block scope
+			AfterCurrentItem   ///< After the current item, in the block scope
+		};
+		void insertItem(const Item& item, Position position);
+
+		XmlToQtScript::Item::Inserter* m_inserter;
 };
