@@ -215,9 +215,14 @@ QString XmlToQtScript::itemString(const QList<Item>& items) const
 	return serialize(in);
 }
 
-QString XmlToQtScript::serialize(const QList<Item>& items) const
+QString XmlToQtScript::serialize(const QList<Item>& items, bool isStatement) const
 {
 	QStringList out;
+	QString suffix;
+	if(isStatement)
+	{
+		suffix = ";";
+	}
 	Q_FOREACH(const Item& item, items)
 	{
 		if(item.method.isNull())
@@ -229,22 +234,22 @@ QString XmlToQtScript::serialize(const QList<Item>& items) const
 		{
 			if(item.parameters.isNull())
 			{
-				out.append(item.method + ";");
+				out.append(item.method + suffix);
 			}
 			else
 			{
-				out.append(QString("%1(%2);").arg(item.method).arg(parametersString(item.parameters)));
+				out.append(QString("%1(%2)").arg(item.method).arg(parametersString(item.parameters)) + suffix);
 			}
 		}
 		else
 		{
 			if(item.target.canConvert<Variable>())
 			{
-				out.append(QString("%1.%2(%3);").arg(item.target.value<Variable>().name).arg(item.method).arg(parametersString(item.parameters)));
+				out.append(QString("%1.%2(%3)").arg(item.target.value<Variable>().name).arg(item.method).arg(parametersString(item.parameters)) + suffix);
 			}
 			else
 			{
-				out.append(QString("objectFromPath(\"%1\").%2(%3);").arg(item.target.toString()).arg(item.method).arg(parametersString(item.parameters)));
+				out.append(QString("objectFromPath(\"%1\").%2(%3)").arg(item.target.toString()).arg(item.method).arg(parametersString(item.parameters)) + suffix);
 			}
 		}
 	}
@@ -308,7 +313,7 @@ QString XmlToQtScript::parametersString(const QVariant& parameters) const
 			}
 			if(parameters.canConvert<Item>())
 			{
-				return serialize(QList<Item>() << parameters.value<Item>());
+				return serialize(QList<Item>() << parameters.value<Item>(), false);
 			}
 			qDebug() << "Unhandled usertype:" << parameters.userType() << parameters.typeName();
 			break;

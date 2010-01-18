@@ -56,7 +56,7 @@ class XmlToQtScript : private QXmlStreamReader
 	private:
 		QString itemString(const QList<Item>& items) const;
 		/// Raw serialization - you probably want itemString instead
-		QString serialize(const QList<Item>& items) const;
+		QString serialize(const QList<Item>& items, bool isStatement = true) const;
 		QString parametersString(const QVariant& parameters) const;
 
 		QString parseDocument();
