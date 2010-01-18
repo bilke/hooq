@@ -141,6 +141,11 @@ QString XmlToQtScript::parseHooq()
 					items.append(parseContextMenuEvent());
 					continue;
 				}
+				if(name() == "dragAndDrop")
+				{
+					items.append(parseDragAndDropEvent());
+					continue;
+				}
 				qDebug() << Q_FUNC_INFO << "skipping unknown element" << name().toString();
 				skipElement();
 				break;
@@ -206,7 +211,7 @@ QString XmlToQtScript::itemString(const QList<Item>& items) const
 	return serialize(out);
 }
 
-QString XmlToQtScript::serialize(const QList<Item>& items)
+QString XmlToQtScript::serialize(const QList<Item>& items) const
 {
 	QStringList out;
 	Q_FOREACH(const Item& item, items)
@@ -242,7 +247,7 @@ QString XmlToQtScript::serialize(const QList<Item>& items)
 	return out.join("\n");
 }
 
-QString XmlToQtScript::parametersString(const QVariant& parameters)
+QString XmlToQtScript::parametersString(const QVariant& parameters) const
 {
 	switch(parameters.type())
 	{
@@ -296,6 +301,10 @@ QString XmlToQtScript::parametersString(const QVariant& parameters)
 			if(parameters.canConvert<Variable>())
 			{
 				return parameters.value<Variable>().name;
+			}
+			if(parameters.canConvert<Item>())
+			{
+				return itemString(QList<Item>() << parameters.value<Item>());
 			}
 			qDebug() << "Unhandled usertype:" << parameters.userType() << parameters.typeName();
 			break;
@@ -476,6 +485,38 @@ XmlToQtScript::Item XmlToQtScript::parseContextMenuEvent()
 		call,
 		parameters
 	);
+}
+
+XmlToQtScript::Item XmlToQtScript::parseDragAndDropEvent()
+{
+	// Two items, one nested as a parameter of the other:
+	// - The Drag item
+	// - The Drop item
+	
+	// First, construct the drag item
+	Item dragItem;
+	{
+		const QString call("drag");
+		const QString target(attributes().value("source").toString());
+		QVariantMap parameters;
+		parameters["x"] = attributes().value("sourceX").toString().toInt();
+		parameters["y"] = attributes().value("sourceY").toString().toInt();
+		dragItem = Item(target, QString(), call, parameters);
+	}
+	// Now, the drop item
+	Item dropItem;
+	{
+		const QString call("drop");
+		const QString target(attributes().value("target").toString());
+		QVariantMap parameters;
+		parameters["x"] = attributes().value("targetX").toString().toInt();
+		parameters["y"] = attributes().value("targetY").toString().toInt();
+		parameters["dragged"] = QVariant::fromValue(dragItem);
+		dropItem = Item(target, QString(), call, parameters);
+	}
+	// Skip to end of the element
+	readElementText();
+	return dropItem;
 }
 
 QString XmlToQtScript::stringForMouseButton(int button)

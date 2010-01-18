@@ -27,6 +27,17 @@ class XmlToQtScript : private QXmlStreamReader
 {
 	public:
 		struct Variable	{ public: Variable(); Variable(const QString& name); QString name; };
+		struct Item
+		{
+			Item();
+			Item(const QString& method, const QVariant& parameters);
+			Item(const QVariant& target, const QString& targetClass, const QString& method, const QVariant& parameters);
+			bool isValid() const;
+			QVariant target; // string or Variable
+			QString targetClass;
+			QString method;
+			QVariant parameters; // A scalar, QVariantMap, or Item
+		};
 		enum Option
 		{
 			NoOptions = 0,
@@ -42,21 +53,10 @@ class XmlToQtScript : private QXmlStreamReader
 		QString parse(QIODevice* xml, Options);
 		static QString escapeString(const QString&);
 	private:
-		struct Item
-		{
-			Item();
-			Item(const QString& method, const QVariant& parameters);
-			Item(const QVariant& target, const QString& targetClass, const QString& method, const QVariant& parameters);
-			bool isValid() const;
-			QVariant target; // string or Variable
-			QString targetClass;
-			QString method;
-			QVariant parameters; // Either a scalar, or QVariantMap
-		};
 		QString itemString(const QList<Item>& items) const;
 		/// Raw serialization - you probably want itemString instead
-		static QString serialize(const QList<Item>& items);
-		static QString parametersString(const QVariant& parameters);
+		QString serialize(const QList<Item>& items) const;
+		QString parametersString(const QVariant& parameters) const;
 
 		QString parseDocument();
 		QString parseHooq();
@@ -70,6 +70,7 @@ class XmlToQtScript : private QXmlStreamReader
 		Item parseWheelEvent();
 		Item parseShortcutEvent();
 		Item parseContextMenuEvent();
+		Item parseDragAndDropEvent();
 
 		static QString stringForMouseButton(int button);
 		static QString stringForMouseButtons(int buttons);
@@ -96,5 +97,6 @@ class XmlToQtScript : private QXmlStreamReader
 };
 
 Q_DECLARE_METATYPE(XmlToQtScript::Variable);
+Q_DECLARE_METATYPE(XmlToQtScript::Item);
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(XmlToQtScript::Options);
