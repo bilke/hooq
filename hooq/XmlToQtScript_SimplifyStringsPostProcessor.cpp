@@ -99,9 +99,9 @@ void XmlToQtScript::SimplifyStringsPostProcessor::process(Item* iterator, QList<
 					"sendText",
 					string
 				),
-				AfterCurrentItem
+				BeforeCurrentItem
 			);
-			insertItem(msec, AfterCurrentItem);
+			insertItem(msec, BeforeCurrentItem);
 		}
 	}
 }

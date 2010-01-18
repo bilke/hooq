@@ -18,6 +18,7 @@
 	51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 #include "XmlToQtScript.h"
+#include "XmlToQtScript_Item_Inserter.h"
 #include "XmlToQtScript_FilterQtInternalsPostProcessor.h"
 #include "XmlToQtScript_MouseMovePostProcessor.h"
 #include "XmlToQtScript_ObjectVariablesPostProcessor.h"
@@ -101,6 +102,7 @@ QString XmlToQtScript::parseHooq()
 		switch(tokenType())
 		{
 			case StartElement:
+				qDebug() << "Reading token" << name();
 				if(name() == "msec")
 				{
 					items.append(parseMsec());
@@ -150,19 +152,22 @@ QString XmlToQtScript::parseHooq()
 				skipElement();
 				break;
 			case EndElement:
+				qDebug() << "Reading end element with" << items.count() << "items";
 				return itemString(items);
 			default:
 				break;
 		}
 	}
+	qDebug() << "Reached EOF!";
 	return QString();
 }
 
 QString XmlToQtScript::itemString(const QList<Item>& items) const
 {
-//	qDebug() << "RAW:" << serialize(items);
 	QList<Item> in(items);
 	QList<Item> out;
+
+	XmlToQtScript::Item::Inserter inserter(&out);
 
 	QList<XmlToQtScript::PostProcessor*> postProcessors;
 	if(m_options & FilterQtInternals)
@@ -175,19 +180,19 @@ QString XmlToQtScript::itemString(const QList<Item>& items) const
 	}
 	if(m_options & SimplifyMouseMovements)
 	{
-		postProcessors.append(new SimplifyMouseMovementsPostProcessor(0));
+		postProcessors.append(new SimplifyMouseMovementsPostProcessor(&inserter));
 	}
 	if(m_options & SimplifyStrings)
 	{
-		postProcessors.append(new SimplifyStringsPostProcessor(0));
+		postProcessors.append(new SimplifyStringsPostProcessor(&inserter));
 	}
 	if(m_options & ObjectVariables)
 	{
-		postProcessors.append(new ObjectVariablesPostProcessor(0));
+		postProcessors.append(new ObjectVariablesPostProcessor(&inserter));
 	}
 	if(m_options & StringVariables)
 	{
-		postProcessors.append(new StringVariablesPostProcessor(0));
+		postProcessors.append(new StringVariablesPostProcessor(&inserter));
 	}
 
 	Q_FOREACH(PostProcessor* postProcessor, postProcessors)
@@ -201,14 +206,16 @@ QString XmlToQtScript::itemString(const QList<Item>& items) const
 			{
 				out.append(item);
 			}
+			inserter.next();
 		}
 		in = out;
+		inserter.reset();
 	}
 
 	qDeleteAll(postProcessors);
 
 	// Serialise
-	return serialize(out);
+	return serialize(in);
 }
 
 QString XmlToQtScript::serialize(const QList<Item>& items) const

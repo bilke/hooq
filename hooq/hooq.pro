@@ -42,6 +42,7 @@ HEADERS += \
 	TestSetDialog.h \ 
 	VariantMapModel.h \
 	XmlToQtScript.h \
+	XmlToQtScript_Item_Inserter.h \
 	XmlToQtScript_FilterQtInternalsPostProcessor.h \
 	XmlToQtScript_MouseMovePostProcessor.h \
 	XmlToQtScript_ObjectVariablesPostProcessor.h \
@@ -76,6 +77,7 @@ SOURCES += \
 	TestSetDialog.cpp \ 
 	VariantMapModel.cpp \
 	XmlToQtScript.cpp \
+	XmlToQtScript_Item_Inserter.cpp \
 	XmlToQtScript_FilterQtInternalsPostProcessor.cpp \
 	XmlToQtScript_MouseMovePostProcessor.cpp \
 	XmlToQtScript_ObjectVariablesPostProcessor.cpp \

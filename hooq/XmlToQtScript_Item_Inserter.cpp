@@ -1,7 +1,6 @@
 /*
 	Hooq: Qt4 UI recording, playback, and testing toolkit.
 	Copyright (C) 2010  Mendeley Limited <copyright@mendeley.com>
-	Copyright (C) 2009  Frederick Emmott <mail@fredemmott.co.uk>
 
 	This program is free software; you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -17,25 +16,44 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-#include "XmlToQtScript_PostProcessor.h"
+
 #include "XmlToQtScript_Item_Inserter.h"
 
-XmlToQtScript::PostProcessor::PostProcessor()
-: m_inserter(0)
+XmlToQtScript::Item::Inserter::Inserter(QList<Item>* rootList)
+: m_rootList(rootList)
 {
+	reset();
 }
 
-XmlToQtScript::PostProcessor::PostProcessor(XmlToQtScript::Item::Inserter* inserter)
-: m_inserter(inserter)
+void XmlToQtScript::Item::Inserter::reset()
 {
+	m_originalStart = 0;
+	m_itemIndex = m_rootList->count() - 1;
+	m_appendedItems = 0;
 }
 
-XmlToQtScript::PostProcessor::~PostProcessor()
+void XmlToQtScript::Item::Inserter::insert(const Item& item, Position position)
 {
+	switch(position)
+	{
+		case Beginning:
+			m_rootList->insert(m_originalStart, item);
+			++m_originalStart;
+			++m_itemIndex;
+			break;
+		case BeforeCurrentItem:
+			m_rootList->insert(m_itemIndex, item);
+			++m_itemIndex;
+			break;
+/*		case AfterCurrentItem:
+			++m_appendedItems;
+			m_rootList->insert(m_itemIndex + m_appendedItems, item);
+			break; */
+	}
 }
 
-void XmlToQtScript::PostProcessor::insertItem(const Item& item, Position position)
+void XmlToQtScript::Item::Inserter::next()
 {
-	Q_ASSERT(m_inserter);
-	m_inserter->insert(item, static_cast<XmlToQtScript::Item::Inserter::Position>(position));
+	m_itemIndex += m_appendedItems + 1;
+	m_appendedItems = 0;
 }
