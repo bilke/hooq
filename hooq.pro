@@ -7,6 +7,8 @@ SUBDIRS += \
 	injectedHooq \
 	uilib \
 
+include(common.pri)
+
 # State dependencies to fix make -j
 
 hooq.depends += \

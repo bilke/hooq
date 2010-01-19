@@ -1,8 +1,9 @@
 TEMPLATE = app
-TARGET = 
+TARGET = hooq
 DEPENDPATH += .
 INCLUDEPATH += . ../hooqInjector/ ../uilib/ $$OUT_PWD/../uilib/
 
+include (../common.pri)
 include(../qscripthighlighter/qscripthighlighter.pri)
 
 QMAKE_RPATHDIR += \
@@ -18,8 +19,6 @@ win32:LIBS += \
 	"..\uilib\debug\hooqui.lib" \
 
 QT += script network
-
-CONFIG += debug
 
 HEADERS += \
 	BacktraceWidget.h \
@@ -91,4 +90,12 @@ unix {
 	include("../install.pri")
 	target.path = /${DESTDIR}$$BINDIR
 	INSTALLS += target 
+}
+
+win32 {
+	target.path = $${OUT_PWD}/../hooq-release
+	CONFIG(debug, debug|release) {
+		target.path = $${OUT_PWD}/../hooq-debug
+	}
+	INSTALLS += target
 }

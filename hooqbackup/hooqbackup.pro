@@ -1,7 +1,9 @@
 TEMPLATE = app
-TARGET = 
+TARGET = hooqbackup
 DEPENDPATH += .
 INCLUDEPATH += . ../hooq
+
+include(../common.pri)
 
 QT -= gui
 
@@ -13,4 +15,12 @@ unix {
 	include("../install.pri")
 	target.path = /${DESTDIR}$$BINDIR
 	INSTALLS += target 
+}
+
+win32 {
+	target.path = $${OUT_PWD}/../hooq-release
+	CONFIG(debug, debug|release) {
+		target.path = $${OUT_PWD}/../hooq-debug
+	}
+	INSTALLS += target
 }

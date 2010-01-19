@@ -1,9 +1,9 @@
 TEMPLATE = lib
-TARGET = 
+TARGET = injectedHooq
 DEPENDPATH += .
 INCLUDEPATH += .
 
-CONFIG += debug
+include(../common.pri)
 
 win32:DEFINES += HOOQ_INJECTED_EXPORT=__declspec(dllexport)
 win32:LIBS += user32.lib
@@ -33,6 +33,11 @@ SOURCES += \
 
 win32 {
 	SOURCES += WinDll.cpp
+	target.path = $${OUT_PWD}/../hooq-release
+	CONFIG(debug, debug|release) {
+		target.path = $${OUT_PWD}/../hooq-debug
+	}
+	INSTALLS += target
 }
 
 unix {
