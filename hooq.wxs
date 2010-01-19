@@ -1,0 +1,140 @@
+<?xml version='1.0'?>
+<Wix xmlns='http://schemas.microsoft.com/wix/2006/wi'>
+	<Product
+		Id='{932B815F-411D-4692-85CC-3157F39E760F}'
+		UpgradeCode='{BA1ECF59-3AD2-4700-80CF-2BEBDE232D2A}'
+		Name='Hooq' Version='0.0.0.1' Language='1033' Manufacturer='Mendeley Limited'>
+		<Package
+			Description='Hooq Installer'
+			Manufacturer='Mendeley Limited'
+			InstallerVersion='300' Compressed='yes' />
+		<Media Id='1' Cabinet='hooq.cab' EmbedCab='yes' CompressionLevel='high' />
+		<Directory Id='TARGETDIR' Name='SourceDir'>
+      <Merge Id='Release CRT' Language='0' SourceFile='Microsoft_VC90_CRT_x86.msm' DiskId='1' />
+      <Merge Id='Release CRT Policy' Language='0' SourceFile='policy_9_0_Microsoft_VC90_CRT_x86.msm' DiskId='1' />
+      <Merge Id='Debug CRT' Language='0' SourceFile='Microsoft_VC90_DebugCRT_x86.msm' DiskId='1' />
+      <Merge Id='Debug CRT Policy' Language='0' SourceFile='policy_9_0_Microsoft_VC90_DebugCRT_x86.msm' DiskId='1' />
+      <Directory Id='ProgramMenuFolder' />
+      <Directory Id='DesktopFolder' />
+			<Directory Id='ProgramFilesFolder' Name='PFiles'>
+				<Directory Id='INSTALLDIR' Name='Hooq'>
+          <Component Id='licenseFiles' Guid='{C5CDEA43-8FE1-464c-92C5-18F759A3F003}'>
+            <File Id='copying' Name='COPYING' Source='COPYING' />
+            <File Id='copying.gpl' Name='COPYING.GPL' Source='COPYING.GPL' />
+            <File Id='copying.lgpl' Name='COPYING.LGPL' Source='COPYING.LGPL' />
+            <File Id='license' Name='license.rtf' Source='license.rtf' />
+          </Component>
+          <Directory Id='releaseDirectory' Name='release'>
+            <Component Id="releaseHooq" Guid="{B0626548-3FAF-4711-B47E-E804A00D6532}" Location="local">
+              <File Id="releaseHooqFile" Name="hooq.exe" DiskId="1" Source="hooq-release/hooq.exe" Vital="yes">
+                <Shortcut Id="releaseHooqDesktopShortcut" Directory="DesktopFolder" Name="Hooq (release)" WorkingDirectory="INSTALLDIR" />
+                <Shortcut Id="releaseHooqStartMenuShortcut" Directory="ProgramMenuFolder" Name="Hooq (release)" WorkingDirectory="INSTALLDIR" />
+              </File>
+            </Component>
+            <Component Id="releaseHooqHooqbackup" Guid="{DBDD79E8-A68B-47e3-83C6-1B9B8E092A76}" Location="local">
+              <File Id="releaseHooqHooqbackup" Name="hooqbackup.exe" Source="hooq-release/hooqbackup.exe" Vital="yes" />
+            </Component>
+            <Component Id="releaseHooqHooqcli" Guid="{0D9F3F4C-F26C-419d-A6DF-1D0CEDC484EB}" Location="local">
+              <File Id="releaseHooqHooqcli" Name="hooqcli.exe" Source="hooq-release/hooqcli.exe" Vital="yes" />
+            </Component>
+            <Component Id="releaseHooqHooqInjector" Guid="{0D9F3F4C-F26C-419d-A6DF-1D0CEDC484EB}" Location="local">
+              <File Id="releaseHooqHooqInjector" Name="hooqInjector.dll" Source="hooq-release/hooqInjector.dll" Vital="yes" />
+            </Component>
+            <Component Id="releaseHooqInjectedHooq" Guid="{250AF368-879F-45eb-9574-F8111FE4413A}" Location="local">
+              <File Id="releaseHooqInjectedHooq" Name="injectedHooq.dll" Source="hooq-release/injectedHooq.dll" Vital="yes" />
+            </Component>
+            <Component Id="releaseHooqHooqui" Guid="{BFD0EBF6-171C-4c15-B4B1-C41B9A8B1BDF}" Location="local">
+              <File Id="releaseHooqHooqui" Name="hooqui.dll" Source="hooq-release/hooqui.dll" Vital="yes" />
+            </Component>
+            <Component Id="releaseQt" Guid="{CFC51C14-4AC5-43d8-99BE-BD50389CA5BD}" Location="local">
+              <File Id="releaseQtCore" Name="QtCore4.dll" Source="qt/QtCore4.dll" Vital="yes" />
+              <File Id="releaseQtGui" Name="QtGui4.dll" Source="qt/QtGui4.dll" Vital="yes" />
+              <File Id="releaseQtNetwork" Name="QtNetwork4.dll" Source="qt/QtNetwork4.dll" Vital="yes" />
+              <File Id="releaseQtScript" Name="QtScript4.dll" Source="qt/QtScript4.dll" Vital="yes" />
+            </Component>
+            <Directory Id="releaseQtScriptPluginsDirectory" Name="script">
+              <Component Id="releaseQtScriptPlugins" Guid="{B8C375D6-F734-42d0-9B5E-43F12FCB3FC0}" Location="local">
+                <File Id="releaseQtScriptCore" Name="qtscript_core.dll" Source="script/qtscript_core.dll" />
+                <File Id="releaseQtScriptGui" Name="qtscript_gui.dll" Source="script/qtscript_gui.dll" />
+              </Component>
+            </Directory>
+          </Directory>
+          <Directory Id='debugDirectory' Name='debug'>
+            <Component Id="debugHooq" Guid="{23302939-A859-4c0b-A80A-2520F1B78E36}" Location="local">
+              <File Id="debugHooqFile" Name="hooq.exe" DiskId="1" Source="hooq-debug/hooq.exe" Vital="yes">
+                <Shortcut Id="debugHooqDesktopShortcut" Directory="DesktopFolder" Name="Hooq (Debug)" WorkingDirectory="INSTALLDIR" />
+                <Shortcut Id="debugHooqStartMenuShortcut" Directory="ProgramMenuFolder" Name="Hooq (Debug)" WorkingDirectory="INSTALLDIR" />
+              </File>
+            </Component>
+            <Component Id="debugHooqHooqbackup" Guid="{6649A6B3-4EF6-4990-A840-2460C76E4E27}" Location="local">
+              <File Id="debugHooqHooqbackup" Name="hooqbackup.exe" Source="hooq-debug/hooqbackup.exe" Vital="yes" />
+            </Component>
+            <Component Id="debugHooqHooqcli" Guid="{C82C4CC6-20E2-459f-98FF-56D51A8B0032}" Location="local">
+              <File Id="debugHooqHooqcli" Name="hooqcli.exe" Source="hooq-debug/hooqcli.exe" Vital="yes" />
+            </Component>
+            <Component Id="debugHooqHooqInjector" Guid="{48BE3611-875B-4e84-AED0-1E0DD72BAF54}" Location="local">
+              <File Id="debugHooqHooqInjector" Name="hooqInjector.dll" Source="hooq-debug/hooqInjector.dll" Vital="yes" />
+            </Component>
+            <Component Id="debugHooqInjectedHooq" Guid="{E9ADC55B-4130-4719-88F2-7013CDBC4D1A}" Location="local">
+              <File Id="debugHooqInjectedHooq" Name="injectedHooq.dll" Source="hooq-debug/injectedHooq.dll" Vital="yes" />
+            </Component>
+            <Component Id="debugHooqHooqui" Guid="{44288524-28C5-4dae-AB7A-61B2581DDEDA}" Location="local">
+              <File Id="debugHooqHooqui" Name="hooqui.dll" Source="hooq-debug/hooqui.dll" Vital="yes" />
+            </Component>
+            <Component Id="debugQt" Guid="{1A0B1148-7BF4-4eb9-8349-BB7AD68D1C14}" Location="local">
+              <File Id="debugQtCore" Name="QtCored4.dll" Source="qt/QtCored4.dll" Vital="yes" />
+              <File Id="debugQtGui" Name="QtGuid4.dll" Source="qt/QtGuid4.dll" Vital="yes" />
+              <File Id="debugQtNetwork" Name="QtNetworkd4.dll" Source="qt/QtNetworkd4.dll" Vital="yes" />
+              <File Id="debugQtScript" Name="QtScriptd4.dll" Source="qt/QtScriptd4.dll" Vital="yes" />
+            </Component>
+            <Directory Id="debugQtScriptPluginsDirectory" Name="script">
+              <Component Id="debugQtScriptPlugins" Guid="{C82AEF51-480F-4138-8DEA-4117B324D07B}" Location="local">
+                <File Id="debugQtScriptCore" Name="qtscript_cored.dll" Source="script/qtscript_cored.dll" />
+                <File Id="debugQtScriptGui" Name="qtscript_guid.dll" Source="script/qtscript_guid.dll" />
+              </Component>
+            </Directory>
+          </Directory>
+				</Directory>
+			</Directory>
+		</Directory>
+    <Feature Id="licenseFiles" Title="License Files" Description="Copies of the GPL version 2.0, and LGPL version 2.1" Level="1" AllowAdvertise="no" Absent="disallow" Display="hidden">
+      <ComponentRef Id="licenseFiles" />
+    </Feature>
+    <Feature Id='releaseHooq' Title='Hooq (release)' Description='A release build of Hooq for Visual Studio 2008 release builds using Qt 4.6' Level='1' AllowAdvertise='no'>
+      <ComponentRef Id='releaseHooq' />
+      <ComponentRef Id='releaseHooqHooqInjector' />
+      <ComponentRef Id='releaseHooqInjectedHooq' />
+      <ComponentRef Id='releaseHooqHooqui' />
+      <ComponentRef Id='releaseQt'/>
+      <ComponentRef Id='releaseQtScriptPlugins' />
+      <Feature Id='releaseHooqCli' Title='CLI Utilities' Description='Command line utiltities: hooqcli, for simple recording and playback, and hooqbackup for manipulating backup files.' Level='1' AllowAdvertise='no'>
+        <ComponentRef Id='releaseHooqHooqcli' />
+        <ComponentRef Id='releaseHooqHooqbackup' />
+      </Feature>
+      <Feature Id='releaseCrt' Title='Visual C++ 9.0 Runtime' Description='Microsoft Visual C++ Runtime, version 9.0.' Level='1' Absent='disallow' AllowAdvertise='no'>
+        <MergeRef Id='Release CRT' />
+        <MergeRef Id='Release CRT Policy' />
+      </Feature>
+    </Feature>
+    <Feature Id='debugHooq' Title='Hooq (Debug)' Description='A debug build of Hooq for Visual Studio 2008 debug builds using Qt 4.6' Level='1' AllowAdvertise='no'>
+			<ComponentRef Id='debugHooq' />
+      <ComponentRef Id='debugHooqHooqInjector' />
+      <ComponentRef Id='debugHooqInjectedHooq' />
+      <ComponentRef Id='debugHooqHooqui' />
+      <ComponentRef Id='debugQt'/>
+      <ComponentRef Id='debugQtScriptPlugins' />
+      <Feature Id='debugHooqCli' Title='CLI Utilities' Description='Command line utiltities: hooqcli, for simple recording and playback, and hooqbackup for manipulating backup files.' Level='1' AllowAdvertise='no'>
+        <ComponentRef Id='debugHooqHooqcli' />
+        <ComponentRef Id='debugHooqHooqbackup' />
+      </Feature>
+      <Feature Id='debugCrt' Title='Visual C++ 9.0 Debug Runtime' Description='Microsoft Visual C++ Debug Runtime, version 9.0.' Level='1' Absent='disallow' AllowAdvertise='no'>
+        <MergeRef Id='Debug CRT' />
+        <MergeRef Id='Debug CRT Policy' />
+      </Feature>
+		</Feature>
+		<Property Id="ALLUSERS" Secure="yes"/>
+		<Property Id='WIXUI_INSTALLDIR' Value='INSTALLDIR' />
+		<WixVariable Id="WixUILicenseRtf" Value="license.rtf" />
+		<UIRef Id="WixUI_FeatureTree" />
+	</Product>
+</Wix>
