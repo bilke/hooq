@@ -1,6 +1,6 @@
 /*
 	Hooq: Qt4 UI recording, playback, and testing toolkit.
-	Copyright (C) 2009  Mendeley Limited <copyright@mendeley.com>
+	Copyright (C) 2010  Mendeley Limited <copyright@mendeley.com>
 	Copyright (C) 2009  Frederick Emmott <mail@fredemmott.co.uk>
 
 	This program is free software; you can redistribute it and/or modify
@@ -366,6 +366,8 @@ bool MainWindow::editTestScript(const QModelIndex& index, VisibleAction action)
 	if(action == EnsureVisible)
 	{
 		m_editor->show();
+		m_editor->activateWindow();
+		m_editor->raise();
 	}
 	return true;
 }
