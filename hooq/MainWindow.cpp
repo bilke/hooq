@@ -479,6 +479,9 @@ void MainWindow::finishRecording()
 	script.open(QIODevice::WriteOnly | QFile::Truncate);
 	Q_ASSERT(script.isOpen() && script.isWritable());
 
+	qDebug() << m_xmlDump->readAll();
+	m_xmlDump->seek(0);
+
 	if(m_includeXml->isChecked())
 	{
 		script.write("/*\n");

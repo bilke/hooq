@@ -79,7 +79,10 @@ void XmlToQtScript::SimplifyStringsPostProcessor::process(Item* iterator, QList<
 				}
 			}
 			
-
+			if(in->isEmpty())
+			{
+				break;
+			}
 			msec = in->takeFirst(); // msec << pointing at
 			*iterator = in->takeFirst(); // ?
 			if(iterator->method != "pressKey" && iterator->method != "releaseKey")
