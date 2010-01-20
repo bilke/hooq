@@ -89,6 +89,7 @@ void Logger::readInput()
 Logger::~Logger()
 {
 	m_writer.writeEndDocument();
+	flushDragAndDropBuffer();
 }
 
 void Logger::activate()
