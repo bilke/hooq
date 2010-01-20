@@ -361,7 +361,9 @@ void Player::postDragAndDrop()
 	readElementText();
 	qDebug() << "Read drag and drop event" << sourcePath << sourcePoint << targetPath << targetPoint;
 	// These explicit flushes are an alternative to zero-second sleeps
+#ifndef Q_OS_WIN32
 	m_eventQueue.enqueue(Event::withoutAck(new FlushEvent()));
+#endif
 	// 1. Start the drag
 	// 1.1 Give focus
 	m_eventQueue.enqueue(
@@ -373,7 +375,9 @@ void Player::postDragAndDrop()
 		))
 	);
 	// 1.2. Click
+#ifndef Q_OS_WIN32
 	m_eventQueue.enqueue(Event::withoutAck(new FlushEvent()));
+#endif
 	m_eventQueue.enqueue(
 		Event::addTag("dnd_click", Event::withoutAck(
 			new ObjectEvent(
