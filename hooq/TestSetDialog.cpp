@@ -70,7 +70,10 @@ void TestSetDialog::browseForApplication()
 {
 	const QString fileName = QFileDialog::getOpenFileName(
 		this,
-		tr("Application Path")
+		tr("Application Path"),
+		QFileInfo(
+			QDir::fromNativeSeparators(m_application->text())
+		).dir().path()
 	);
 	if(!fileName.isEmpty())
 	{
