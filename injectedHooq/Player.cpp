@@ -38,6 +38,14 @@
 #include <QUrl>
 #include <QWidget>
 
+#ifdef Q_OS_WIN32
+
+#include <QDrag>
+// Need to manually synthesise this
+#include <QDropEvent>
+
+#endif
+
 #include <memory> // for std::auto_ptr - XXX FIXME XXX switch to QScopedPointer in 4.6
 
 namespace Hooq
@@ -59,6 +67,12 @@ bool Player::hook(void** data)
 
 bool Player::eventFilter(QObject* receiver, QEvent* event)
 {
+	if(dynamic_cast<QDropEvent*>(event))
+	{
+		qDebug() << "IS A DROP EVENT";
+		qDebug() << "Receiver:" << receiver;
+		qDebug() << "Event type:" << event->type();
+	}
 	if(m_mode == Pick)
 	{
 		if(event->type() == QEvent::MouseButtonPress)
