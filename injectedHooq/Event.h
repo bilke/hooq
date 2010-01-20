@@ -1,6 +1,6 @@
 /*
 	Hooq: Qt4 UI recording, playback, and testing toolkit.
-	Copyright (C) 2009  Mendeley Limited <copyright@mendeley.com>
+	Copyright (C) 2010  Mendeley Limited <copyright@mendeley.com>
 	Copyright (C) 2009  Frederick Emmott <mail@fredemmott.co.uk>
 
 	This program is free software; you can redistribute it and/or modify
@@ -19,6 +19,7 @@
 */
 #pragma once
 
+#include <QPoint>
 #include <QString>
 
 class QEvent;
@@ -35,6 +36,7 @@ namespace Hooq
 				// PathEvent not listed here, as it's abstract
 				Ack,    ///< No-operation event, just send the frontend an ack
 				Dump,   ///< Request for all the Q_PROPERTYs of a given QObject
+				Drop,   ///< Finish a drag-and-drop event
 				Focus,  ///< A focus request for a given QObject
 				Object, ///< A QEvent to be sent to a QObject
 				Pick,   ///< Request for the user to click on a QObject, then treat as the target of a Dump event
@@ -125,6 +127,20 @@ namespace Hooq
 			QEvent* qtEvent() const;
 		private:
 			QEvent* m_qtEvent;
+	};
+
+	class DropEvent : public TypedEvent<DropEvent, PathEvent>
+	{
+		public:
+			static const Event::Type EVENT_TYPE = Drop;
+			DropEvent(const QString& objectPath, const QPoint& pos, const QPoint& globalPos);
+			virtual ~DropEvent();
+
+			QPoint pos() const;
+			QPoint globalPos() const;
+		private:
+			QPoint m_pos;
+			QPoint m_globalPos;
 	};
 
 	class PickEvent : public TypedEvent<PickEvent, Event>

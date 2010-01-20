@@ -452,6 +452,7 @@ void Player::postDragAndDrop()
 				new QMouseEvent(
 					QEvent::MouseButtonRelease,
 					targetPoint,
+					qobject_cast<QWidget*>(findObject(targetPath))->mapToGlobal(targetPoint),
 					Qt::LeftButton,
 					Qt::NoButton,
 					Qt::NoModifier

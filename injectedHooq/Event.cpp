@@ -1,6 +1,6 @@
 /*
 	Hooq: Qt4 UI recording, playback, and testing toolkit.
-	Copyright (C) 2009  Mendeley Limited <copyright@mendeley.com>
+	Copyright (C) 2010  Mendeley Limited <copyright@mendeley.com>
 	Copyright (C) 2009  Frederick Emmott <mail@fredemmott.co.uk>
 
 	This program is free software; you can redistribute it and/or modify
@@ -105,6 +105,27 @@ ObjectEvent::ObjectEvent(const QString& objectPath, QEvent* qtEvent)
 QEvent* ObjectEvent::qtEvent() const
 {
 	return m_qtEvent;
+}
+
+DropEvent::DropEvent(const QString& objectPath, const QPoint& pos, const QPoint& globalPos)
+: TypedEvent<DropEvent,PathEvent>(objectPath)
+, m_pos(pos)
+, m_globalPos(pos)
+{
+}
+
+DropEvent::~DropEvent()
+{
+}
+
+QPoint DropEvent::pos() const
+{
+	return m_pos;
+}
+
+QPoint DropEvent::globalPos() const
+{
+	return m_globalPos;
 }
 
 FocusEvent::~FocusEvent()
