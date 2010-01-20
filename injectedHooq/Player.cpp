@@ -1,6 +1,6 @@
 /*
 	Hooq: Qt4 UI recording, playback, and testing toolkit.
-	Copyright (C) 2009  Mendeley Limited <copyright@mendeley.com>
+	Copyright (C) 2010  Mendeley Limited <copyright@mendeley.com>
 	Copyright (C) 2009  Frederick Emmott <mail@fredemmott.co.uk>
 
 	This program is free software; you can redistribute it and/or modify
@@ -259,6 +259,44 @@ void Player::processEvents()
 				}
 				break;
 			}
+			case Event::Drop:
+			{
+				DropEvent* e = Hooq::event_cast<DropEvent*>(event.get());
+				QObject* o = findObject(e->objectPath());
+				if(o)
+				{
+					// Windows: grab the internal data to do the drop
+#ifdef Q_OS_WIN32
+#endif
+					/*
+					QDropEvent de(
+						e->pos(),
+						Qt::ActionMask,
+						QDragManager::self()->object->mimeData(),
+						Qt::NoButton,
+						Qt::NoModifier
+					);
+					qApp->sendEvent(o, &de);
+					*/
+					// X11: Actual drag
+					// Windows: avoid a press without release
+					QMouseEvent* me = new QMouseEvent(
+						QEvent::MouseButtonRelease,
+						e->pos(),
+						e->globalPos(),
+						Qt::LeftButton,
+						Qt::NoButton,
+						Qt::NoModifier
+					);
+					qApp->postEvent(o, me);
+				}
+				else
+				{
+					qDebug() << "Couldn't find receiver from path" << e->objectPath();
+					notifyNotFound(e);
+				}
+				break;
+			}
 			case Event::Object:
 			{
 				ObjectEvent* e = Hooq::event_cast<ObjectEvent*>(event.get());
@@ -447,16 +485,10 @@ void Player::postDragAndDrop()
 	// 2.2. Now, release the hounds^Wmouse button
 	m_eventQueue.enqueue(
 		Event::addTag("dnd_drop", Event::withoutAck(
-			new ObjectEvent(
+			new DropEvent(
 				targetPath,
-				new QMouseEvent(
-					QEvent::MouseButtonRelease,
-					targetPoint,
-					qobject_cast<QWidget*>(findObject(targetPath))->mapToGlobal(targetPoint),
-					Qt::LeftButton,
-					Qt::NoButton,
-					Qt::NoModifier
-				)
+				targetPoint,
+				qobject_cast<QWidget*>(findObject(targetPath))->mapToGlobal(targetPoint)
 			)
 		))
 	);

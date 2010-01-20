@@ -110,7 +110,7 @@ QEvent* ObjectEvent::qtEvent() const
 DropEvent::DropEvent(const QString& objectPath, const QPoint& pos, const QPoint& globalPos)
 : TypedEvent<DropEvent,PathEvent>(objectPath)
 , m_pos(pos)
-, m_globalPos(pos)
+, m_globalPos(globalPos)
 {
 }
 
