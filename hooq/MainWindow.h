@@ -34,6 +34,7 @@ class TestResultsDialog;
 class QMenu;
 class QModelIndex;
 class QTemporaryFile;
+class QTcpServer;
 
 namespace Hooq
 {
@@ -102,6 +103,7 @@ class MainWindow : public QMainWindow, private Ui::MainWindow
 		Hooq::Injector* m_hooqRecordInjector;
 		Hooq::RemoteLogger* m_hooqLogger;
 		Hooq::RemoteConnection* m_hooqPlayer;
+		QTcpServer* m_server;
 
 		Interpreter* m_interpreter;
 		TestModel* m_testModel;

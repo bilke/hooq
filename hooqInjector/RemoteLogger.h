@@ -27,6 +27,7 @@
 
 
 class QIODevice;
+class QTcpServer;
 class QTcpSocket;
 
 namespace Hooq
@@ -38,7 +39,7 @@ class HOOQ_INJECTOR_EXPORT RemoteLogger : public QObject
 {
 	Q_OBJECT
 	public:
-		RemoteLogger(QObject* parent = 0);
+		RemoteLogger(QTcpServer* tcpServer, QObject* parent = 0);
 
 		void start(const QString& application, const QStringList& arguments, QIODevice* logDevice, Injector* injector);
 		// TODO: attach()

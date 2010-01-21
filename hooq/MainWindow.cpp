@@ -37,6 +37,9 @@
 #include "RemoteLogger.h"
 #include "PlatformInjector.h"
 
+// common
+#include "../common/Communication.h"
+
 // Qt
 #include <QApplication>
 #include <QDebug>
@@ -50,6 +53,7 @@
 #include <QString>
 #include <QStringList>
 #include <QStyle>
+#include <QTcpServer>
 #include <QTemporaryFile>
 #include <QUrl>
 
@@ -61,6 +65,7 @@ MainWindow::MainWindow(QWidget* parent)
 , m_hooqLogger(0)
 , m_hooqPlayer(0)
 , m_interpreter(new Interpreter(this))
+, m_server(new QTcpServer(this))
 , m_testModel(new TestModel(this))
 , m_testRunning(false)
 , m_testResultsWindow(new TestResultsDialog(this))
@@ -69,6 +74,11 @@ MainWindow::MainWindow(QWidget* parent)
 	if(!m_interpreter->haveRequiredQtScriptExtensions())
 	{
 		QMessageBox::critical(0, tr("Couldn't load required QtScript extensions"), tr("Please install qtscriptgenerator for the version of Qt you are currently using. While recording in Hooq may work, playback will not be possible."));
+	}
+
+	if(!m_server->listen(QHostAddress::LocalHost, Hooq::Communication::serverPort()))
+	{
+		QMessageBox::critical(0, tr("Couldn't listen for applications"), tr("Hooq couldn't start listening for applications; you're probably running two copies of Hooq. Hooq will not work."));
 	}
 
 	m_editor = new ScriptEditor(m_interpreter->engine());
@@ -390,7 +400,7 @@ void MainWindow::runTestScript(const QModelIndex& index)
 
 	m_interpreter->setScriptPath(index.data(TestModel::FilePathRole).toString());
 
-	m_hooqPlayer = new Hooq::RemoteConnection(this);
+	m_hooqPlayer = new Hooq::RemoteConnection(m_server, this);
 	connect(
 		m_hooqPlayer,
 		SIGNAL(connected(QTcpSocket*)),
@@ -473,7 +483,7 @@ void MainWindow::startRecording()
 	m_xmlDump = new QTemporaryFile();
 	m_xmlDump->open();
 
-	m_hooqLogger = new Hooq::RemoteLogger();
+	m_hooqLogger = new Hooq::RemoteLogger(m_server, this);
 	m_hooqLogger->start(applicationPath(), m_arguments, m_xmlDump, m_hooqRecordInjector);
 }
 

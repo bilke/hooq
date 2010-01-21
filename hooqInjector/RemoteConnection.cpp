@@ -21,8 +21,6 @@
 
 #include "Injector.h"
 
-#include "../common/Communication.h"
-
 #include <QDir>
 #include <QFile>
 #include <QTcpServer>
@@ -47,36 +45,25 @@ QString RemoteConnectionException::errorString() const
 	return m_errorString;
 }
 
-RemoteConnection::RemoteConnection(QObject* parent)
+RemoteConnection::RemoteConnection(QTcpServer* server, QObject* parent)
 : QObject(parent)
-, m_localServer(0)
+, m_localServer(server)
 {
-}
-
-void RemoteConnection::start(const QString& application, const QStringList& arguments, Injector* injector)
-{
-	delete m_localServer;
-
-	m_localServer = new QTcpServer(this);
 	connect(
 		m_localServer,
 		SIGNAL(newConnection()),
 		SLOT(acceptConnection())
 	);
+}
 
-	if(!m_localServer->listen(QHostAddress::LocalHost, Communication::serverPort()))
-	{
-		throw RemoteConnectionException(m_localServer->serverError(), m_localServer->errorString());
-	}
-
+void RemoteConnection::start(const QString& application, const QStringList& arguments, Injector* injector)
+{
 	injector->startAndAttach(application, arguments);
 }
 
 void RemoteConnection::acceptConnection()
 {
-	QTcpSocket* socket = m_localServer->nextPendingConnection();
-	m_localServer->close();
-	emit connected(socket);
+	emit connected(m_localServer->nextPendingConnection());
 }
 
 }; // namespace

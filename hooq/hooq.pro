@@ -21,6 +21,7 @@ win32:LIBS += \
 QT += script network
 
 HEADERS += \
+	../common/Communication.h \
 	BacktraceWidget.h \
 	EnumConverter.h \
 	Interpreter.h \
@@ -56,6 +57,7 @@ FORMS += \
 	TestSetDialog.ui \
 
 SOURCES += \
+	../common/Communication.cpp \
 	BacktraceWidget.cpp \
 	EnumConverter.cpp \
 	Interpreter.cpp \

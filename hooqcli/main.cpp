@@ -22,12 +22,15 @@
 
 #include "PlatformInjector.h"
 
+#include "../common/Communication.h"
+
 #include <QCoreApplication>
 #include <QDebug>
 #include <QDir>
 #include <QFile>
 #include <QFileInfo>
 #include <QStringList>
+#include <QTcpServer>
 #include <QTextStream>
 
 using namespace Hooq;
@@ -91,8 +94,11 @@ int main(int argc, char** argv)
 		SLOT(quit())
 	);
 
-	RemoteLogger logger;
-	RemotePlayback player;
+	QTcpServer server;
+	server.listen(QHostAddress::LocalHost, Hooq::Communication::serverPort());
+
+	RemoteLogger logger(&server);
+	RemotePlayback player(&server);
 
 	if(mode == Replay)
 	{

@@ -27,10 +27,10 @@
 namespace Hooq
 {
 
-RemotePlayback::RemotePlayback(QObject* parent)
+RemotePlayback::RemotePlayback(QTcpServer* tcpServer, QObject* parent)
 : QObject(parent)
 , m_log(0)
-, m_server(new RemoteConnection(this))
+, m_server(new RemoteConnection(tcpServer, this))
 , m_socket(0)
 {
 	connect(
