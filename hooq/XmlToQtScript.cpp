@@ -356,6 +356,7 @@ XmlToQtScript::Item XmlToQtScript::parseMsec()
 QString XmlToQtScript::escapeString(const QString& _string)
 {
 	QString string(_string);
+	string.replace("\\", "\\\\");
 	string.replace("\"", "\\\"");
 	string.replace("\r", "\\r");
 	string.replace("\n", "\\n");
