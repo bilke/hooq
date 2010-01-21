@@ -79,7 +79,15 @@ void WindowsInjector::startAndAttach(const QString& application, const QStringLi
 
 void WindowsInjector::attachToSpawnedProcess()
 {
-	attach(m_process->pid());
+	if(m_process->state() == QProcess::NotRunning)
+	{
+		// TODO: Propogate to UI
+		qDebug() << "Failed to start process:" << m_process->error();
+	}
+	else
+	{
+		attach(m_process->pid());
+	}
 }
 
 void WindowsInjector::attach(Q_PID processId)
