@@ -5,6 +5,8 @@ INCLUDEPATH += . ../hooq
 
 include(../common.pri)
 
+CONFIG += console
+
 QT -= gui
 
 # Input

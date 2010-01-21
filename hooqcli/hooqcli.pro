@@ -5,6 +5,8 @@ INCLUDEPATH += . ../hooqInjector
 
 include(../common.pri)
 
+CONFIG += console
+
 unix:LIBS += -L../hooqInjector -lhooqInjector
 win32:LIBS += "..\hooqInjector\debug\hooqInjector.lib"
 QMAKE_RPATHDIR += $$(PWD)/../hooqInjector/
