@@ -21,6 +21,11 @@
 
 #include <QApplication>
 
+#ifdef WITH_BREAKPAD
+#include "BreakpadCrashHandler.h"
+#include <QDesktopServices>
+#endif
+
 int main(int argc, char** argv)
 {
 	QApplication app(argc, argv);
@@ -29,6 +34,10 @@ int main(int argc, char** argv)
 	app.setApplicationVersion("0.1");
 	app.setOrganizationDomain("hooq.org");
 	app.setOrganizationName("Hooq Developers");
+
+#ifdef WITH_BREAKPAD
+	BreakpadCrashHandler handler(QDesktopServices::storageLocation(QDesktopServices::DesktopLocation) + "/hooq-crashes");
+#endif
 
 	MainWindow window;
 	window.show();

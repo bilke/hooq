@@ -1,3 +1,5 @@
+include(common.pri)
+
 TEMPLATE = subdirs
 SUBDIRS += \
 	hooq \
@@ -6,8 +8,6 @@ SUBDIRS += \
 	hooqInjector \
 	injectedHooq \
 	uilib \
-
-include(common.pri)
 
 # State dependencies to fix make -j
 
@@ -18,3 +18,7 @@ hooq.depends += \
 hooqcli.depends += \
 	hooqInjector \
 
+CONFIG(debug, debug|release) {
+	SUBDIRS += google-breakpad
+	hooq.depends += google-breakpad
+}

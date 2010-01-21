@@ -86,10 +86,20 @@ SOURCES += \
 	XmlToQtScript_StringVariablesPostProcessor.cpp \
 	main.cpp \
 
+CONFIG(debug, debug|release) {
+	INCLUDEPATH += ..
+	HEADERS += BreakpadCrashHandler.h
+	SOURCES += BreakpadCrashHandler.cpp
+	DEFINES += WITH_BREAKPAD
+}
+
 unix {
 	include("../install.pri")
 	target.path = /${DESTDIR}$$BINDIR
 	INSTALLS += target 
+	CONFIG(debug, debug|release) {
+		LIBS += -L../google-breakpad -lbreakpad
+	}
 }
 
 win32 {
