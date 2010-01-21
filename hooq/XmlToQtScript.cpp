@@ -265,8 +265,6 @@ QString XmlToQtScript::parametersString(const QVariant& parameters) const
 		case QVariant::Int:
 			return QString::number(parameters.toInt());
 		case QVariant::String:
-			qDebug() << Q_FUNC_INFO << "Before escaping:" << parameters.toString();
-			qDebug() << Q_FUNC_INFO << "After escaping:" << escapeString(parameters.toString());
 			return "\"" + escapeString(parameters.toString()) + "\"";
 		case QVariant::Map:
 			{
