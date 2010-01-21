@@ -88,6 +88,7 @@ SOURCES += \
 
 CONFIG(debug, debug|release) {
 	INCLUDEPATH += ..
+	INCLUDEPATH += ../google-breakpad/src/
 	HEADERS += BreakpadCrashHandler.h
 	SOURCES += BreakpadCrashHandler.cpp
 	DEFINES += WITH_BREAKPAD
@@ -106,6 +107,7 @@ win32 {
 	target.path = $${OUT_PWD}/../hooq-release
 	CONFIG(debug, debug|release) {
 		target.path = $${OUT_PWD}/../hooq-debug
+		LIBS += "..\google-breakpad\debug\breakpad.lib"
 	}
 	INSTALLS += target
 }
