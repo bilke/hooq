@@ -74,7 +74,9 @@ void RemoteConnection::start(const QString& application, const QStringList& argu
 
 void RemoteConnection::acceptConnection()
 {
-	emit connected(m_localServer->nextPendingConnection());
+	QTcpSocket* socket = m_localServer->nextPendingConnection();
+	m_localServer->close();
+	emit connected(socket);
 }
 
 }; // namespace
