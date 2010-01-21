@@ -3,5 +3,5 @@ all: hooq.msi
 hooq.msi: hooq.wixobj
 	light.exe hooq.wixobj -ext WixUIExtension -cultures:en-us -out hooq.msi
 
-hooq.wixobj: hooq.wxs
+hooq.wixobj: hooq.wxs hooq-debug/hooq.exe hooq-release/hooq.exe
 	candle.exe hooq.wxs
