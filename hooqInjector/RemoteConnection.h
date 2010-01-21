@@ -21,6 +21,7 @@
 
 #include "InjectorImport.h"
 
+#include <QAbstractSocket>
 #include <QObject>
 
 class QTcpServer;
@@ -29,6 +30,17 @@ class QTcpSocket;
 namespace Hooq
 {
 class Injector;
+
+class HOOQ_INJECTOR_EXPORT RemoteConnectionException
+{
+	public:
+		RemoteConnectionException(QAbstractSocket::SocketError serverError, const QString& errorString);
+		QAbstractSocket::SocketError serverError() const;
+		QString errorString() const;
+	private:
+		QAbstractSocket::SocketError m_serverError;
+		QString m_errorString;
+};
 
 class HOOQ_INJECTOR_EXPORT RemoteConnection : public QObject
 {

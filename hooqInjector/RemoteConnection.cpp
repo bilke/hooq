@@ -31,6 +31,22 @@
 namespace Hooq
 {
 
+RemoteConnectionException::RemoteConnectionException(QAbstractSocket::SocketError serverError, const QString& errorString)
+: m_serverError(serverError)
+, m_errorString(errorString)
+{
+}
+
+QAbstractSocket::SocketError RemoteConnectionException::serverError() const
+{
+	return m_serverError;
+}
+
+QString RemoteConnectionException::errorString() const
+{
+	return m_errorString;
+}
+
 RemoteConnection::RemoteConnection(QObject* parent)
 : QObject(parent)
 , m_localServer(0)
@@ -48,7 +64,10 @@ void RemoteConnection::start(const QString& application, const QStringList& argu
 		SLOT(acceptConnection())
 	);
 
-	m_localServer->listen(QHostAddress::LocalHost, Communication::serverPort());
+	if(!m_localServer->listen(QHostAddress::LocalHost, Communication::serverPort()))
+	{
+		throw RemoteConnectionException(m_localServer->serverError(), m_localServer->errorString());
+	}
 
 	injector->startAndAttach(application, arguments);
 }

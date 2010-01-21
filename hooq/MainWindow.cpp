@@ -397,7 +397,15 @@ void MainWindow::runTestScript(const QModelIndex& index)
 		m_interpreter,
 		SLOT(run(QTcpSocket*))
 	);
-	m_hooqPlayer->start(applicationPath(), m_arguments, m_hooqPlayInjector);
+
+	try
+	{
+		m_hooqPlayer->start(applicationPath(), m_arguments, m_hooqPlayInjector);
+	}
+	catch(Hooq::RemoteConnectionException e)
+	{
+		QMessageBox::critical(this, tr("Could not attach to process"), tr("Failed to open a socket: %1 (error number %2)").arg(e.errorString()).arg(static_cast<int>(e.serverError())));
+	}
 }
 
 void MainWindow::logException(const QString& exception, const QStringList& backtrace)
