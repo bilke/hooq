@@ -77,6 +77,8 @@ class MainWindow : public QMainWindow, private Ui::MainWindow
 
 		void exportCurrentSet();
 		void importTestSet();
+
+		void startApplication();
 	private:
 		enum VisibleAction
 		{

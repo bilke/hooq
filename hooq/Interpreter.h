@@ -20,6 +20,7 @@
 #pragma once
 
 class ObjectInformation;
+class RemoteApplicationPrototype;
 class RemoteObjectPrototype;
 
 #include <QObject>
@@ -46,11 +47,16 @@ class Interpreter : public QObject, private QXmlStreamWriter
 		void finished();
 		void executionFailed(int lineNumber);
 		void objectNotFound(const QString& path);
+		void startApplicationAndAttach();
+		void startApplicationAndAttach(const QString& path, const QStringList& arguments);
+		void closeApplication();
 	public slots:
-		void run(QTcpSocket* socket);
+		void run();
+		void setSocket(QTcpSocket* socket);
 		void processSocketData();
 		void pickObject();
 	private slots:
+		void connectRemoteApplication(RemoteApplicationPrototype*);
 		void connectRemoteObject(RemoteObjectPrototype*);
 		void writeCloseEvent(const QString& path);
 		void writeContextMenuEvent(const QString& path, const QPoint& position, const QPoint& globalPosition, Qt::KeyboardModifiers modifiers);
@@ -79,6 +85,16 @@ class Interpreter : public QObject, private QXmlStreamWriter
 
 		ObjectInformation* m_dumpedObject;
 		int m_pendingAcks;
+
+		enum AttachState
+		{
+			NotAttached,
+			WaitingForAttach,
+			Attached
+		};
+		AttachState m_attachState;
+		void waitForAttach();
+		void ensureAttached();
 
 		bool m_haveRequiredQtScriptExtensions;
 		QScriptEngine* m_engine;

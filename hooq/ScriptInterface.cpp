@@ -19,6 +19,7 @@
 */
 #include "ScriptInterface.h"
 
+#include "RemoteApplicationPrototype.h"
 #include "RemoteObjectPrototype.h"
 #include "XmlToQtScript.h"
 
@@ -39,13 +40,6 @@ QScriptValue ScriptInterface::scriptAssert(QScriptContext* context, QScriptEngin
 	{
 		return context->throwError(tr("Assertion failed."));
 	}
-	return QScriptValue();
-}
-
-QScriptValue ScriptInterface::scriptSpawnDefaultsAndAttach(QScriptContext* context, QScriptEngine* engine)
-{
-	Q_UNUSED(context);
-	Q_UNUSED(engine);
 	return QScriptValue();
 }
 
@@ -114,5 +108,13 @@ QScriptValue ScriptInterface::scriptObjectFromPath(QScriptContext* context, QScr
 	const QString path = context->argument(0).toString();
 	RemoteObjectPrototype* object = new RemoteObjectPrototype(path);
 	emit instance()->newRemoteObject(object);
+	return engine->newQObject(object, QScriptEngine::ScriptOwnership);
+}
+
+QScriptValue ScriptInterface::scriptSpawnDefaultsAndAttach(QScriptContext* context, QScriptEngine* engine)
+{
+	Q_UNUSED(context);
+	RemoteApplicationPrototype* object = new RemoteApplicationPrototype();
+	emit instance()->newRemoteApplication(object);
 	return engine->newQObject(object, QScriptEngine::ScriptOwnership);
 }

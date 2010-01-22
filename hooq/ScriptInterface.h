@@ -23,6 +23,7 @@
 #include <QScriptEngine>
 #include <QScriptValue>
 
+class RemoteApplicationPrototype;
 class RemoteObjectPrototype;
 
 class ScriptInterface : public QObject
@@ -40,8 +41,8 @@ class ScriptInterface : public QObject
 		static QScriptValue scriptSpawnDefaultsAndAttach(QScriptContext*, QScriptEngine*);
 	signals:
 		void msleep(int msec);
-		void spawnDefaultsAndAttach();
 		void newRemoteObject(RemoteObjectPrototype*);
+		void newRemoteApplication(RemoteApplicationPrototype*);
 	private:
 		ScriptInterface();
 

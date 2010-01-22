@@ -20,6 +20,7 @@
 #include "Interpreter.h"
 
 #include "ObjectInformation.h"
+#include "RemoteApplicationPrototype.h"
 #include "RemoteObjectPrototype.h"
 #include "ScriptInterface.h"
 
@@ -68,6 +69,10 @@ Interpreter::Interpreter(QObject* parent)
 		"requireHooqScriptVersion",
 		m_engine->newFunction(ScriptInterface::scriptRequireHooqScriptVersion, 1)
 	);
+	m_engine->globalObject().setProperty(
+		"spawnDefaultsAndAttach",
+		m_engine->newFunction(ScriptInterface::scriptSpawnDefaultsAndAttach, 0)
+	);
 
 	connect(
 		ScriptInterface::instance(),
@@ -79,6 +84,12 @@ Interpreter::Interpreter(QObject* parent)
 		ScriptInterface::instance(),
 		SIGNAL(newRemoteObject(RemoteObjectPrototype*)),
 		SLOT(connectRemoteObject(RemoteObjectPrototype*))
+	);
+
+	connect(
+		ScriptInterface::instance(),
+		SIGNAL(newRemoteApplication(RemoteApplicationPrototype*)),
+		SLOT(connectRemoteApplication(RemoteApplicationPrototype*))
 	);
 }
 
@@ -104,6 +115,36 @@ void Interpreter::fetchProperty(const QString& path, const QString& name, QVaria
 	writeEndElement();
 	waitForDumpedObject();
 	*value = m_dumpedObject->properties().value(name);
+}
+
+void Interpreter::connectRemoteApplication(RemoteApplicationPrototype* object)
+{
+	if(object->useDefaults())
+	{
+		emit startApplicationAndAttach();
+	}
+	else
+	{
+		emit startApplicationAndAttach(object->path(), object->arguments());
+	}
+	connect(
+		object,
+		SIGNAL(closeRequested()),
+		SIGNAL(closeApplication())
+	);
+	waitForAttach();
+}
+
+void Interpreter::waitForAttach()
+{
+	if(m_attachState == NotAttached)
+	{
+		m_attachState = WaitingForAttach;
+	}
+	while(m_attachState != Attached)
+	{
+		QApplication::processEvents(QEventLoop::WaitForMoreEvents);
+	}
 }
 
 void Interpreter::connectRemoteObject(RemoteObjectPrototype* object)
@@ -220,7 +261,7 @@ bool Interpreter::waitForAck()
 	QTcpSocket* socket = static_cast<QTcpSocket*>(device());
 	while(socket->state() == QTcpSocket::ConnectedState && !ack())
 	{
-		QApplication::processEvents();
+		QApplication::processEvents(QEventLoop::WaitForMoreEvents);
 	}
 	if(!ack())
 	{
@@ -241,6 +282,22 @@ bool Interpreter::waitForAck()
 	return true;
 }
 
+void Interpreter::ensureAttached()
+{
+	switch(m_attachState)
+	{
+		case NotAttached:
+			emit startApplicationAndAttach();
+		case WaitingForAttach:
+			waitForAttach();
+			break;
+		case Attached:
+			return;
+	}
+	Q_ASSERT(m_attachState == Attached);
+	Q_ASSERT(device());
+}
+
 void Interpreter::waitForDumpedObject()
 {
 	delete m_dumpedObject;
@@ -259,6 +316,7 @@ void Interpreter::pickObject()
 
 void Interpreter::writeKeyPressEvent(const QString& path, int key, Qt::KeyboardModifiers modifiers, const QString& text, bool autorepeat, ushort count)
 {
+	ensureAttached();
 	writeStartElement("keyPress");
 	writeKeyAttributes(path, key, modifiers, text, autorepeat, count);
 	writeEndElement();
@@ -267,6 +325,7 @@ void Interpreter::writeKeyPressEvent(const QString& path, int key, Qt::KeyboardM
 
 void Interpreter::writeSetFocusEvent(const QString& path, Qt::FocusReason reason)
 {
+	ensureAttached();
 	writeStartElement("focusChanged");
 	writeAttribute("target", path);
 	writeAttribute("reason", QString::number(reason));
@@ -276,6 +335,7 @@ void Interpreter::writeSetFocusEvent(const QString& path, Qt::FocusReason reason
 
 void Interpreter::writeCloseEvent(const QString& path)
 {
+	ensureAttached();
 	writeStartElement("windowClosed");
 	writeAttribute("target", path);
 	writeEndElement();
@@ -284,6 +344,7 @@ void Interpreter::writeCloseEvent(const QString& path)
 
 void Interpreter::writeKeyReleaseEvent(const QString& path, int key, Qt::KeyboardModifiers modifiers, const QString& text, bool autorepeat, ushort count)
 {
+	ensureAttached();
 	writeStartElement("keyRelease");
 	writeKeyAttributes(path, key, modifiers, text, autorepeat, count);
 	writeEndElement();
@@ -292,6 +353,7 @@ void Interpreter::writeKeyReleaseEvent(const QString& path, int key, Qt::Keyboar
 
 void Interpreter::writeMouseMoveEvent(const QString& path, const QPoint& position, Qt::MouseButton button, Qt::MouseButtons buttons, Qt::KeyboardModifiers modifiers)
 {
+	ensureAttached();
 	writeStartElement("mouseMove");
 	writeMouseAttributes(path, position, button, buttons, modifiers);
 	writeEndElement();
@@ -300,6 +362,7 @@ void Interpreter::writeMouseMoveEvent(const QString& path, const QPoint& positio
 
 void Interpreter::writeMousePressEvent(const QString& path, const QPoint& position, Qt::MouseButton button, Qt::MouseButtons buttons, Qt::KeyboardModifiers modifiers)
 {
+	ensureAttached();
 	writeStartElement("mouseButtonPress");
 	writeMouseAttributes(path, position, button, buttons, modifiers);
 	writeEndElement();
@@ -308,6 +371,7 @@ void Interpreter::writeMousePressEvent(const QString& path, const QPoint& positi
 
 void Interpreter::writeMouseReleaseEvent(const QString& path, const QPoint& position, Qt::MouseButton button, Qt::MouseButtons buttons, Qt::KeyboardModifiers modifiers)
 {
+	ensureAttached();
 	writeStartElement("mouseButtonRelease");
 	writeMouseAttributes(path, position, button, buttons, modifiers);
 	writeEndElement();
@@ -316,6 +380,7 @@ void Interpreter::writeMouseReleaseEvent(const QString& path, const QPoint& posi
 
 void Interpreter::writeMouseDoubleClickEvent(const QString& path, const QPoint& position, Qt::MouseButton button, Qt::MouseButtons buttons, Qt::KeyboardModifiers modifiers)
 {
+	ensureAttached();
 	writeStartElement("mouseButtonDoubleClick");
 	writeMouseAttributes(path, position, button, buttons, modifiers);
 	writeEndElement();
@@ -324,6 +389,7 @@ void Interpreter::writeMouseDoubleClickEvent(const QString& path, const QPoint& 
 
 void Interpreter::writeContextMenuEvent(const QString& path, const QPoint& position, const QPoint& globalPosition, Qt::KeyboardModifiers modifiers)
 {
+	ensureAttached();
 	writeStartElement("contextMenu");
 	writeAttribute("x", QString::number(position.x()));
 	writeAttribute("y", QString::number(position.y()));
@@ -337,6 +403,7 @@ void Interpreter::writeContextMenuEvent(const QString& path, const QPoint& posit
 
 void Interpreter::writeMouseAttributes(const QString& path, const QPoint& position, Qt::MouseButton button, Qt::MouseButtons buttons, Qt::KeyboardModifiers modifiers)
 {
+	ensureAttached();
 	writeAttribute("x", QString::number(position.x()));
 	writeAttribute("y", QString::number(position.y()));
 	writeAttribute("button", QString::number(button));
@@ -347,6 +414,7 @@ void Interpreter::writeMouseAttributes(const QString& path, const QPoint& positi
 
 void Interpreter::writeKeyAttributes(const QString& path, int key, Qt::KeyboardModifiers modifiers, const QString& text, bool autorepeat, ushort count)
 {
+	ensureAttached();
 	writeAttribute("key", QString::number(key));
 	writeAttribute("modifiers", QString::number(modifiers));
 	writeAttribute("text", text);
@@ -357,6 +425,7 @@ void Interpreter::writeKeyAttributes(const QString& path, int key, Qt::KeyboardM
 
 void Interpreter::writeShortcutEvent(const QString& path, const QKeySequence& sequence, int id, bool ambiguous)
 {
+	ensureAttached();
 	writeStartElement("shortcut");
 	writeAttribute("string", sequence.toString());
 	writeAttribute("id", QString::number(id));
@@ -368,6 +437,7 @@ void Interpreter::writeShortcutEvent(const QString& path, const QKeySequence& se
 
 void Interpreter::writeWheelEvent(const QString& path, const QPoint& position, int delta, Qt::MouseButtons buttons, Qt::KeyboardModifiers modifiers, Qt::Orientation orientation)
 {
+	ensureAttached();
 	writeStartElement("mouseWheel");
 	writeAttribute("x", QString::number(position.x()));
 	writeAttribute("y", QString::number(position.y()));
@@ -382,6 +452,7 @@ void Interpreter::writeWheelEvent(const QString& path, const QPoint& position, i
 
 void Interpreter::writeDragAndDropEvent(const QString& sourcePath, const QPoint& sourcePoint, const QString& targetPath, const QPoint& targetPoint)
 {
+	ensureAttached();
 	writeStartElement("dragAndDrop");
 	writeAttribute("source", sourcePath);
 	writeAttribute("sourceX", QString::number(sourcePoint.x()));
@@ -435,30 +506,40 @@ void Interpreter::processSocketData()
 	}
 }
 
-void Interpreter::run(QTcpSocket* socket)
+void Interpreter::run()
 {
-	m_pendingAcks = 0;
+	qDebug() << Q_FUNC_INFO;
+	m_attachState = NotAttached;
+	m_engine->evaluate(m_script, m_scriptPath);
+	if(device())
+	{
+		writeEndElement(); // hooq
+		writeEndDocument();
+
+		waitForAck();
+		device()->write("DIE\n");
+		waitForAck();
+
+		emit finished();
+	}
+	setDevice(0);
+}
+
+void Interpreter::setSocket(QTcpSocket* socket)
+{
 	connect(
 		socket,
 		SIGNAL(readyRead()),
 		SLOT(processSocketData())
 	);
+	m_pendingAcks = 0;
 	socket->write("PLAY\n");
 	setDevice(socket);
 
 	writeStartDocument();
 	writeStartElement("hooq");
 
-	m_engine->evaluate(m_script, m_scriptPath);
-
-	writeEndElement(); // hooq
-	writeEndDocument();
-
-	waitForAck();
-	socket->write("DIE\n");
-	waitForAck();
-
-	emit finished();
+	m_attachState = Attached;
 }
 
 bool Interpreter::importExtension(const QString& extension)
@@ -477,6 +558,7 @@ bool Interpreter::importExtension(const QString& extension)
 
 void Interpreter::writeSleep(int msec)
 {
+	ensureAttached();
 	writeTextElement("msec", QString::number(msec));
 	waitForAck();
 }
