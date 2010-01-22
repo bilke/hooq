@@ -42,6 +42,13 @@ QScriptValue ScriptInterface::scriptAssert(QScriptContext* context, QScriptEngin
 	return QScriptValue();
 }
 
+QScriptValue ScriptInterface::scriptSpawnDefaultsAndAttach(QScriptContext* context, QScriptEngine* engine)
+{
+	Q_UNUSED(context);
+	Q_UNUSED(engine);
+	return QScriptValue();
+}
+
 QScriptValue ScriptInterface::scriptRequireHooqScriptVersion(QScriptContext* context, QScriptEngine* engine)
 {
 	Q_UNUSED(engine);

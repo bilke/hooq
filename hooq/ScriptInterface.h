@@ -37,8 +37,10 @@ class ScriptInterface : public QObject
 		static QScriptValue scriptCompare(QScriptContext*, QScriptEngine*);
 		static QScriptValue scriptImportExtension(QScriptContext*, QScriptEngine*);
 		static QScriptValue scriptRequireHooqScriptVersion(QScriptContext*, QScriptEngine*);
+		static QScriptValue scriptSpawnDefaultsAndAttach(QScriptContext*, QScriptEngine*);
 	signals:
 		void msleep(int msec);
+		void spawnDefaultsAndAttach();
 		void newRemoteObject(RemoteObjectPrototype*);
 	private:
 		ScriptInterface();

@@ -29,6 +29,7 @@ HEADERS += \
 	MainWindow.h \
 	ObjectInformation.h \
 	PropertyDialog.h \
+	RemoteApplicationPrototype.h \
 	RemoteObjectPrototype.h \
 	ScriptBacktraceModel.h \
 	ScriptEditor.h \
@@ -65,6 +66,7 @@ SOURCES += \
 	MainWindow.cpp \
 	ObjectInformation.cpp \
 	PropertyDialog.cpp \
+	RemoteApplicationPrototype.cpp \
 	RemoteObjectPrototype.cpp \
 	ScriptBacktraceModel.cpp \
 	ScriptEditor.cpp \
