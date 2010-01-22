@@ -53,7 +53,23 @@ QString Locations::testSetsLocation()
 QString Locations::scriptPath(const QString& testSet, const QString& testName)
 {
 
-	return QDir::cleanPath(QString("%1/%2.qs").arg(testSetLocation(testSet)).arg(testName));
+	const QString qs = QDir::cleanPath(QString("%1/%2.qs").arg(testSetLocation(testSet)).arg(testName));
+	if(QFile::exists(qs))
+	{
+		return qs;
+	}
+	else
+	{
+		return QDir::cleanPath(
+			QString(
+				"%1/%2.hs"
+			).arg(
+				testSetLocation(testSet)
+			).arg(
+				QLatin1String(testName.toUtf8().toHex())
+			)
+		);
+	}
 }
 
 QString Locations::testSetLocation(const QString& testSet)
