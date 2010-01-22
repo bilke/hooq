@@ -119,6 +119,8 @@ void Interpreter::fetchProperty(const QString& path, const QString& name, QVaria
 
 void Interpreter::connectRemoteApplication(RemoteApplicationPrototype* object)
 {
+	m_applicationUuid = object->uuid();
+	qDebug() << Q_FUNC_INFO << "Launching" << object->uuid();
 	if(object->useDefaults())
 	{
 		emit startApplicationAndAttach();
@@ -137,9 +139,18 @@ void Interpreter::connectRemoteApplication(RemoteApplicationPrototype* object)
 
 void Interpreter::closeApplication()
 {
-	qDebug() << Q_FUNC_INFO;
+	RemoteApplicationPrototype* object = qobject_cast<RemoteApplicationPrototype*>(sender());
+	if(object)
+	{
+		if(object->uuid() != m_applicationUuid)
+		{
+			qDebug() << Q_FUNC_INFO << "Ignoring request. Current UUID:" << m_applicationUuid << "Requested UUID:" << object->uuid();
+			return;
+		}
+	}
 	if(device())
 	{
+		qDebug() << Q_FUNC_INFO << "Closing UUID" << m_applicationUuid;
 		writeEndElement(); // hooq
 		writeEndDocument();
 
@@ -148,6 +159,7 @@ void Interpreter::closeApplication()
 		waitForAck();
 		m_attachState = NotAttached;
 		setDevice(0);
+		m_applicationUuid = QString();
 	}
 }
 
@@ -524,9 +536,11 @@ void Interpreter::processSocketData()
 
 void Interpreter::run()
 {
+	m_applicationUuid = QString();
 	qDebug() << Q_FUNC_INFO;
 	m_attachState = NotAttached;
 	m_engine->evaluate(m_script, m_scriptPath);
+	m_engine->collectGarbage();
 	closeApplication();
 	emit finished();
 }

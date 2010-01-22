@@ -18,15 +18,24 @@
 */
 #include "RemoteApplicationPrototype.h"
 
+#include <QUuid>
+
 RemoteApplicationPrototype::RemoteApplicationPrototype(QObject* parent)
 : QObject(parent)
 , m_closed(false)
+, m_uuid(QUuid::createUuid())
 {
+}
+
+QString RemoteApplicationPrototype::uuid() const
+{
+	return m_uuid;
 }
 
 RemoteApplicationPrototype::RemoteApplicationPrototype(const QString& path, const QStringList& arguments, QObject* parent)
 : QObject(parent)
 , m_closed(false)
+, m_uuid(QUuid::createUuid())
 , m_path(path)
 , m_arguments(arguments)
 {

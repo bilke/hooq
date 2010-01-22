@@ -32,12 +32,15 @@ class RemoteApplicationPrototype : public QObject, public QScriptable
 		bool useDefaults() const;
 		QString path() const;
 		QStringList arguments() const;
+
+		QString uuid() const;
 	public slots:
 		void close();
 	signals:
 		void closeRequested();
 	private:
 		bool m_closed;
+		QString m_uuid;
 		QString m_path;
 		QStringList m_arguments;
 };

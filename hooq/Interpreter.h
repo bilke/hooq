@@ -95,6 +95,7 @@ class Interpreter : public QObject, private QXmlStreamWriter
 		AttachState m_attachState;
 		void waitForAttach();
 		void ensureAttached();
+		QString m_applicationUuid;
 
 		bool m_haveRequiredQtScriptExtensions;
 		QScriptEngine* m_engine;
