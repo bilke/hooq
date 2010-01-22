@@ -51,7 +51,7 @@ XmlToQtScript::Variable::Variable(const QString& _name)
 int XmlToQtScript::scriptVersion()
 {
 	// bump whenever compatibility changes
-	return 1;
+	return 2;
 }
 
 QString XmlToQtScript::parse(QIODevice* xml, Options options)
