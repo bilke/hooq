@@ -103,9 +103,9 @@ class MainWindow : public QMainWindow, private Ui::MainWindow
 		Hooq::Injector* m_hooqRecordInjector;
 		Hooq::RemoteLogger* m_hooqLogger;
 		Hooq::RemoteConnection* m_hooqPlayer;
+		Interpreter* m_interpreter;
 		QTcpServer* m_server;
 
-		Interpreter* m_interpreter;
 		TestModel* m_testModel;
 		bool m_testRunning;
 
