@@ -49,13 +49,13 @@ class Interpreter : public QObject, private QXmlStreamWriter
 		void objectNotFound(const QString& path);
 		void startApplicationAndAttach();
 		void startApplicationAndAttach(const QString& path, const QStringList& arguments);
-		void closeApplication();
 	public slots:
 		void run();
 		void setSocket(QTcpSocket* socket);
 		void processSocketData();
 		void pickObject();
 	private slots:
+		void closeApplication();
 		void connectRemoteApplication(RemoteApplicationPrototype*);
 		void connectRemoteObject(RemoteObjectPrototype*);
 		void writeCloseEvent(const QString& path);

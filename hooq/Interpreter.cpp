@@ -130,9 +130,24 @@ void Interpreter::connectRemoteApplication(RemoteApplicationPrototype* object)
 	connect(
 		object,
 		SIGNAL(closeRequested()),
-		SIGNAL(closeApplication())
+		SLOT(closeApplication())
 	);
 	waitForAttach();
+}
+
+void Interpreter::closeApplication()
+{
+	if(device())
+	{
+		writeEndElement(); // hooq
+		writeEndDocument();
+
+		waitForAck();
+		device()->write("DIE\n");
+		waitForAck();
+		m_attachState = NotAttached;
+		setDevice(0);
+	}
 }
 
 void Interpreter::waitForAttach()
@@ -511,18 +526,8 @@ void Interpreter::run()
 	qDebug() << Q_FUNC_INFO;
 	m_attachState = NotAttached;
 	m_engine->evaluate(m_script, m_scriptPath);
-	if(device())
-	{
-		writeEndElement(); // hooq
-		writeEndDocument();
-
-		waitForAck();
-		device()->write("DIE\n");
-		waitForAck();
-
-		emit finished();
-	}
-	setDevice(0);
+	closeApplication();
+	emit finished();
 }
 
 void Interpreter::setSocket(QTcpSocket* socket)
