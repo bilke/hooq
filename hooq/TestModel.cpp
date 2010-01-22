@@ -83,8 +83,24 @@ void TestModel::setTestSet(const QString& testSet)
 		m_watcher->addPath(testSetDir.path());
 	}
 
-	m_items = testSetDir.entryList(QStringList("*.qs"), QDir::Files, QDir::Name);
-	m_items.replaceInStrings(".qs", QString());
+	QStringList items;
+	items = testSetDir.entryList(QStringList() << "*.qs" << "*.hs", QDir::Files, QDir::Name);
+	m_items.clear();
+
+	Q_FOREACH(QString item, items) // not const QString& - chop() called
+	{
+		if(item.endsWith(".qs"))
+		{
+			item.chop(3);
+			m_items.append(item);
+		}
+		else if(item.endsWith(".hs"))
+		{
+			item.chop(3);
+			m_items.append(QString::fromUtf8(QByteArray::fromHex(item.toLatin1())));
+		}
+	}
+
 	reset();
 }
 
