@@ -34,7 +34,10 @@ class RemoteApplicationPrototype : public QObject, public QScriptable
 		QStringList arguments() const;
 	public slots:
 		void close();
+	signals:
+		void closeRequested();
 	private:
+		bool m_closed;
 		QString m_path;
 		QStringList m_arguments;
 };

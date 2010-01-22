@@ -137,6 +137,7 @@ void Interpreter::connectRemoteApplication(RemoteApplicationPrototype* object)
 
 void Interpreter::closeApplication()
 {
+	qDebug() << Q_FUNC_INFO;
 	if(device())
 	{
 		writeEndElement(); // hooq

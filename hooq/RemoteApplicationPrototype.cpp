@@ -20,11 +20,13 @@
 
 RemoteApplicationPrototype::RemoteApplicationPrototype(QObject* parent)
 : QObject(parent)
+, m_closed(false)
 {
 }
 
 RemoteApplicationPrototype::RemoteApplicationPrototype(const QString& path, const QStringList& arguments, QObject* parent)
 : QObject(parent)
+, m_closed(false)
 , m_path(path)
 , m_arguments(arguments)
 {
@@ -42,6 +44,11 @@ bool RemoteApplicationPrototype::useDefaults() const
 
 void RemoteApplicationPrototype::close()
 {
+	if(!m_closed)
+	{
+		m_closed = true;
+		emit closeRequested();
+	}
 }
 
 QString RemoteApplicationPrototype::path() const
