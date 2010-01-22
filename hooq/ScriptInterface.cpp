@@ -1,6 +1,6 @@
 /*
 	Hooq: Qt4 UI recording, playback, and testing toolkit.
-	Copyright (C) 2009  Mendeley Limited <copyright@mendeley.com>
+	Copyright (C) 2010  Mendeley Limited <copyright@mendeley.com>
 	Copyright (C) 2009  Frederick Emmott <mail@fredemmott.co.uk>
 
 	This program is free software; you can redistribute it and/or modify
@@ -20,6 +20,7 @@
 #include "ScriptInterface.h"
 
 #include "RemoteObjectPrototype.h"
+#include "XmlToQtScript.h"
 
 #include <QDebug>
 
@@ -37,6 +38,22 @@ QScriptValue ScriptInterface::scriptAssert(QScriptContext* context, QScriptEngin
 	if(!success)
 	{
 		return context->throwError(tr("Assertion failed."));
+	}
+	return QScriptValue();
+}
+
+QScriptValue ScriptInterface::scriptRequireHooqScriptVersion(QScriptContext* context, QScriptEngine* engine)
+{
+	Q_UNUSED(engine);
+	const int requiredVersion = context->argument(0).toInteger();
+	const int supportedVersion = XmlToQtScript::scriptVersion();
+	if(requiredVersion > supportedVersion)
+	{
+		return context->throwError(tr("Script requires HooqScript version %1; this version of Hooq only supports version %2 or older.").arg(requiredVersion).arg(supportedVersion));
+	}
+	if(requiredVersion < 1)
+	{
+		return context->throwError(tr("Script requires an invalid version of HooqScript (%1). Version %2 is supported.").arg(requiredVersion).arg(supportedVersion));
 	}
 	return QScriptValue();
 }

@@ -64,6 +64,10 @@ Interpreter::Interpreter(QObject* parent)
 		"importExtension",
 		m_engine->newFunction(ScriptInterface::scriptImportExtension, 1)
 	);
+	m_engine->globalObject().setProperty(
+		"requireHooqScriptVersion",
+		m_engine->newFunction(ScriptInterface::scriptRequireHooqScriptVersion, 1)
+	);
 
 	connect(
 		ScriptInterface::instance(),

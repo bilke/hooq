@@ -48,13 +48,19 @@ XmlToQtScript::Variable::Variable(const QString& _name)
 {
 }
 
+int XmlToQtScript::scriptVersion()
+{
+	// bump whenever compatibility changes
+	return 1;
+}
+
 QString XmlToQtScript::parse(QIODevice* xml, Options options)
 {
 	m_options = options;
 
 	Q_ASSERT(xml->isOpen() && xml->isReadable());
 	setDevice(xml);
-	return parseDocument();
+	return QString("requireHooqScriptVersion(%1);\n").arg(scriptVersion()) + parseDocument();
 }
 
 QString XmlToQtScript::parseDocument()

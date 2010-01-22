@@ -52,6 +52,7 @@ class XmlToQtScript : private QXmlStreamReader
 		Q_DECLARE_FLAGS(Options, Option);
 
 		QString parse(QIODevice* xml, Options);
+		static int scriptVersion();
 		static QString escapeString(const QString&);
 	private:
 		QString itemString(const QList<Item>& items) const;

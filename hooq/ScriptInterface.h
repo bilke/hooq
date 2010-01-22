@@ -1,6 +1,6 @@
 /*
 	Hooq: Qt4 UI recording, playback, and testing toolkit.
-	Copyright (C) 2009  Mendeley Limited <copyright@mendeley.com>
+	Copyright (C) 2010  Mendeley Limited <copyright@mendeley.com>
 	Copyright (C) 2009  Frederick Emmott <mail@fredemmott.co.uk>
 
 	This program is free software; you can redistribute it and/or modify
@@ -36,6 +36,7 @@ class ScriptInterface : public QObject
 		static QScriptValue scriptAssert(QScriptContext*, QScriptEngine*);
 		static QScriptValue scriptCompare(QScriptContext*, QScriptEngine*);
 		static QScriptValue scriptImportExtension(QScriptContext*, QScriptEngine*);
+		static QScriptValue scriptRequireHooqScriptVersion(QScriptContext*, QScriptEngine*);
 	signals:
 		void msleep(int msec);
 		void newRemoteObject(RemoteObjectPrototype*);
