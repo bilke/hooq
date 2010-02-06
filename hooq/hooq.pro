@@ -107,6 +107,13 @@ unix {
 	}
 }
 
+macx {
+	CONFIG(debug, debug|release) {
+		LIBS += -lcrypto -framework Cocoa
+	}
+}
+
+
 win32 {
 	target.path = $${OUT_PWD}/../hooq-release
 	CONFIG(debug, debug|release) {
