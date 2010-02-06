@@ -46,7 +46,9 @@ void GdbInjector::startAndAttach(const QString& application, const QStringList& 
 	delete m_gdb;
 	m_gdb = new QProcess(this);
 	const QStringList arguments = QStringList()
+#ifndef Q_OS_MAC
 		<< "-return-child-result"
+#endif
 		<< "-interpreter" << "mi" // machine interface
 		<< application
 	;
