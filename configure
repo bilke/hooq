@@ -9,7 +9,11 @@ case $(uname -m) in
 	*)
 		echo "LIBDIR=/usr/lib" >> install.pri
 esac
+EXTRA=
+if [ $(uname -s) = "Darwin" ]; then
+	EXTRA="-spec macx-g++"
+fi
 DIRECTORY=$(dirname "$0")
-if ! qmake "${DIRECTORY}"/*.pro ; then
-	qmake-qt4 "${DIRECTORY}"/*.pro
+if ! qmake "${DIRECTORY}"/*.pro $EXTRA; then
+	qmake-qt4 "${DIRECTORY}"/*.pro $EXTRA
 fi

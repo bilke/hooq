@@ -111,6 +111,7 @@ macx {
 	CONFIG(debug, debug|release) {
 		LIBS += -lcrypto -framework Cocoa
 	}
+	CONFIG -= app_bundle
 }
 
 
