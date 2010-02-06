@@ -8,7 +8,8 @@ include (../common.pri)
 QT -= core gui
 CONFIG += static
 
-linux {
+unix {
+!macx {
 	INCLUDEPATH += src
 	INCLUDEPATH += src/client/linux
 	INCLUDEPATH += src/third_party/linux/include
@@ -23,6 +24,7 @@ linux {
 		src/client/linux/minidump_writer/linux_dumper.cc \
 		src/client/linux/minidump_writer/minidump_writer.cc \
 
+}
 }
 
 macx {
