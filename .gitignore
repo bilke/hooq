@@ -30,8 +30,10 @@ desktop.ini
 *~
 
 *.dylib
+*.so*
 
 Makefile
+*.pri
 
 google-breakpad
 
