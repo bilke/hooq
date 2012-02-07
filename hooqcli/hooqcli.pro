@@ -23,7 +23,7 @@ SOURCES += \
 
 unix {
 	include("../install.pri")
-	target.path = /${DESTDIR}$$BINDIR
+	target.path = $$BINDIR
 	INSTALLS += target 
 }
 

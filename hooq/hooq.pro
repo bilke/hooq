@@ -102,7 +102,7 @@ SOURCES += \
 
 unix {
 	include("../install.pri")
-	target.path = /${DESTDIR}$$BINDIR
+	target.path = $$BINDIR
 	INSTALLS += target 
 	!macx {
 		CONFIG(debug, debug|release) {

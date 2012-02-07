@@ -36,6 +36,6 @@ win32 {
 
 unix {
 	include("../install.pri")
-	target.path = /${DESTDIR}$$LIBDIR
+	target.path = $$LIBDIR
 	INSTALLS += target 
 }

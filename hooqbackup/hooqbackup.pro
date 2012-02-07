@@ -16,7 +16,7 @@ SOURCES += main.cpp ../hooq/TestSetBackup.cpp
 
 unix {
 	include("../install.pri")
-	target.path = /${DESTDIR}$$BINDIR
+	target.path = $$BINDIR
 	INSTALLS += target 
 }
 

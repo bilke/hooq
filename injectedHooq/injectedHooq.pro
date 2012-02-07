@@ -44,6 +44,6 @@ unix {
 	SOURCES += EntryPoint.cpp
 
 	include("../install.pri")
-	target.path = /${DESTDIR}$$LIBDIR
+	target.path = $$LIBDIR
 	INSTALLS += target 
 }
