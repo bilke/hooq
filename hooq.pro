@@ -18,7 +18,9 @@ hooq.depends += \
 hooqcli.depends += \
 	hooqInjector \
 
-CONFIG(debug, debug|release) {
-	SUBDIRS += google-breakpad
-	hooq.depends += google-breakpad
+!macx {
+	CONFIG(debug, debug|release) {
+		SUBDIRS += google-breakpad
+		hooq.depends += google-breakpad
+	}
 }
