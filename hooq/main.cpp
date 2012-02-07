@@ -26,9 +26,17 @@
 #include <QDesktopServices>
 #endif
 
+#include <iostream>
+
 int main(int argc, char** argv)
 {
 	QApplication app(argc, argv);
+
+	QString appPath = app.applicationDirPath();
+	QString pluginsPath = QString("%1/../../qtscriptgenerator/plugins").arg(appPath);
+	QStringList libPaths = app.libraryPaths();
+	libPaths << pluginsPath;
+	app.setLibraryPaths(libPaths);	
 
 	app.setApplicationName("Hooq");
 	app.setApplicationVersion("0.1");
