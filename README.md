@@ -68,6 +68,7 @@
 - Build Hooq
 
         cd hooq
+        ./configure
         qmake
         make qmake
         make all
