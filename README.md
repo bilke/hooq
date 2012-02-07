@@ -48,6 +48,8 @@
 
 ## How to use ##
 
+***Note: Does NOT work on Mac OS so far.***
+
 - Clone Hooq and qtscriptgenerator to the same directory
 
         git clone git://github.com/bilke/hooq.git
@@ -71,9 +73,11 @@
         ./configure
         qmake
         make qmake
-        make all
+        make
+        [make install] # On Mac OS
 
 - Run Hooq
 
         cd hooq
+        [cd bin]       # On Mac OS
         ./hooq
